@@ -44,16 +44,100 @@
       }
     }
     </script>
+    <style>
+        /* Дополнительные стили для подчеркивания активной вкладки и выпадающего меню */
+        .nav-item-underline::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #F15F31; /* panda-orange */
+            transition: width 0.3s;
+            margin-top: 2px;
+        }
+
+        .nav-item-underline.active::after {
+            width: 100%;
+        }
+
+        .nav-item-underline:hover::after {
+            width: 100%;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block;
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
 </head>
 <body>
     <div id="app" class="block-container">
-        <!-- Навигационное меню -->
-        <nav class="w-full max-w-5xl bg-panda-black p-4 rounded-b-lg shadow-md flex justify-around">
-            <button @click="navigateTo('home')" :class="{ 'font-bold text-panda-orange': currentPage === 'home' }" class="text-panda-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">Главная</button>
-            <button @click="navigateTo('contact')" :class="{ 'font-bold text-panda-orange': currentPage === 'contact' }" class="text-panda-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">Расчет стоимости</button>
-            <button @click="navigateTo('gallery')" :class="{ 'font-bold text-panda-orange': currentPage === 'gallery' }" class="text-panda-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">Галерея</button>
-            <button @click="navigateTo('shop')" :class="{ 'font-bold text-panda-orange': currentPage === 'shop' }" class="text-panda-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">Магазин</button>
-            <span v-if="isAuthReady" class="text-xs text-dark-gray flex items-center ml-auto px-2 py-1 bg-gray-800 rounded">
+        <!-- Новое навигационное меню -->
+        <nav class="w-full max-w-5xl bg-light-gray p-4 rounded-b-lg shadow-md flex justify-between items-center px-10 relative z-10">
+            <!-- Логотип -->
+            <div class="flex flex-col items-start">
+                <div class="flex items-center">
+                    <img src="https://placehold.co/40x40/131C26/FFFFFF?text=Лого" alt="Логотип Red Panda" class="w-10 h-10 rounded-md mr-2">
+                    <span class="font-semibold text-panda-black text-xl">RED PANDA</span>
+                </div>
+                <span class="text-xs text-dark-gray mt-1">Printing agency</span>
+            </div>
+
+            <!-- Навигационные ссылки -->
+            <ul class="flex space-x-8 text-lg font-medium text-dark-gray">
+                <li>
+                    <button @click="navigateTo('home')"
+                        :class="{ 'text-panda-black active': currentPage === 'home' }"
+                        class="nav-item-underline hover:text-panda-black transition-colors duration-200 focus:outline-none">
+                        Главная
+                    </button>
+                </li>
+                <li class="relative dropdown">
+                    <button @click="navigateTo('about')"
+                        :class="{ 'text-panda-black active': currentPage === 'about' }"
+                        class="nav-item-underline hover:text-panda-black transition-colors duration-200 focus:outline-none flex items-center">
+                        О нас
+                        <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
+                    <ul class="dropdown-menu absolute hidden bg-panda-white shadow-lg rounded-md mt-2 py-2 w-40 opacity-0 visibility-hidden transition-all duration-300 transform scale-95 origin-top z-20">
+                        <li><button @click="navigateTo('aboutCompany')" class="block px-4 py-2 text-dark-gray hover:bg-light-gray w-full text-left rounded-md">О компании</button></li>
+                        <li><button @click="navigateTo('team')" class="block px-4 py-2 text-dark-gray hover:bg-light-gray w-full text-left rounded-md">Команда</button></li>
+                        <li><button @click="navigateTo('reviews')" class="block px-4 py-2 text-dark-gray hover:bg-light-gray w-full text-left rounded-md">Отзывы</button></li>
+                    </ul>
+                </li>
+                <li>
+                    <button @click="navigateTo('gallery')"
+                        :class="{ 'text-panda-black active': currentPage === 'gallery' }"
+                        class="nav-item-underline hover:text-panda-black transition-colors duration-200 focus:outline-none">
+                        Наши работы
+                    </button>
+                </li>
+                <li>
+                    <button @click="navigateTo('promotions')"
+                        :class="{ 'text-panda-black active': currentPage === 'promotions' }"
+                        class="nav-item-underline hover:text-panda-black transition-colors duration-200 focus:outline-none">
+                        Акции
+                    </button>
+                </li>
+                <li>
+                    <button @click="navigateTo('shop')"
+                        :class="{ 'text-panda-black active': currentPage === 'shop' }"
+                        class="nav-item-underline hover:text-panda-black transition-colors duration-200 focus:outline-none">
+                        Магазин
+                    </button>
+                </li>
+                <li>
+                    <button @click="navigateTo('preparation')"
+                        :class="{ 'text-panda-black active': currentPage === 'preparation' }"
+                        class="nav-item-underline hover:text-panda-black transition-colors duration-200 focus:outline-none">
+                        Подготовка к печати
+                    </button>
+                </li>
+            </ul>
+
+            <!-- ID пользователя -->
+            <span v-if="isAuthReady" class="text-xs text-dark-gray flex items-center ml-auto px-2 py-1 bg-gray-200 rounded">
                 ID пользователя: {{ userId.substring(0, 8) + '...' }}
             </span>
         </nav>

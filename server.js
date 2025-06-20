@@ -1,5 +1,5 @@
 const express = require('express');
-const cors = require('cors'); // Исправлено: bodyParser был ошибочно указан здесь
+const cors = require('cors');
 const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const rateLimit = require('express-rate-limit');
@@ -19,77 +19,62 @@ app.use(helmet({
             defaultSrc: ["'self'"],
             // Разрешаем 'unsafe-eval' для Vue.js в режиме разработки
             // Разрешаем CDN для TailwindCSS, Unpkg (для Vue, Firebase) и Gstatic (для Firebase)
-            scriptSrc: ["'self'", "'unsafe-inline'", "'unsafe-eval'", "https://unpkg.com", "https://cdn.tailwindcss.com", "https://www.gstatic.com"],
+            scriptSrc: [
+                "'self'", 
+                "'unsafe-inline'", 
+                "'unsafe-eval'", 
+                "https://unpkg.com", 
+                "https://cdn.tailwindcss.com", 
+                "https://www.gstatic.com", // Для Firebase SDK
+                "https://apis.google.com" // Иногда требуется для Firebase Auth
+            ],
             // Разрешаем CDN для TailwindCSS и Google Fonts
-            styleSrc: ["'self'", "'unsafe-inline'", "https://cdn.tailwindcss.com", "https://fonts.googleapis.com"],
+            styleSrc: [
+                "'self'", 
+                "'unsafe-inline'", 
+                "https://cdn.tailwindcss.com", 
+                "https://fonts.googleapis.com"
+            ],
             // Разрешаем загрузку шрифтов из data: URI и с Google Fonts
             fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
             // Разрешаем изображения из data: URI и с placehold.co
             imgSrc: ["'self'", "data:", "https://placehold.co"],
-            // Разрешаем подключения к API Firebase и Google API для генерации текста
+            // Разрешаем подключения к Firebase и другим API
             connectSrc: [
-                "'self'",
-                "https://generativelanguage.googleapis.com", // Для Gemini API
-                "https://*.firebaseio.com",
-                "https://*.googleapis.com",
-                "https://securetoken.googleapis.com",
-                "https://identitytoolkit.googleapis.com" // Важно для Firebase Auth
+                "'self'", 
+                "https://generativelanguage.googleapis.com", 
+                "https://identitytoolkit.googleapis.com", // Firebase Auth
+                "https://securetoken.googleapis.com",   // Firebase Auth
+                "https://firestore.googleapis.com",      // Firestore
+                "https://www.googleapis.com"             // Общие Google APIs
             ],
-            objectSrc: ["'none'"], // Запрещаем плагины (Flash, Java и т.д.)
-            upgradeInsecureRequests: [], // Просим браузеры обновлять HTTP-запросы до HTTPS
-        },
-    },
+            objectSrc: ["'none'"], // Запрещаем <object>, <embed> и <applet>
+            upgradeInsecureRequests: [], // Автоматически перенаправляет HTTP-запросы на HTTPS
+        }
+    }
 }));
 
-// CORS настройки
-app.use(cors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
-    credentials: true
-}));
-
-// Парсинг JSON и URL-encoded данных
+// Middleware для обработки JSON-запросов и URL-кодированных данных
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Раздача статических файлов из папки 'public'
-app.use(express.static(path.join(__dirname, 'public')));
+// Разрешаем CORS для всех источников (на этапе разработки)
+app.use(cors());
 
-// Rate limiting - ограничение количества запросов для предотвращения злоупотреблений
+// Настройка ограничения частоты запросов для защиты от DDoS и brute-force атак
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 минут
-    max: 5, // Максимум 5 запросов на IP за 15 минут
-    message: {
-        error: 'Слишком много запросов. Попробуйте позже.'
-    },
-    standardHeaders: true, // Добавляет заголовки X-RateLimit-Limit, X-RateLimit-Remaining, X-RateLimit-Reset
-    legacyHeaders: false, // Отключает заголовки X-RateLimit-Reset
+    max: 100, // максимум 100 запросов с одного IP за 15 минут
+    message: 'Слишком много запросов с вашего IP, попробуйте повторить позже.'
 });
+app.use('/api/', limiter); // Применяем ко всем API-маршрутам
 
-// Применяем rate limiting только к маршруту отправки формы
-app.use('/api/submit-form', limiter);
+// Статические файлы из папки public
+app.use(express.static(path.join(__dirname, 'public')));
 
-// Настройка Nodemailer для отправки email
-const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: process.env.EMAIL_PORT,
-    secure: process.env.EMAIL_SECURE === 'true', // secure: true для порта 465, secure: false для порта 587 (STARTTLS)
-    auth: {
-        user: process.env.EMAIL_USER,
-        pass: process.env.EMAIL_PASS,
-    },
-});
-
-// Проверка подключения к Email-серверу при запуске
-transporter.verify((error, success) => {
-    if (error) {
-        console.error('📧 Ошибка подключения к Email:', error);
-    } else {
-        console.log('📧 Email настроен: ✅ Да');
-    }
-});
-
-// Маршрут для отдачи конфигурации Firebase на фронтенд
+// Обработчик для получения конфигурации Firebase
 app.get('/api/firebase-config', (req, res) => {
+    // В реальном приложении эти данные должны храниться в переменных окружения и никогда не коммититься в Git!
     const firebaseConfig = {
         apiKey: process.env.FIREBASE_API_KEY,
         authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -99,103 +84,85 @@ app.get('/api/firebase-config', (req, res) => {
         appId: process.env.FIREBASE_APP_ID,
         measurementId: process.env.FIREBASE_MEASUREMENT_ID
     };
-    // Отфильтровываем пустые значения, чтобы не отправлять их на фронтенд
-    const filteredConfig = Object.fromEntries(
-        Object.entries(firebaseConfig).filter(([_, v]) => v != null && v !== '')
-    );
-    res.json(filteredConfig);
+    res.json(firebaseConfig);
 });
 
 // Маршрут для обработки отправки формы
 app.post(
     '/api/submit-form',
     [
-        // Правила валидации полей формы
-        body('name').trim().notEmpty().withMessage('Имя не может быть пустым').isLength({ min: 2 }).withMessage('Имя должно быть не менее 2 символов'),
-        // ИСПРАВЛЕНИЕ: Сначала очищаем номер телефона, затем применяем более простое регулярное выражение
-        body('phone')
-            .trim()
-            .notEmpty().withMessage('Телефон не может быть пустым')
-            .customSanitizer(value => value.replace(/[\s\-\(\)]/g, '')) // Удаляем пробелы, дефисы, скобки
-            .matches(/^\+?\d{10,15}$/).withMessage('Некорректный формат телефона'), // Теперь ожидаем 10-15 цифр после очистки
-        body('email').trim().notEmpty().withMessage('Email не может быть пустым').isEmail().withMessage('Некорректный email адрес'),
-        body('task').trim().notEmpty().withMessage('Задача не может быть пустой').isLength({ min: 10 }).withMessage('Задача должна быть не менее 10 символов'),
-        body('company').trim(), // Поле "Компания" опционально
-        body('promo').trim(), // Поле "Промокод" опционально
+        body('name').trim().notEmpty().withMessage('Имя не может быть пустым').isLength({ min: 2 }).withMessage('Имя должно содержать минимум 2 символа'),
+        body('phone').trim().notEmpty().withMessage('Телефон не может быть пустым').matches(/^\+?[0-9\s\-\(\)]{7,20}$/).withMessage('Некорректный формат телефона'),
+        body('email').trim().isEmail().withMessage('Некорректный email адрес'),
+        body('task').trim().notEmpty().withMessage('Описание задачи не может быть пустым').isLength({ min: 10 }).withMessage('Описание задачи должно содержать минимум 10 символов')
     ],
     async (req, res) => {
-        const errors = validationResult(req); // Получаем результаты валидации
+        const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            // Если есть ошибки валидации, отправляем их на фронтенд
-            return res.status(400).json({ success: false, message: 'Ошибки валидации', errors: errors.array() });
+            return res.status(400).json({ success: false, message: 'Ошибка валидации', errors: errors.array() });
         }
 
-        const formData = req.body; // Получаем данные формы из тела запроса
-        const dataFile = path.join(__dirname, 'data', 'submissions.json'); // Путь к файлу для сохранения заявок
+        const { name, phone, email, company, task, promo } = req.body;
+        const timestamp = new Date().toISOString();
+        const submissionData = { name, phone, email, company, task, promo, timestamp };
 
         try {
-            // Создаем директорию 'data', если она не существует
-            await fs.mkdir(path.dirname(dataFile), { recursive: true });
+            // Сохранение заявки в локальный JSON-файл (для примера)
+            const dataFile = path.join(__dirname, 'data', 'submissions.json');
+            await fs.mkdir(path.dirname(dataFile), { recursive: true }); // Создать папку, если не существует
 
             let submissions = [];
-            // Пытаемся прочитать существующие заявки
             try {
-                const data = await fs.readFile(dataFile, 'utf8');
-                submissions = JSON.parse(data); // Парсим JSON
+                const existingData = await fs.readFile(dataFile, 'utf8');
+                submissions = JSON.parse(existingData);
             } catch (readError) {
-                // Если файл не существует или пуст/некорректен, начинаем с пустого массива
-                if (readError.code === 'ENOENT' || readError instanceof SyntaxError) {
-                    submissions = [];
-                } else {
-                    throw readError; // Перебрасываем другие ошибки чтения файла
+                if (readError.code !== 'ENOENT') { // Игнорировать ошибку "файл не найден"
+                    throw readError;
                 }
             }
-
-            // Добавляем новую заявку с отметкой времени
-            const newSubmission = {
-                ...formData,
-                timestamp: new Date().toISOString()
-            };
-            submissions.push(newSubmission);
-
-            // Записываем обновленный массив заявок обратно в файл
+            submissions.push(submissionData);
             await fs.writeFile(dataFile, JSON.stringify(submissions, null, 2), 'utf8');
 
-            // Настраиваем параметры для отправки Email
-            const mailOptions = {
-                from: process.env.EMAIL_FROM, // От кого
-                to: process.env.RECIPIENT_EMAIL, // Кому
-                subject: 'Новая заявка с сайта "Расчет стоимости"', // Тема письма
+            // Отправка письма на почту (пример)
+            let transporter = nodemailer.createTransport({
+                host: process.env.EMAIL_HOST,
+                port: process.env.EMAIL_PORT,
+                secure: process.env.EMAIL_SECURE === 'true', // true для 465, false для других портов
+                auth: {
+                    user: process.env.EMAIL_USER,
+                    pass: process.env.EMAIL_PASS,
+                },
+            });
+
+            await transporter.sendMail({
+                from: `"Форма сайта" <${process.env.EMAIL_USER}>`,
+                to: process.env.EMAIL_RECEIVER, // Куда отправлять письма
+                subject: 'Новая заявка с сайта',
                 html: `
-                    <h2>Новая заявка получена!</h2>
-                    <p><b>Имя:</b> ${formData.name}</p>
-                    <p><b>Телефон:</b> ${formData.phone}</p>
-                    <p><b>Email:</b> ${formData.email}</p>
-                    <p><b>Компания:</b> ${formData.company || 'Не указано'}</p>
-                    <p><b>Задача:</b> ${formData.task}</p>
-                    <p><b>Промокод:</b> ${formData.promo || 'Не указано'}</p>
-                    <p><b>Время:</b> ${new Date().toLocaleString('ru-RU')}</p>
+                    <h1>Новая заявка</h1>
+                    <p><strong>Имя:</strong> ${name}</p>
+                    <p><strong>Телефон:</strong> ${phone}</p>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Компания:</strong> ${company || 'Не указана'}</p>
+                    <p><strong>Задача:</strong> ${task}</p>
+                    <p><strong>Промокод:</strong> ${promo || 'Не указан'}</p>
+                    <p><strong>Время:</strong> ${new Date().toLocaleString()}</p>
                 `,
-            };
+            });
 
-            // Отправляем Email
-            await transporter.sendMail(mailOptions);
-
-            // Отправляем успешный ответ на фронтенд
             res.status(200).json({ success: true, message: 'Заявка успешно отправлена!' });
 
         } catch (error) {
-            console.error('Ошибка при обработке формы:', error);
-            res.status(500).json({ success: false, message: 'Ошибка сервера при отправке заявки.' });
+            console.error('Ошибка при обработке заявки:', error);
+            res.status(500).json({ success: false, message: 'Произошла ошибка при отправке заявки. Попробуйте еще раз.' });
         }
     }
 );
 
-// Маршрут для получения статистики (если будет использоваться)
+// Маршрут для получения статистики заявок
 app.get('/api/stats', async (req, res) => {
     try {
         const dataFile = path.join(__dirname, 'data', 'submissions.json');
-
         let submissions = [];
         try {
             const data = await fs.readFile(dataFile, 'utf8');
@@ -228,6 +195,7 @@ app.get('/api/stats', async (req, res) => {
     }
 });
 
+
 // Обработка 404 ошибок (страница не найдена)
 app.use((req, res) => {
     res.status(404).json({ error: 'Страница не найдена' });
@@ -236,11 +204,9 @@ app.use((req, res) => {
 // Глобальный обработчик ошибок
 app.use((error, req, res, next) => {
     console.error('Глобальная ошибка:', error);
-    res.status(500).json({ error: 'Внутренняя ошибка сервера' });
+    res.status(500).json({ error: 'Произошла внутренняя ошибка сервера.' });
 });
 
-// Запуск сервера
 app.listen(PORT, () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
-    console.log(`📂 Статические файлы: http://localhost:${PORT}`);
 });

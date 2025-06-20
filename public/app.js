@@ -8,9 +8,7 @@ import { getFirestore, collection, onSnapshot } from 'firebase/firestore';
 let firebaseApp, auth, db; // Объявляем переменные для экземпляров Firebase
 const appId = 'default-app-id'; // При локальной разработке можно использовать любой ID, соответствующий projectId
 
-// --- Компоненты страниц ---
-// Все компоненты остаются без изменений.
-// Компонент Домашней страницы
+// --- Компонент Домашней страницы ---
 const HomePage = {
     template: `
         <div class="main-container rounded-lg shadow-lg">
@@ -20,7 +18,7 @@ const HomePage = {
                 предоставить общую информацию и привлечь внимание посетителей.
             </p>
             <p class="text-xl text-dark-gray leading-relaxed mt-4">
-                Используйте навигацию выше, чтобы перейти к форме расчета стоимости, галерее или магазину.
+                Используйте навигацию выше, чтобы перейти к формам, галерее или магазину.
             </p>
             <div class="mt-8 p-6 bg-light-gray rounded-lg">
                 <h3 class="font-semibold text-panda-black text-2xl mb-3">Наши преимущества:</h3>
@@ -35,17 +33,16 @@ const HomePage = {
     `
 };
 
-// Компонент Страницы Галереи
+// --- Компонент Страницы Галереи (Наши работы) ---
 const GalleryPage = {
     setup() {
-        // Логика для загрузки данных галереи из Firestore (если будет реализована)
         return {};
     },
     template: `
         <div class="main-container rounded-lg shadow-lg">
-            <h1 class="font-bold text-panda-black text-4xl mb-4">Наша Галерея</h1>
+            <h1 class="font-bold text-panda-black text-4xl mb-4">Наши работы</h1>
             <p class="text-xl text-dark-gray leading-relaxed mb-6">
-                Посмотрите на некоторые из наших прошлых работ. В будущем здесь будут динамически загружаться изображения из базы данных.
+                Примеры наших проектов. В будущем здесь будут динамически загружаться изображения из базы данных.
             </p>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 <div class="bg-gray-100 rounded-lg overflow-hidden shadow-md">
@@ -74,10 +71,9 @@ const GalleryPage = {
     `
 };
 
-// Компонент Страницы Магазина
+// --- Компонент Страницы Магазина ---
 const ShopPage = {
     setup() {
-        // Логика для загрузки данных магазина из Firestore (если будет реализована)
         return {};
     },
     template: `
@@ -119,7 +115,7 @@ const ShopPage = {
     `
 };
 
-// Компонент Формы Контактов
+// --- Компонент Формы Контактов (Расчет стоимости) ---
 const ContactFormPage = {
     setup() {
         const formData = reactive({
@@ -354,6 +350,78 @@ const ContactFormPage = {
     `
 };
 
+// --- Компонент Страницы "О нас" ---
+const AboutPage = {
+    template: `
+        <div class="main-container rounded-lg shadow-lg">
+            <h1 class="font-bold text-panda-black text-4xl mb-4">О нас</h1>
+            <p class="text-xl text-dark-gray leading-relaxed">
+                Это общая страница "О нас". Здесь будет общая информация о компании.
+            </p>
+        </div>
+    `
+};
+
+// --- Компонент Страницы "О компании" ---
+const AboutCompanyPage = {
+    template: `
+        <div class="main-container rounded-lg shadow-lg">
+            <h1 class="font-bold text-panda-black text-4xl mb-4">О компании</h1>
+            <p class="text-xl text-dark-gray leading-relaxed">
+                Подробная информация о нашей компании, её истории и ценностях.
+            </p>
+        </div>
+    `
+};
+
+// --- Компонент Страницы "Команда" ---
+const TeamPage = {
+    template: `
+        <div class="main-container rounded-lg shadow-lg">
+            <h1 class="font-bold text-panda-black text-4xl mb-4">Наша команда</h1>
+            <p class="text-xl text-dark-gray leading-relaxed">
+                Познакомьтесь с нашей профессиональной командой, которая делает возможным каждый проект.
+            </p>
+        </div>
+    `
+};
+
+// --- Компонент Страницы "Отзывы" ---
+const ReviewsPage = {
+    template: `
+        <div class="main-container rounded-lg shadow-lg">
+            <h1 class="font-bold text-panda-black text-4xl mb-4">Отзывы клиентов</h1>
+            <p class="text-xl text-dark-gray leading-relaxed">
+                Что говорят о нас наши довольные клиенты.
+            </p>
+        </div>
+    `
+};
+
+// --- Компонент Страницы "Акции" ---
+const PromotionsPage = {
+    template: `
+        <div class="main-container rounded-lg shadow-lg">
+            <h1 class="font-bold text-panda-black text-4xl mb-4">Акции и спецпредложения</h1>
+            <p class="text-xl text-dark-gray leading-relaxed">
+                Следите за нашими актуальными акциями и скидками!
+            </p>
+        </div>
+    `
+};
+
+// --- Компонент Страницы "Подготовка к печати" ---
+const PreparationPage = {
+    template: `
+        <div class="main-container rounded-lg shadow-lg">
+            <h1 class="font-bold text-panda-black text-4xl mb-4">Подготовка к печати</h1>
+            <p class="text-xl text-dark-gray leading-relaxed">
+                Информация о требованиях к файлам и процессе подготовки макетов к печати.
+            </p>
+        </div>
+    `
+};
+
 // --- Главное Vue приложение ---
 // Создаем и монтируем корневое Vue-приложение.
 const app = createApp({
@@ -361,9 +429,16 @@ const app = createApp({
         const currentPage = ref('home');
         const userId = ref('Загрузка...');
         const isAuthReady = ref(false);
+        const isAboutDropdownOpen = ref(false); // НОВОЕ: для контроля выпадающего меню
+
+        // НОВОЕ: Функция для переключения выпадающего меню
+        const toggleAboutDropdown = () => {
+            isAboutDropdownOpen.value = !isAboutDropdownOpen.value;
+        };
 
         const navigateTo = (page) => {
             currentPage.value = page;
+            isAboutDropdownOpen.value = false; // Закрываем выпадающее меню при навигации
         };
 
         onMounted(async () => {
@@ -425,15 +500,27 @@ const app = createApp({
         const currentComponent = computed(() => {
             switch (currentPage.value) {
                 case 'home': return HomePage;
-                case 'contact': return ContactFormPage;
-                case 'gallery': return GalleryPage;
-                case 'shop': return ShopPage;
+                case 'contact': return ContactFormPage; // Расчет стоимости
+                case 'gallery': return GalleryPage; // Наши работы
+                case 'shop': return ShopPage; // Магазин
+                case 'about': return AboutPage; // О нас (общая)
+                case 'aboutCompany': return AboutCompanyPage; // О компании
+                case 'team': return TeamPage; // Команда
+                case 'reviews': return ReviewsPage; // Отзывы
+                case 'promotions': return PromotionsPage; // Акции
+                case 'preparation': return PreparationPage; // Подготовка к печати
                 default: return HomePage;
             }
         });
 
         return {
-            currentPage, userId, isAuthReady, navigateTo, currentComponent
+            currentPage,
+            userId,
+            isAuthReady,
+            isAboutDropdownOpen, // Экспортируем для использования в шаблоне
+            navigateTo,
+            toggleAboutDropdown, // Экспортируем для использования в шаблоне
+            currentComponent
         };
     }
 });
@@ -443,6 +530,13 @@ app.component('HomePage', HomePage);
 app.component('ContactFormPage', ContactFormPage);
 app.component('GalleryPage', GalleryPage);
 app.component('ShopPage', ShopPage);
+app.component('AboutPage', AboutPage);
+app.component('AboutCompanyPage', AboutCompanyPage);
+app.component('TeamPage', TeamPage);
+app.component('ReviewsPage', ReviewsPage);
+app.component('PromotionsPage', PromotionsPage);
+app.component('PreparationPage', PreparationPage);
+
 
 // Монтируем Vue-приложение к элементу с id="app" в HTML.
 if (typeof window !== 'undefined' && document) {
