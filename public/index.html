@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Корпоративный сайт (Vue.js)</title>
+    <!-- Подключаем Tailwind CSS через CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Конфигурация Tailwind CSS для использования пользовательских цветов и шрифтов
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'panda-orange': '#F15F31',
+                        'panda-black': '#131C26',
+                        'panda-white': '#FFFFFF',
+                        'panda-green': '#89C869',
+                        'light-gray': '#F7F7F7',
+                        'gray': '#E3E3E3',
+                        'dark-gray': '#8F8F8F',
+                    },
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                        medium: ['medium', 'sans-serif'],
+                        semibold: ['semibold', 'sans-serif'],
+                        bold: ['bold', 'sans-serif'],
+                    },
+                }
+            }
+        }
+    </script>
+    <!-- Подключаем внешние стили -->
+    <link rel="stylesheet" href="style.css">
+
+    <!-- НОВОЕ: Import Maps для разрешения модулей Vue и Firebase -->
+    <script type="importmap">
+    {
+      "imports": {
+        "vue": "https://unpkg.com/vue@3/dist/vue.esm-browser.js",
+        "firebase/app": "https://www.gstatic.com/firebasejs/10.12.3/firebase-app.js",
+        "firebase/auth": "https://www.gstatic.com/firebasejs/10.12.3/firebase-auth.js",
+        "firebase/firestore": "https://www.gstatic.com/firebasejs/10.12.3/firebase-firestore.js"
+      }
+    }
+    </script>
+</head>
+<body>
+    <div id="app" class="block-container">
+        <!-- Навигационное меню -->
+        <nav class="w-full max-w-5xl bg-panda-black p-4 rounded-b-lg shadow-md flex justify-around">
+            <button @click="navigateTo('home')" :class="{ 'font-bold text-panda-orange': currentPage === 'home' }" class="text-panda-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">Главная</button>
+            <button @click="navigateTo('contact')" :class="{ 'font-bold text-panda-orange': currentPage === 'contact' }" class="text-panda-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">Расчет стоимости</button>
+            <button @click="navigateTo('gallery')" :class="{ 'font-bold text-panda-orange': currentPage === 'gallery' }" class="text-panda-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">Галерея</button>
+            <button @click="navigateTo('shop')" :class="{ 'font-bold text-panda-orange': currentPage === 'shop' }" class="text-panda-white px-4 py-2 rounded-md hover:bg-gray-700 transition-colors">Магазин</button>
+            <span v-if="isAuthReady" class="text-xs text-dark-gray flex items-center ml-auto px-2 py-1 bg-gray-800 rounded">
+                ID пользователя: {{ userId.substring(0, 8) + '...' }}
+            </span>
+        </nav>
+
+        <div class="header">
+            <h2 class="section-title">Корпоративный сайт</h2>
+        </div>
+
+        <!-- Динамическое отображение компонентов страниц -->
+        <component :is="currentComponent"></component>
+    </div>
+
+    <!-- Подключаем наш основной JavaScript-файл приложения -->
+    <script type="module" src="./app.js"></script>
+</body>
+</html>
