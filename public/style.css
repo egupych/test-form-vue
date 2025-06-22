@@ -175,7 +175,6 @@ h2 {
     gap: var(--gap-header);
     padding-bottom: 0;
     min-height: 100vh;
-    padding: 40px 20px; /* Вернул паддинг для основного контента внутри контейнера */
     box-sizing: border-box; /* Важно для padding */
 }
 
