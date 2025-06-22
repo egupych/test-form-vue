@@ -33,7 +33,7 @@
     <!-- Подключаем внешние стили -->
     <link rel="stylesheet" href="style.css">
 
-    <!-- НОВОЕ: Import Maps для разрешения модулей Vue и Firebase -->
+    <!-- Import Maps для разрешения модулей Vue и Firebase -->
     <script type="importmap">
     {
       "imports": {
@@ -69,23 +69,33 @@
             opacity: 1;
             visibility: visible;
         }
+        /* Увеличение интервала между элементами меню для нового количества элементов */
+        .header-nav-list {
+            display: flex;
+            gap: 1.5rem; /* Уменьшаем стандартный space-x-8 до gap-6 или gap-4, чтобы все поместилось */
+            flex-wrap: wrap; /* Позволяем элементам переноситься на новую строку при необходимости */
+            justify-content: center; /* Центрируем элементы при переносе */
+        }
+
+        @media (min-width: 1024px) { /* На больших экранах возвращаем стандартный большой отступ */
+            .header-nav-list {
+                gap: 2rem; /* space-x-8 equivalent */
+                flex-wrap: nowrap;
+            }
+        }
     </style>
 </head>
 <body>
     <div id="app" class="block-container">
         <!-- Новое навигационное меню -->
-        <nav class="w-full max-w-5xl bg-light-gray p-4 rounded-b-lg shadow-md flex justify-between items-center px-10 relative z-10">
-            <!-- Логотип -->
-            <div class="flex flex-col items-start">
-                <div class="flex items-center">
-                    <img src="https://placehold.co/40x40/131C26/FFFFFF?text=Лого" alt="Логотип Red Panda" class="w-10 h-10 rounded-md mr-2">
-                    <span class="font-semibold text-panda-black text-xl">RED PANDA</span>
-                </div>
-                <span class="text-xs text-dark-gray mt-1">Printing agency</span>
+        <nav class="w-full max-w-5xl pt-10 pb-5 flex flex-wrap justify-between items-center relative z-10">
+            <!-- Логотип - теперь используется путь к изображению -->
+            <div class="flex items-center mb-4 md:mb-0">
+                <img src="path/to/your/logo.svg" alt="Логотип Red Panda" class="w-24 h-auto mr-2"> <!-- Ширина 24, высота авто -->
             </div>
 
             <!-- Навигационные ссылки -->
-            <ul class="flex space-x-8 text-lg font-medium text-dark-gray">
+            <ul class="header-nav-list text-lg font-medium text-dark-gray">
                 <li>
                     <button @click="navigateTo('home')"
                         :class="{ 'text-panda-black active': currentPage === 'home' }"
@@ -95,15 +105,16 @@
                 </li>
                 <li class="relative dropdown">
                     <button @click="navigateTo('about')"
-                        :class="{ 'text-panda-black active': currentPage === 'about' }"
+                        :class="{ 'text-panda-black active': ['team', 'news', 'vacancies', 'equipment'].includes(currentPage) }"
                         class="nav-item-underline hover:text-panda-black transition-colors duration-200 focus:outline-none flex items-center">
                         О нас
                         <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
                     </button>
                     <ul class="dropdown-menu absolute hidden bg-panda-white shadow-lg rounded-md mt-2 py-2 w-40 opacity-0 visibility-hidden transition-all duration-300 transform scale-95 origin-top z-20">
-                        <li><button @click="navigateTo('aboutCompany')" class="block px-4 py-2 text-dark-gray hover:bg-light-gray w-full text-left rounded-md">О компании</button></li>
                         <li><button @click="navigateTo('team')" class="block px-4 py-2 text-dark-gray hover:bg-light-gray w-full text-left rounded-md">Команда</button></li>
-                        <li><button @click="navigateTo('reviews')" class="block px-4 py-2 text-dark-gray hover:bg-light-gray w-full text-left rounded-md">Отзывы</button></li>
+                        <li><button @click="navigateTo('news')" class="block px-4 py-2 text-dark-gray hover:bg-light-gray w-full text-left rounded-md">Новости</button></li>
+                        <li><button @click="navigateTo('vacancies')" class="block px-4 py-2 text-dark-gray hover:bg-light-gray w-full text-left rounded-md">Вакансии</button></li>
+                        <li><button @click="navigateTo('equipment')" class="block px-4 py-2 text-dark-gray hover:bg-light-gray w-full text-left rounded-md">Оборудование</button></li>
                     </ul>
                 </li>
                 <li>
@@ -134,12 +145,12 @@
                         Подготовка к печати
                     </button>
                 </li>
+                <li class="ml-auto">
+                    <span v-if="isAuthReady" class="text-xs text-dark-gray flex items-center px-2 py-1 bg-gray-200 rounded">
+                        ID пользователя: {{ userId.substring(0, 8) + '...' }}
+                    </span>
+                </li>
             </ul>
-
-            <!-- ID пользователя -->
-            <span v-if="isAuthReady" class="text-xs text-dark-gray flex items-center ml-auto px-2 py-1 bg-gray-200 rounded">
-                ID пользователя: {{ userId.substring(0, 8) + '...' }}
-            </span>
         </nav>
 
         <div class="header">
@@ -147,7 +158,7 @@
         </div>
 
         <!-- Динамическое отображение компонентов страниц -->
-        <component :is="currentComponent"></component>
+        <component :is="currentComponent" :navigateTo="navigateTo"></component>
     </div>
 
     <!-- Подключаем наш основной JavaScript-файл приложения -->

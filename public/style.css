@@ -26,7 +26,7 @@
     --panda-green: #89C869;
 
     --light-gray: #F7F7F7;
-    --gray: #E3E3E3;
+    --gray: #E3E3E3; /* Используется только в кнопках (влево-вправо) и некоторых границах */
     --dark-gray: #8F8F8F;
 
     --gap-site: 100px;
@@ -130,24 +130,31 @@ a {
 }
 /* #endregion */
 
-/* #region Стилизация html, body - Эти стили были в <style> и теперь здесь */
+/* #region Стилизация html, body */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+    overflow-x: hidden; /* Предотвращает горизонтальный скролл */
+}
+
 body {
     font-family: 'medium', Arial, sans-serif;
     -webkit-font-smoothing: antialiased; /* Делает текст тоньше и четче */
     text-wrap: balance; /* Балансирует переносы слов */
     text-wrap: pretty; /* Альтернативный вариант для более старых браузеров */
     background-color: var(--light-gray);
-    margin: 0;
-    padding: 40px 20px;
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: flex-start;
     min-height: 100vh;
+    /* padding: 0; - Убраны глобальные паддинги, они теперь у block-container */
 }
 
 /* #endregion Стилизация html, body */
 
-/* #region Контейнер - Эти стили были в <style> и теперь здесь */
+/* #region Контейнер */
 .header {
     width: var(--width-container);
 }
@@ -161,25 +168,28 @@ h2 {
 
 .block-container {
     display: flex;
-    justify-content: center;
-    align-items: center;
+    justify-content: flex-start;
+    align-items: center; /* Центрируем по горизонтали */
     width: 100%;
     flex-direction: column;
     gap: var(--gap-header);
+    padding-bottom: 0;
+    min-height: 100vh;
+    padding: 40px 20px; /* Вернул паддинг для основного контента внутри контейнера */
+    box-sizing: border-box; /* Важно для padding */
 }
 
 .main-container {
     max-width: var(--width-container);
     width: 100%;
     background-color: var(--panda-white);
-    padding-top: 100px;
-    padding-left: 100px;
-    padding-right: 100px;
-    padding-bottom: 0;
+    padding: 100px;
+    box-sizing: border-box;
 }
+
 /* #endregion Контейнер */
 
-/* #region Заголовок секции "Расчёт стоимости" - Эти стили были в <style> и теперь здесь */
+/* #region Заголовок секции "Расчёт стоимости" */
 .section-title {
     color: var(--panda-orange);
     font-size: 16px;
@@ -201,7 +211,7 @@ h2 {
 }
 /* #endregion Заголовок секции "Расчёт стоимости" */
 
-/* #region Обёртка для формы - Эти стили были в <style> и теперь здесь */
+/* #region Обёртка для формы */
 .form-wrapper {
     display: flex;
     justify-content: space-between;
@@ -230,7 +240,7 @@ h2 {
 }
 /* #endregion Обёртка для формы */
 
-/* #region Стилизация формы - Эти стили были в <style> и теперь здесь */
+/* #region Стилизация формы */
 .form-body {
     flex-basis: 45%;
     display: flex;
@@ -254,11 +264,11 @@ textarea {
     font-size: 16px;
     color: var(--panda-black);
     background-color: transparent;
-    transition: var(--panda-black) 0.3s ease; /* Исправлено panda-black на var(--panda-black) */
+    transition: border-color 0.3s ease;
 }
 /* #endregion Стилизация формы */
 
-/* #region Специфичные стили для textarea - Эти стили были в <style> и теперь здесь */
+/* #region Специфичные стили для textarea */
 textarea {
     resize: vertical;
     padding-top: 15px;
@@ -273,11 +283,11 @@ textarea::placeholder {
 input:focus,
 textarea:focus {
     outline: none;
-    border-bottom-color: var(--panda-black);
+    border-bottom-color: var(--panda-orange);
 }
 /* #endregion Специфичные стили для textarea */
 
-/* #region Стили для валидации - Эти стили были в <style> и теперь здесь */
+/* #region Стили для валидации */
 input.error,
 textarea.error {
     border-bottom-color: var(--panda-orange);
@@ -298,7 +308,7 @@ textarea.error {
 }
 /* #endregion Стили для валидации */
 
-/* #region Кнопка - Эти стили были в <style> и теперь здесь */
+/* #region Кнопка */
 button[type="submit"] {
     padding-left: 20px;
     padding-right: 20px;
@@ -327,7 +337,7 @@ button[type="submit"]:disabled {
 }
 /* #endregion Кнопка */
 
-/* #region Анимация успешной отправки - Эти стили были в <style> и теперь здесь */
+/* #region Анимация успешной отправки */
 .success-message {
     margin-top: 20px;
     background-color: var(--panda-green);
@@ -346,7 +356,7 @@ button[type="submit"]:disabled {
 }
 /* #endregion Анимация успешной отправки */
 
-/* #region Адаптивность - Эти стили были в <style> и теперь здесь */
+/* #region Адаптивность */
 @media (max-width: 768px) {
     .main-container {
         padding: 40px 30px;
@@ -365,4 +375,133 @@ button[type="submit"]:disabled {
         font-size: 14px;
     }
 }
+
 /* #endregion Адаптивность */
+
+/* Стилизация футера */
+footer {
+    width: 100vw; /* Футер на всю ширину вьюпорта */
+    position: relative;
+    overflow: hidden;
+    left: 50%; /* Сдвигаем на 50% влево */
+    transform: translateX(-50%); /* Затем сдвигаем обратно на 50% своей ширины */
+    /* Padding и margin убраны, чтобы он занимал всю ширину */
+}
+
+/* Стили для карты-наложения */
+.map-overlay {
+    position: absolute;
+    top: 50%; /* Центрируем по вертикали относительно родителя */
+    left: 50%; /* Центрируем по горизонтали относительно родителя */
+    transform: translate(-50%, -50%); /* Точное центрирование */
+    width: 400px; /* Начальная ширина карты */
+    height: 210px; /* Начальная высота карты */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 15; /* Карта должна быть выше основного контента футера, но ниже расширенного состояния */
+    transition: all 0.5s ease-in-out, background-color 0.3s; /* Плавный переход для размера и фона */
+    background-color: transparent; /* Изначально без фона */
+    pointer-events: auto; /* Позволяем взаимодействовать с картой */
+    border-radius: 14px; /* Закругленные края для всего контейнера карты */
+}
+
+.map-overlay iframe {
+    width: 100%;
+    height: 100%;
+    border-radius: 14px; /* Закругленные края */
+}
+
+.map-overlay.map-expanded {
+    position: fixed; /* Закрепляем на экране */
+    top: 0;
+    left: 0;
+    width: 100vw; /* Расширяется на всю ширину вьюпорта */
+    height: 100vh; /* Расширяется на всю высоту вьюпорта */
+    transform: none; /* Сбрасываем центрирование, так как теперь он fixed */
+    z-index: 50; /* Высокий z-index, чтобы перекрыть все остальное */
+    background-color: rgba(0, 0, 0, 0.7); /* Затемнение фона при расширении */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0; /* Убираем закругления у контейнера при расширении на весь экран */
+}
+
+.map-overlay.map-expanded iframe {
+    width: 90%; /* Карта занимает 90% ширины при расширении (можно настроить) */
+    height: 90%; /* Карта занимает 90% высоты при расширении (можно настроить) */
+    border-radius: 14px; /* Сохраняем закругления карты */
+}
+
+
+/* Стилизация текста в футере */
+footer p, footer label, footer a {
+    font-family: 'medium', Arial, sans-serif;
+    font-size: var(--size-text-panda); /* 16px */
+    line-height: var(--line-text-panda); /* 140% */
+    color: var(--light-gray); /* Цвет текста light-gray */
+}
+
+footer h3 {
+    font-family: 'semibold', Arial, sans-serif;
+    font-size: var(--size-h5); /* 20px */
+    line-height: var(--line-height-h5); /* 125% */
+    color: var(--panda-white); /* Заголовки белые */
+}
+
+footer input[type="email"] {
+    font-family: 'medium', Arial, sans-serif;
+    font-size: var(--size-text-panda); /* 16px */
+    line-height: var(--line-text-panda); /* 140% */
+    color: var(--light-gray);
+    background-color: rgba(255, 255, 255, 0.1); /* Легкий фон для полей ввода */
+    border: 1px solid rgba(255, 255, 255, 0.2); /* Легкая граница */
+}
+
+footer input::placeholder {
+    color: var(--dark-gray); /* Цвет плейсхолдера dark-gray */
+}
+
+footer button[type="submit"] {
+    font-family: 'medium', Arial, sans-serif;
+    font-size: var(--size-button-panda); /* 16px */
+    line-height: var(--line-button-panda); /* 120% */
+    color: var(--panda-white); /* Цвет кнопки белый */
+    background-color: var(--panda-orange); /* Цвет кнопки оранжевый */
+    padding: 10px 20px;
+    border-radius: 25px;
+}
+
+/* Стили для QR-кодов */
+.qr-code-img {
+    background-color: var(--panda-white); /* Белый фон для QR-кодов */
+    padding: 8px; /* Небольшой отступ внутри рамки QR-кода */
+}
+
+/* Стили для кнопок социальных сетей */
+.social-button {
+    background-color: var(--panda-white); /* Белый фон */
+    color: var(--panda-black); /* Черный текст */
+    padding: 10px 20px;
+    border-radius: 9999px; /* Полностью закругленные */
+    font-family: 'medium', Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.2;
+    transition: background-color 0.3s, color 0.3s;
+    cursor: pointer;
+    border: 1px solid var(--panda-white); /* Белая рамка */
+}
+
+.social-button:hover {
+    background-color: var(--panda-black); /* На черном фоне */
+    color: var(--panda-white); /* Белый текст */
+    border-color: var(--panda-white); /* Белая рамка */
+}
+
+/* Стили для текста в самом низу футера */
+footer .text-sm { /* Это тот же стиль, что и в тексте light-gray, но с учетом, что он sm */
+    font-family: 'medium', Arial, sans-serif;
+    font-size: var(--size-text-small-panda); /* 13px */
+    line-height: var(--line-text-small-panda); /* 120% */
+    color: var(--dark-gray);
+}
