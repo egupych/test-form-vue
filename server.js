@@ -7,7 +7,21 @@ const { body, validationResult } = require('express-validator');
 const nodemailer = require('nodemailer');
 const path = require('path');
 const fs = require('fs').promises;
-require('dotenv').config(); // Загружаем переменные из .env
+
+// --- Начало: Загрузка и проверка переменных окружения ---
+// Загружаем переменные из .env файла
+require('dotenv').config();
+
+// Проверяем наличие всех необходимых переменных окружения для отправки почты.
+// Если какой-либо из них нет, сервер не запустится и выведет ошибку в консоль.
+const requiredEnv = ['EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_SECURE', 'EMAIL_USER', 'EMAIL_PASS', 'EMAIL_RECEIVER'];
+for (const envVar of requiredEnv) {
+    if (!process.env[envVar]) {
+        console.error(`\x1b[31mFATAL ERROR: Environment variable ${envVar} is not defined in your .env file.\x1b[0m`);
+        process.exit(1); // Завершаем процесс, если переменная не найдена
+    }
+}
+// --- Конец: Загрузка и проверка переменных окружения ---
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -17,64 +31,87 @@ app.use(helmet({
     contentSecurityPolicy: {
         directives: {
             defaultSrc: ["'self'"],
-            // Разрешаем 'unsafe-eval' для Vue.js в режиме разработки
-            // Разрешаем CDN для TailwindCSS, Unpkg (для Vue, Firebase) и Gstatic (для Firebase)
             scriptSrc: [
                 "'self'", 
                 "'unsafe-inline'", 
                 "'unsafe-eval'", 
                 "https://unpkg.com", 
                 "https://cdn.tailwindcss.com", 
-                "https://www.gstatic.com", // Для Firebase SDK
-                "https://apis.google.com" // Иногда требуется для Firebase Auth
+                "https://www.gstatic.com",
+                "https://apis.google.com"
             ],
-            // Разрешаем CDN для TailwindCSS и Google Fonts
             styleSrc: [
                 "'self'", 
                 "'unsafe-inline'", 
                 "https://cdn.tailwindcss.com", 
                 "https://fonts.googleapis.com"
             ],
-            // Разрешаем загрузку шрифтов из data: URI и с Google Fonts
             fontSrc: ["'self'", "data:", "https://fonts.gstatic.com"],
-            // Разрешаем изображения из data: URI и с placehold.co
             imgSrc: ["'self'", "data:", "https://placehold.co"],
-            // Разрешаем подключения к Firebase и другим API
             connectSrc: [
                 "'self'", 
                 "https://generativelanguage.googleapis.com", 
-                "https://identitytoolkit.googleapis.com", // Firebase Auth
-                "https://securetoken.googleapis.com",   // Firebase Auth
-                "https://firestore.googleapis.com",      // Firestore
-                "https://www.googleapis.com"             // Общие Google APIs
+                "https://identitytoolkit.googleapis.com",
+                "https://securetoken.googleapis.com",
+                "https://firestore.googleapis.com",
+                "https://www.googleapis.com",
+                // Добавляем хост вашего почтового сервера, если это необходимо
+                // `https://${process.env.EMAIL_HOST}` 
             ],
-            objectSrc: ["'none'"], // Запрещаем <object>, <embed> и <applet>
-            upgradeInsecureRequests: [], // Автоматически перенаправляет HTTP-запросы на HTTPS
+            objectSrc: ["'none'"],
+            upgradeInsecureRequests: [],
         }
     }
 }));
 
-// Middleware для обработки JSON-запросов и URL-кодированных данных
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-
-// Разрешаем CORS для всех источников (на этапе разработки)
 app.use(cors());
 
-// Настройка ограничения частоты запросов для защиты от DDoS и brute-force атак
+// Ограничение частоты запросов
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, // 15 минут
-    max: 100, // максимум 100 запросов с одного IP за 15 минут
+    windowMs: 15 * 60 * 1000,
+    max: 100,
     message: 'Слишком много запросов с вашего IP, попробуйте повторить позже.'
 });
-app.use('/api/', limiter); // Применяем ко всем API-маршрутам
+app.use('/api/', limiter);
 
-// Статические файлы из папки public
+// Статические файлы
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Обработчик для получения конфигурации Firebase
+
+// --- Начало: Настройка и проверка Nodemailer ---
+// Создаем "транспортер" для отправки писем с конфигурацией из .env
+const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: parseInt(process.env.EMAIL_PORT, 10), // Убедимся, что порт - это число
+    secure: process.env.EMAIL_SECURE === 'true', // true для порта 465, false для других
+    auth: {
+        user: process.env.EMAIL_USER, // Ваш email
+        pass: process.env.EMAIL_PASS, // Ваш пароль или пароль приложения
+    },
+    // Добавляем таймаут для подключения, чтобы не ждать вечно
+    connectionTimeout: 10000, // 10 секунд
+});
+
+// Проверяем соединение с SMTP сервером при старте приложения
+console.log('Verifying Nodemailer connection to SMTP server...');
+transporter.verify((error, success) => {
+    if (error) {
+        console.error('\x1b[31m--- Nodemailer Configuration Error ---');
+        console.error('Failed to connect to SMTP server. Please check your .env file settings.');
+        console.error(`Host: ${process.env.EMAIL_HOST}, Port: ${process.env.EMAIL_PORT}, Secure: ${process.env.EMAIL_SECURE}`);
+        console.error('Error details:', error);
+        console.error('-------------------------------------\x1b[0m');
+    } else {
+        console.log('\x1b[32m✅ Nodemailer is configured correctly. Server is ready to send emails.\x1b[0m');
+    }
+});
+// --- Конец: Настройка и проверка Nodemailer ---
+
+
+// Маршрут для получения конфигурации Firebase
 app.get('/api/firebase-config', (req, res) => {
-    // В реальном приложении эти данные должны храниться в переменных окружения и никогда не коммититься в Git!
     const firebaseConfig = {
         apiKey: process.env.FIREBASE_API_KEY,
         authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -91,6 +128,7 @@ app.get('/api/firebase-config', (req, res) => {
 app.post(
     '/api/submit-form',
     [
+        // Правила валидации
         body('name').trim().notEmpty().withMessage('Имя не может быть пустым').isLength({ min: 2 }).withMessage('Имя должно содержать минимум 2 символа'),
         body('phone').trim().notEmpty().withMessage('Телефон не может быть пустым').matches(/^\+?[0-9\s\-\(\)]{7,20}$/).withMessage('Некорректный формат телефона'),
         body('email').trim().isEmail().withMessage('Некорректный email адрес'),
@@ -103,40 +141,13 @@ app.post(
         }
 
         const { name, phone, email, company, task, promo } = req.body;
-        const timestamp = new Date().toISOString();
-        const submissionData = { name, phone, email, company, task, promo, timestamp };
-
+        
         try {
-            // Сохранение заявки в локальный JSON-файл (для примера)
-            const dataFile = path.join(__dirname, 'data', 'submissions.json');
-            await fs.mkdir(path.dirname(dataFile), { recursive: true }); // Создать папку, если не существует
-
-            let submissions = [];
-            try {
-                const existingData = await fs.readFile(dataFile, 'utf8');
-                submissions = JSON.parse(existingData);
-            } catch (readError) {
-                if (readError.code !== 'ENOENT') { // Игнорировать ошибку "файл не найден"
-                    throw readError;
-                }
-            }
-            submissions.push(submissionData);
-            await fs.writeFile(dataFile, JSON.stringify(submissions, null, 2), 'utf8');
-
-            // Отправка письма на почту (пример)
-            let transporter = nodemailer.createTransport({
-                host: process.env.EMAIL_HOST,
-                port: process.env.EMAIL_PORT,
-                secure: process.env.EMAIL_SECURE === 'true', // true для 465, false для других портов
-                auth: {
-                    user: process.env.EMAIL_USER,
-                    pass: process.env.EMAIL_PASS,
-                },
-            });
-
+            // --- Начало: Отправка письма ---
+            console.log(`Attempting to send email to ${process.env.EMAIL_RECEIVER}...`);
             await transporter.sendMail({
                 from: `"Форма сайта" <${process.env.EMAIL_USER}>`,
-                to: process.env.EMAIL_RECEIVER, // Куда отправлять письма
+                to: process.env.EMAIL_RECEIVER,
                 subject: 'Новая заявка с сайта',
                 html: `
                     <h1>Новая заявка</h1>
@@ -149,15 +160,50 @@ app.post(
                     <p><strong>Время:</strong> ${new Date().toLocaleString()}</p>
                 `,
             });
+            console.log('Email sent successfully!');
+            // --- Конец: Отправка письма ---
+
+            // --- Начало: Сохранение в файл (опционально) ---
+            // Если отправка письма прошла успешно, сохраняем заявку в файл.
+            const dataFile = path.join(__dirname, 'data', 'submissions.json');
+            await fs.mkdir(path.dirname(dataFile), { recursive: true });
+            let submissions = [];
+            try {
+                const existingData = await fs.readFile(dataFile, 'utf8');
+                submissions = JSON.parse(existingData);
+            } catch (readError) {
+                if (readError.code !== 'ENOENT') throw readError;
+            }
+            submissions.push({ name, phone, email, company, task, promo, timestamp: new Date().toISOString() });
+            await fs.writeFile(dataFile, JSON.stringify(submissions, null, 2), 'utf8');
+            console.log('Submission saved to file.');
+            // --- Конец: Сохранение в файл ---
 
             res.status(200).json({ success: true, message: 'Заявка успешно отправлена!' });
 
         } catch (error) {
-            console.error('Ошибка при обработке заявки:', error);
-            res.status(500).json({ success: false, message: 'Произошла ошибка при отправке заявки. Попробуйте еще раз.' });
+            // --- Начало: Улучшенная обработка ошибок Nodemailer ---
+            console.error('\x1b[31mError processing form submission:\x1b[0m', error);
+            let userMessage = 'Произошла ошибка при отправке заявки. Попробуйте еще раз.';
+
+            // Предоставляем клиенту более конкретную информацию об ошибке
+            if (error.code === 'EAUTH') {
+                userMessage = 'Ошибка аутентификации с почтовым сервером. Проверьте правильность EMAIL_USER и EMAIL_PASS в .env файле.';
+            } else if (error.code === 'ECONNRESET' || error.code === 'ECONNREFUSED' || error.code === 'ETIMEDOUT') {
+                userMessage = 'Не удалось подключиться к почтовому серверу. Проверьте правильность EMAIL_HOST и EMAIL_PORT.';
+            } else if (error.command === 'CONN') {
+                userMessage = 'Общая ошибка подключения к почтовому серверу.';
+            }
+
+            res.status(500).json({ success: false, message: userMessage, error: error.message });
+            // --- Конец: Улучшенная обработка ошибок Nodemailer ---
         }
     }
 );
+
+
+// Остальные маршруты (stats, 404, etc.)
+// ... (ваш существующий код для /api/stats и обработчиков ошибок)
 
 // Маршрут для получения статистики заявок
 app.get('/api/stats', async (req, res) => {
@@ -195,7 +241,6 @@ app.get('/api/stats', async (req, res) => {
     }
 });
 
-
 // Обработка 404 ошибок (страница не найдена)
 app.use((req, res) => {
     res.status(404).json({ error: 'Страница не найдена' });
@@ -208,5 +253,5 @@ app.use((error, req, res, next) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`🚀 Сервер запущен на порту ${PORT}`);
+    console.log(`🚀 Server started on port ${PORT}`);
 });
