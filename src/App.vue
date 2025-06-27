@@ -1,5 +1,4 @@
 <script setup>
-// Логика остается пустой, так как всё управление у vue-router
 </script>
 
 <template>
@@ -9,7 +8,7 @@
         <img src="/src/images/red-panda-logo-black.svg" alt="Логотип Red Panda" class="h-10">
       </router-link>
       <nav>
-        <ul class="flex items-center space-x-8">
+        <ul class="flex items-center space-x-8 text-header-panda font-semibold">
           <li><router-link to="/">Главная</router-link></li>
           <li class="relative dropdown">
             <div class="nav-item">
@@ -30,7 +29,6 @@
         </ul>
       </nav>
     </header>
-
     <main class="main-content">
       <router-view />
     </main>
@@ -38,88 +36,14 @@
 </template>
 
 <style scoped>
-/* Scoped-стили применяются только к этому компоненту и не ломают ничего другого */
-
-.site-container {
-  display: flex;
-  flex-direction: column;
-  min-height: 100vh;
-  background-color: #F7F7F7; /* bg-light-gray */
-}
-
-.site-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 1rem 2rem;
-  background-color: white;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  position: sticky; /* Делаем шапку "липкой" */
-  top: 0;
-  z-index: 10;
-}
-
-.main-content {
-  flex-grow: 1; /* Этот стиль заставляет основной контент занимать всё доступное место */
-}
-
-/* Стили для ссылок в навигации */
-nav a, .nav-item {
-  font-family: 'Gilroy-Medium', sans-serif;
-  color: #131C26; /* panda-black */
-  text-decoration: none;
-  cursor: pointer;
-  padding: 8px 0;
-  transition: color 0.2s ease-in-out;
-  display: flex;
-  align-items: center;
-}
-
-nav a:hover, .dropdown:hover .nav-item {
-  color: #F15F31; /* panda-orange */
-}
-
-/* Стили для активной ссылки */
-nav a.router-link-exact-active {
-  color: #F15F31; /* panda-orange */
-  font-family: 'Gilroy-SemiBold', sans-serif;
-  border-bottom: 2px solid #F15F31;
-}
-
-/* Стили для выпадающего меню */
-.dropdown:hover .dropdown-menu {
-  display: block;
-}
-
-.dropdown-menu {
-  display: none;
-  position: absolute;
-  top: 100%;
-  left: 0;
-  background-color: white;
-  min-width: 200px; /* Увеличил ширину для лучшего вида */
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-  z-index: 20;
-  border-radius: 0 0 8px 8px; /* Скруглил только нижние углы */
-  padding: 8px 0;
-  margin-top: 2px; /* Небольшой отступ сверху */
-}
-
-.dropdown-item {
-  color: black;
-  padding: 12px 16px;
-  text-decoration: none;
-  display: block;
-  text-align: left;
-  width: 100%;
-  background: none;
-  border: none;
-  cursor: pointer;
-  transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out;
-}
-
-.dropdown-item:hover {
-  background-color: #f1f1f1;
-  color: #F15F31;
-}
+.site-container { display: flex; flex-direction: column; min-height: 100vh; background-color: #F7F7F7; }
+.site-header { display: flex; justify-content: space-between; align-items: center; padding: 1rem 2rem; background-color: white; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05); position: sticky; top: 0; z-index: 10; }
+.main-content { flex-grow: 1; }
+nav a, .nav-item { cursor: pointer; padding: 8px 0; transition: color 0.2s ease-in-out; display: flex; align-items: center; }
+nav a:hover, .dropdown:hover .nav-item { color: #F15F31; }
+nav a.router-link-exact-active { color: #F15F31; border-bottom: 2px solid #F15F31; }
+.dropdown-menu { display: none; position: absolute; top: 100%; left: 0; background-color: white; min-width: 200px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); z-index: 20; border-radius: 0 0 8px 8px; padding: 8px 0; margin-top: 2px; }
+.dropdown:hover .dropdown-menu { display: block; }
+.dropdown-item { color: black; padding: 12px 16px; text-decoration: none; display: block; text-align: left; width: 100%; background: none; border: none; cursor: pointer; transition: background-color 0.2s ease-in-out, color 0.2s ease-in-out; }
+.dropdown-item:hover { background-color: #f1f1f1; color: #F15F31; }
 </style>
