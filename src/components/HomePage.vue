@@ -3,7 +3,6 @@ import { ref, reactive, computed } from 'vue';
 import FooterSection from './FooterSection.vue';
 
 // УДАЛЕНО: defineProps(['navigateTo']);
-// Эта строка была удалена, так как навигация теперь управляется vue-router.
 
 const formData = reactive({ name: '', phone: '', email: '', company: '', task: '', promo: '' });
 const errors = reactive({ name: '', phone: '', email: '', task: '' });
@@ -137,7 +136,6 @@ const handleSubmit = async () => {
 </template>
 
 <style scoped>
-/* Эти стили теперь применяются ТОЛЬКО к этой странице и не конфликтуют с другими */
 .form-wrapper { display: flex; justify-content: space-between; gap: 60px; align-items: flex-start; }
 .form-info h1 { font-family: 'Gilroy-Bold', sans-serif; font-size: 48px; color: #131C26; line-height: 1.1; margin-bottom: 20px; }
 .form-info p { font-size: 20px; color: #131C26; line-height: 1.25; }

@@ -70,21 +70,8 @@ const limiter = rateLimit({
 });
 app.use('/api/', limiter);
 
-// Раздача статических файлов
-app.use(express.static(path.join(__dirname, 'public')));
-
-// Настройка Nodemailer
-const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: parseInt(process.env.EMAIL_PORT, 10),
-    secure: process.env.EMAIL_SECURE === 'true',
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-});
-
-transporter.verify((error) => {
-    if (error) console.error('\x1b[31mОшибка конфигурации Nodemailer:\x1b[0m', error);
-    else console.log('\x1b[32m✅ Nodemailer готов к отправке писем.\x1b[0m');
-});
+// Раздача статических файлов из папки 'dist'
+app.use(express.static(path.join(__dirname, 'dist')));
 
 // API Эндпоинт для обработки формы
 app.post(
@@ -130,7 +117,7 @@ app.post(
 
 // Обработчик для SPA
 app.get('*', (req, res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+    res.sendFile(path.join(__dirname, 'dist', 'index.html'));
 });
 
 // Запуск сервера
