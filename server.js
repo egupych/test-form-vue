@@ -1,16 +1,22 @@
-// Импортируем все необходимые модули
-const express = require('express');
-const cors = require('cors');
-const bodyParser = require('body-parser');
-const helmet = require('helmet');
-const rateLimit = require('express-rate-limit');
-const { body, validationResult } = require('express-validator');
-const nodemailer = require('nodemailer');
-const path = require('path');
-const admin = require('firebase-admin');
+// Импортируем все необходимые модули, используя синтаксис ES Modules
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import helmet from 'helmet';
+import rateLimit from 'express-rate-limit';
+import { body, validationResult } from 'express-validator';
+import nodemailer from 'nodemailer';
+import path from 'path';
+import admin from 'firebase-admin';
+import { fileURLToPath } from 'url';
 
 // Загружаем переменные окружения из файла .env
-require('dotenv').config();
+import 'dotenv/config';
+
+// --- Важное изменение для ES Modules ---
+// Получаем __dirname, так как он не доступен в ES-модулях по умолчанию
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 // Проверяем наличие всех необходимых переменных окружения.
 const requiredEnv = [
@@ -90,6 +96,19 @@ app.post(
 
         const { name, phone, email, company, task, promo } = req.body;
         const newSubmission = { name, phone, email, company: company || 'Не указана', task, promo: promo || 'Не указан', timestamp: admin.firestore.FieldValue.serverTimestamp(), ip: req.ip, userAgent: req.headers['user-agent'] };
+
+        // Настройка Nodemailer
+        const transporter = nodemailer.createTransport({
+            host: process.env.EMAIL_HOST,
+            port: parseInt(process.env.EMAIL_PORT, 10),
+            secure: process.env.EMAIL_SECURE === 'true',
+            auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+        });
+
+        transporter.verify((error) => {
+            if (error) console.error('\x1b[31mОшибка конфигурации Nodemailer:\x1b[0m', error);
+            else console.log('\x1b[32m✅ Nodemailer готов к отправке писем.\x1b[0m');
+        });
 
         try {
             await transporter.sendMail({
