@@ -14,7 +14,6 @@ import { fileURLToPath } from 'url';
 import 'dotenv/config';
 
 // --- Важное изменение для ES Modules ---
-// Получаем __dirname, так как он не доступен в ES-модулях по умолчанию
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
@@ -46,28 +45,27 @@ const db = admin.firestore();
 const app = express();
 const PORT = process.env.PORT;
 
-// --- ИСПРАВЛЕНИЕ: Финальная, корректная политика безопасности ---
-app.use(
-    helmet.contentSecurityPolicy({
-        directives: {
-            defaultSrc: ["'self'"],
-            scriptSrc: [
-                "'self'",
-                "https://cdn.tailwindcss.com",
-                "https://unpkg.com",
-                "'unsafe-inline'", // Разрешает встроенные скрипты (для tailwind.config)
-                "'unsafe-eval'",   // Разрешает eval (необходимо для Vue в режиме разработки)
-            ],
-            styleSrc: ["'self'", "https://fonts.googleapis.com", "'unsafe-inline'"],
-            fontSrc: ["'self'", "https://fonts.gstatic.com"],
-            imgSrc: ["'self'", "data:", "https://placehold.co"],
-            frameSrc: ["'self'", "https://www.google.com/"],
-            connectSrc: ["'self'", "https://firestore.googleapis.com", `http://localhost:${PORT}`]
-        },
-    })
-);
+// --- ИСПРАВЛЕНИЕ: Конфигурация Nodemailer вынесена за пределы обработчика ---
+// Настраиваем Nodemailer один раз при запуске сервера
+const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: parseInt(process.env.EMAIL_PORT, 10),
+    secure: process.env.EMAIL_SECURE === 'true',
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+});
 
-// Остальные Middleware
+// Проверяем соединение с почтовым сервером
+transporter.verify((error) => {
+    if (error) {
+        console.error('\x1b[31m--- Ошибка конфигурации Nodemailer ---', error);
+    } else {
+        console.log('\x1b[32m✅ Nodemailer готов к отправке писем.\x1b[0m');
+    }
+});
+
+
+// --- MIDDLEWARE ---
+app.use(helmet()); // Используем helmet для базовой защиты
 app.use(bodyParser.json());
 app.use(cors());
 const limiter = rateLimit({
@@ -96,21 +94,9 @@ app.post(
 
         const { name, phone, email, company, task, promo } = req.body;
         const newSubmission = { name, phone, email, company: company || 'Не указана', task, promo: promo || 'Не указан', timestamp: admin.firestore.FieldValue.serverTimestamp(), ip: req.ip, userAgent: req.headers['user-agent'] };
-
-        // Настройка Nodemailer
-        const transporter = nodemailer.createTransport({
-            host: process.env.EMAIL_HOST,
-            port: parseInt(process.env.EMAIL_PORT, 10),
-            secure: process.env.EMAIL_SECURE === 'true',
-            auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-        });
-
-        transporter.verify((error) => {
-            if (error) console.error('\x1b[31mОшибка конфигурации Nodemailer:\x1b[0m', error);
-            else console.log('\x1b[32m✅ Nodemailer готов к отправке писем.\x1b[0m');
-        });
-
+        
         try {
+            // Отправляем письмо, используя уже созданный transporter
             await transporter.sendMail({
                 from: `"Форма с сайта RedPanda" <${process.env.EMAIL_USER}>`,
                 to: process.env.EMAIL_RECEIVER,
@@ -119,6 +105,7 @@ app.post(
             });
             console.log(`Письмо с заявкой от ${name} успешно отправлено.`);
 
+            // Сохраняем заявку в Firestore
             const docRef = await db.collection('submissions').add(newSubmission);
             console.log(`Заявка сохранена в Firestore с ID: ${docRef.id}`);
             
