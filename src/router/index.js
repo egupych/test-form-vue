@@ -13,6 +13,7 @@ import VacanciesPage from '../components/VacanciesPage.vue';
 import EquipmentPage from '../components/EquipmentPage.vue';
 import PromotionsPage from '../components/PromotionsPage.vue';
 import PreparationPage from '../components/PreparationPage.vue';
+import NotFoundPage from '../components/NotFoundPage.vue'; // <-- ИЗМЕНЕНИЕ: Импортируем новый компонент
 
 // Определяем массив маршрутов.
 // Каждый объект - это отдельная страница на сайте.
@@ -67,6 +68,14 @@ const routes = [
     name: 'Preparation',
     component: PreparationPage,
   },
+  // --- ИЗМЕНЕНИЕ: Добавлен маршрут для страницы 404 ---
+  // Он должен быть ПОСЛЕДНИМ в списке.
+  // Он "ловит" все адреса, которые не совпали с маршрутами выше.
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFoundPage,
+  },
 ];
 
 // Создаем экземпляр роутера
@@ -86,4 +95,3 @@ const router = createRouter({
 
 // Экспортируем роутер для использования в main.js
 export default router;
-
