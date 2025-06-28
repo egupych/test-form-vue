@@ -1,23 +1,19 @@
 <script setup>
 import FooterSection from './FooterSection.vue';
-
-// УДАЛЕНО: defineProps(['navigateTo']);
-// Эта строка была удалена, так как навигация теперь управляется vue-router.
 </script>
 
 <template>
   <main>
     <div class="main-container">
-        <h1 class="font-bold text-panda-black text-4xl mb-8">Наше Оборудование</h1>
+        <h1 class="font-bold text-panda-black text-h1-panda mb-8">Наше Оборудование</h1>
         
-        <!-- Roland VersaCAMM VS-640 -->
         <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
                 <img src="/src/images/Roland VersaCAMM VS-640.png" alt="Изображение Roland VersaCAMM VS-640" class="w-full h-auto max-w-sm">
             </div>
             <div class="space-y-6">
-                <h2 class="text-2xl font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">Roland VersaCAMM VS-640</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                <h2 class="text-h3-panda font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">Roland VersaCAMM VS-640</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-body-panda">
                     <div class="flex flex-col gap-y-4">
                         <div><h3 class="font-semibold text-gray-900 mb-1">Тип</h3><p class="text-gray-600">Экосольвентный плоттер-печатник с функцией плоттерной резки</p></div>
                         <div><h3 class="font-semibold text-gray-900 mb-1">Ширина печати</h3><p class="text-gray-600">До 1615 мм</p></div>
@@ -32,16 +28,15 @@ import FooterSection from './FooterSection.vue';
             </div>
         </div>
 
-        <hr class="border-t border-gray-200 my-16" />
+        <hr class="border-t border-gray my-16" />
 
-        <!-- Roland VersaUV LEF-200 -->
-         <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
+        <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
              <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
                  <img src="/src/images/Roland VersaUV LEF-200.png" alt="Изображение Roland VersaUV LEF-200" class="w-full h-auto max-w-sm">
              </div>
              <div class="space-y-6">
-                 <h2 class="text-2xl font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">Roland VersaUV LEF-200</h2>
-                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                 <h2 class="text-h3-panda font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">Roland VersaUV LEF-200</h2>
+                 <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-body-panda">
                     <div class="flex flex-col gap-y-4">
                         <div><h3 class="font-semibold text-gray-900 mb-1">Тип</h3><p class="text-gray-600">УФ-принтер (ультрафиолетовая струйная печать)</p></div>
                         <div><h3 class="font-semibold text-gray-900 mb-1">Область печати</h3><p class="text-gray-600">508 х 330 мм. Высота до 100 мм</p></div>
@@ -56,16 +51,37 @@ import FooterSection from './FooterSection.vue';
              </div>
          </div>
          
-        <hr class="border-t border-gray-200 my-16" />
+        <hr class="border-t border-gray my-16" />
 
-        <!-- XEROX Versant 280 -->
+        <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
+            <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
+                <img src="/src/images/Roland EGX-350.png" alt="Изображение Roland EGX-350" class="w-full h-auto max-w-sm">
+            </div>
+            <div class="space-y-6">
+                <h2 class="text-h3-panda font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">Roland EGX-350</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-body-panda">
+                    <div class="flex flex-col gap-y-4">
+                        <div><h3 class="font-semibold text-gray-900 mb-1">Тип</h3><p class="text-gray-600">Настольный фрезерно-гравировальный станок</p></div>
+                        <div><h3 class="font-semibold text-gray-900 mb-1">Область печати</h3><p class="text-gray-600">305х230 мм, Высота до 40 мм</p></div>
+                        <div><h3 class="font-semibold text-gray-900 mb-1">Скорость</h3><p class="text-gray-600">1200 мм/мин</p></div>
+                    </div>
+                    <div class="flex flex-col gap-y-4">
+                        <div><h3 class="font-semibold text-gray-900 mb-1">Стандартные материалы</h3><p class="text-gray-600">Двухслойные пластики, акрил, дерево, латунь, алюминий</p></div>
+                        <div><h3 class="font-semibold text-gray-900 mb-1">Применение</h3><p class="text-gray-600">Таблички, шильды, сувенирная продукция, штампы, клише</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <hr class="border-t border-gray my-16" />
+        
         <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
                 <img src="/src/images/XEROX Versant 280.png" alt="Изображение XEROX Versant 280" class="w-full h-auto max-w-sm">
             </div>
             <div class="space-y-6">
-                <h2 class="text-2xl font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">XEROX Versant 280</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                <h2 class="text-h3-panda font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">XEROX Versant 280</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-body-panda">
                     <div class="flex flex-col gap-y-4">
                         <div><h3 class="font-semibold text-gray-900 mb-1">Тип</h3><p class="text-gray-600">Цветная цифровая печатная машина</p></div>
                         <div><h3 class="font-semibold text-gray-900 mb-1">Скорость</h3><p class="text-gray-600">До 80 стр./мин (А4)</p></div>
@@ -80,16 +96,15 @@ import FooterSection from './FooterSection.vue';
             </div>
         </div>
 
-        <hr class="border-t border-gray-200 my-16" />
+        <hr class="border-t border-gray my-16" />
 
-        <!-- Duplo DC-616 -->
-        <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
                 <img src="/src/images/Duplo DC-616.png" alt="Изображение Duplo DC-616" class="w-full h-auto max-w-sm">
             </div>
             <div class="space-y-6">
-                <h2 class="text-2xl font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">Duplo DC-616</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-sm">
+                <h2 class="text-h3-panda font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">Duplo DC-616</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-body-panda">
                     <div class="flex flex-col gap-y-4">
                         <div><h3 class="font-semibold text-gray-900 mb-1">Тип</h3><p class="text-gray-600">Автоматический Слиттер / Каттер / Биговщик</p></div>
                         <div><h3 class="font-semibold text-gray-900 mb-1">Скорость обработки</h3><p class="text-gray-600">До 10 листов в минуту</p></div>
@@ -101,6 +116,28 @@ import FooterSection from './FooterSection.vue';
                 </div>
             </div>
         </div>
+
+        <hr class="border-t border-gray my-16" />
+
+        <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
+                <img src="/src/images/PFI Blade B3.png" alt="Изображение PFI Blade B3" class="w-full h-auto max-w-sm">
+            </div>
+            <div class="space-y-6">
+                <h2 class="text-h3-panda font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">PFI Blade B3</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-4 text-body-panda">
+                    <div class="flex flex-col gap-y-4">
+                        <div><h3 class="font-semibold text-gray-900 mb-1">Тип</h3><p class="text-gray-600">Цифровой режущий стол с автоматической подачей листов</p></div>
+                        <div><h3 class="font-semibold text-gray-900 mb-1">Область обработки</h3><p class="text-gray-600">340х480 мм</p></div>
+                        <div><h3 class="font-semibold text-gray-900 mb-1">Скорость резки</h3><p class="text-gray-600">До 800 мм/сек</p></div>
+                    </div>
+                    <div class="flex flex-col gap-y-4">
+                        <div><h3 class="font-semibold text-gray-900 mb-1">Применение</h3><p class="text-gray-600">Этикетки, kiss-cut, биговка, перфорация, изготовление прототипов упаковки, открыток, приглашений, бирок и др.</p></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
     <FooterSection />
   </main>

@@ -31,3 +31,11 @@ body {
     text-rendering: optimizeLegibility;
     background-color: #F7F7F7; /* Tailwind: bg-light-gray */
 }
+
+/* --- ИЗМЕНЕНИЕ: Глобальный запрет на перетаскивание и выделение --- */
+img, a {
+  /* Запрещает перетаскивание в Chrome, Safari, Edge */
+  -webkit-user-drag: none;
+  /* Запрещает выделение элемента мышкой */
+  user-select: none;
+}

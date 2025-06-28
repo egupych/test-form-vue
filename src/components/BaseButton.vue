@@ -10,10 +10,10 @@ const props = defineProps({
     type: String,
     default: null,
   },
-  // ИЗМЕНЕНИЕ: Название варианта теперь в kebab-case.
+  // ИЗМЕНЕНИЕ: Стиль по умолчанию теперь 'fill-black'
   variant: {
     type: String,
-    default: 'fill-orange', 
+    default: 'fill-black', 
   },
 });
 
@@ -25,24 +25,24 @@ const componentType = computed(() => {
 
 const baseClasses = 'px-5 py-2.5 rounded-full inline-block text-center transition-colors duration-200 ease-in-out cursor-pointer';
 
-// ИЗМЕНЕНИЕ: Все названия вариантов теперь в kebab-case.
 const variantClasses = computed(() => {
   switch (props.variant) {
     case 'stroke': 
       return 'bg-white text-panda-orange border-2 border-panda-orange hover:bg-panda-orange hover:text-white';
     
-    case 'fill-black':
-      return 'bg-panda-black text-white hover:bg-panda-orange';
-
     case 'stroke-white':
       return 'bg-white text-panda-black border border-gray-300 hover:bg-panda-orange hover:text-white hover:border-panda-orange';
-
-    case 'fill':
-      return 'bg-gray-200 text-dark-gray hover:bg-panda-orange hover:text-white';
+    
+    case 'gray':
+      return 'bg-gray text-dark-gray hover:bg-panda-orange hover:text-white';
       
     case 'fill-orange':
+      return 'bg-panda-orange text-white hover:bg-panda-black';
+
+    // ИЗМЕНЕНИЕ: Этот стиль теперь применяется по умолчанию
+    case 'fill-black':
     default: 
-      return 'bg-panda-orange text-white hover:bg-orange-600';
+      return 'bg-panda-black text-white hover:bg-panda-orange';
   }
 });
 </script>
