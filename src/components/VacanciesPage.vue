@@ -1,6 +1,5 @@
 <script setup>
 import { ref } from 'vue';
-import FooterSection from './FooterSection.vue';
 import BaseButton from './BaseButton.vue';
 
 const vacancies = ref([
@@ -98,6 +97,5 @@ const submitApplication = () => {
             </div>
         </div>
     </div>
-    <FooterSection />
   </main>
 </template>

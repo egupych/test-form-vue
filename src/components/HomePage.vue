@@ -1,6 +1,5 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
-import FooterSection from './FooterSection.vue';
 
 const formData = reactive({ name: '', phone: '', email: '', company: '', task: '', promo: '' });
 const errors = reactive({ name: '', phone: '', email: '', task: '' });
@@ -139,7 +138,6 @@ const handleSubmit = async () => {
           </div>
           <div v-if="message" class="success-message" :class="[messageType === 'success' ? 'bg-panda-green' : 'bg-red-500']">{{ message }}</div>
       </div>
-      <FooterSection />
     </main>
 </template>
 

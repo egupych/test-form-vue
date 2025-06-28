@@ -1,7 +1,5 @@
 <script setup>
-import FooterSection from './FooterSection.vue';
 
-// УДАЛЕНО: defineProps(['navigateTo']);
 // Эта строка была удалена, так как навигация теперь управляется vue-router.
 </script>
 
@@ -23,6 +21,5 @@ import FooterSection from './FooterSection.vue';
             <div class="mb-8"><h3 class="font-semibold text-panda-black text-2xl">2022 Февраль</h3><p class="text-lg text-dark-gray">Открытие первого филиала в другом городе.</p></div>
         </div>
     </div>
-    <FooterSection />
   </main>
 </template>

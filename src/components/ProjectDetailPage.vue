@@ -1,5 +1,4 @@
 <script setup>
-import FooterSection from './FooterSection.vue';
 // ИЗМЕНЕНИЕ: Импортируем наш компонент кнопки
 import BaseButton from './BaseButton.vue';
 </script>
@@ -44,6 +43,5 @@ import BaseButton from './BaseButton.vue';
         </div>
         <BaseButton to="/gallery" variant="fill-black" class="mt-8">← Вернуться к нашим работам</BaseButton>
     </div>
-    <FooterSection />
   </main>
 </template>

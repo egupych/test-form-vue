@@ -1,6 +1,5 @@
 <script setup>
 import { ref, reactive } from 'vue';
-import FooterSection from './FooterSection.vue';
 // ИЗМЕНЕНИЕ: Импортируем наш компонент кнопки
 import BaseButton from './BaseButton.vue';
 
@@ -44,6 +43,5 @@ const activeCategory = ref('catalogsAlbums');
         </div>
         <div v-else class="text-center py-10 text-dark-gray text-xl">Примеров для этой категории пока нет.</div>
     </div>
-    <FooterSection />
   </main>
 </template>

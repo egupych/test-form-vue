@@ -1,5 +1,4 @@
 <script setup>
-import FooterSection from './FooterSection.vue';
 </script>
 
 <template>
@@ -139,6 +138,5 @@ import FooterSection from './FooterSection.vue';
         </div>
 
     </div>
-    <FooterSection />
   </main>
 </template>

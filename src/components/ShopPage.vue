@@ -1,5 +1,4 @@
 <script setup>
-import FooterSection from './FooterSection.vue';
 import BaseButton from './BaseButton.vue';
 </script>
 
@@ -38,6 +37,5 @@ import BaseButton from './BaseButton.vue';
             </div>
         </div>
     </div>
-    <FooterSection />
   </main>
 </template>

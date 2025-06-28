@@ -1,5 +1,4 @@
 <script setup>
-import FooterSection from './FooterSection.vue';
 // ИЗМЕНЕНИЕ: Импортируем наш компонент кнопки
 import BaseButton from './BaseButton.vue';
 </script>
@@ -56,6 +55,5 @@ import BaseButton from './BaseButton.vue';
             <BaseButton to="/" variant="fill-orange">Заказать подготовку файлов</BaseButton>
         </div>
     </div>
-    <FooterSection />
   </main>
 </template>

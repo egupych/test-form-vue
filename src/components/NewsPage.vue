@@ -3,7 +3,6 @@ import { ref, onMounted } from 'vue';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../firebase.js';
 
-import FooterSection from './FooterSection.vue';
 
 // УДАЛЕНО: defineProps(['navigateTo']);
 // Эта строка была удалена, так как навигация теперь управляется vue-router.
@@ -64,6 +63,5 @@ onMounted(async () => {
       </div>
     </div>
     
-    <FooterSection />
   </main>
 </template>
