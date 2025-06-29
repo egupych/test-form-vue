@@ -1,6 +1,8 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
+// --- ИЗМЕНЕНИЕ: Импортируем компонент заголовка ---
+import SectionHeader from '@/components/ui/SectionHeader.vue';
 
 const formData = reactive({ name: '', phone: '', email: '', company: '', task: '', promo: '' });
 const errors = reactive({ name: '', phone: '', email: '', task: '' });
@@ -95,56 +97,60 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-    <main class="py-10 md:py-25">
-      <div class="max-w-6xl mx-auto px-4">
+  <main class="py-10 md:py-25">
+    <div class="max-w-6xl mx-auto px-4">
+      
+      <section>
+        <SectionHeader class="gap-container">
+          Добро пожаловать в Red Panda!
+        </SectionHeader>
+
+        <p class="text-h5-panda text-dark-gray text-center max-w-2xl mx-auto">Мы — современное печатное агентство, которое предоставляет полный спектр полиграфических услуг.</p>
         
-        <section>
-          <h1 class="text-h1-panda font-bold text-panda-black mb-4">Добро пожаловать в Red Panda!</h1>
-          <p class="text-h5-panda text-dark-gray">Мы — современное печатное агентство, которое предоставляет полный спектр полиграфических услуг.</p>
-          <div class="p-6 mt-8 bg-white rounded-lg">
-              <h3 class="mb-3 text-h4-panda font-semibold text-panda-black">Наши преимущества:</h3>
-              <ul class="space-y-2 text-body-panda list-disc list-inside text-dark-gray">
-                  <li>Индивидуальный подход к каждому клиенту.</li>
-                  <li>Высокое качество печати на современном оборудовании.</li>
-                  <li>Быстрое выполнение заказов в установленные сроки.</li>
-                  <li>Гибкая система скидок и специальные предложения.</li>
-              </ul>
-          </div>
-        </section>
+        <div class="p-6 mt-10 bg-white rounded-lg">
+            <h3 class="mb-3 text-h4-panda font-semibold text-panda-black">Наши преимущества:</h3>
+            <ul class="space-y-2 text-body-panda list-disc list-inside text-dark-gray">
+                <li>Индивидуальный подход к каждому клиенту.</li>
+                <li>Высокое качество печати на современном оборудовании.</li>
+                <li>Быстрое выполнение заказов в установленные сроки.</li>
+                <li>Гибкая система скидок и специальные предложения.</li>
+            </ul>
+        </div>
+      </section>
 
-        <section class="gap-page">
-          <div class="form-wrapper">
-              <div class="form-info">
-                  <h2 class="text-h2-panda font-bold">Расчёт<br>стоимости</h2>
-                  <p class="text-h5-panda font-medium">С вами свяжется наш менеджер<br>в ближайшее время. Спасибо, что<br>обратились в наше печатное агентство!</p>
-              </div>
-              <div class="form-body">
-                  <form @submit.prevent="handleSubmit" novalidate>
-                      <div class="form-group"><input type="text" placeholder="Ваше имя" required v-model.trim="formData.name" @input="validateField('name')" :class="{ 'border-panda-orange': errors.name }"><div class="error-message" v-if="errors.name">{{ errors.name }}</div></div>
-                      <div class="form-group"><input type="tel" placeholder="Телефон" required v-model="formData.phone" @input="formatPhoneInput" :class="{ 'border-panda-orange': errors.phone }"><div class="error-message" v-if="errors.phone">{{ errors.phone }}</div></div>
-                      <div class="form-group"><input type="email" placeholder="@email" required v-model.trim="formData.email" @input="validateField('email')" :class="{ 'border-panda-orange': errors.email }"><div class="error-message" v-if="errors.email">{{ errors.email }}</div></div>
-                      <div class="form-group"><input type="text" placeholder="Компания" v-model.trim="formData.company"></div>
-                      <div class="form-group"><textarea placeholder="Опишите задачу" required v-model.trim="formData.task" @input="validateField('task')" :class="{ 'border-panda-orange': errors.task }"></textarea><div class="error-message" v-if="errors.task">{{ errors.task }}</div></div>
-                      <div class="form-group"><input type="text" placeholder="Промокод" v-model.trim="formData.promo"></div>
-                      
-                      <BaseButton type="submit" :disabled="isSubmitting || !isFormValid">
-                        <div v-if="isSubmitting" class="flex items-center justify-center">
-                          <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                          </svg>
-                          Отправка...
-                        </div>
-                        <span v-else>Отправить заявку</span>
-                      </BaseButton>
-                  </form>
-              </div>
-          </div>
-          <div v-if="message" class="success-message mt-5" :class="[messageType === 'success' ? 'bg-panda-green' : 'bg-red-500']">{{ message }}</div>
-        </section>
+      <section class="gap-page">
+        <div class="form-wrapper">
+            <div class="form-info">
+                <h2 class="text-h2-panda font-bold">Расчёт<br>стоимости</h2>
+                <p class="text-h5-panda font-medium">С вами свяжется наш менеджер<br>в ближайшее время. Спасибо, что<br>обратились в наше печатное агентство!</p>
+            </div>
+            <div class="form-body">
+                <form @submit.prevent="handleSubmit" novalidate>
+                    <div class="form-group"><input type="text" placeholder="Ваше имя" required v-model.trim="formData.name" @input="validateField('name')" :class="{ 'border-panda-orange': errors.name }"><div class="error-message" v-if="errors.name">{{ errors.name }}</div></div>
+                    <div class="form-group"><input type="tel" placeholder="Телефон" required v-model="formData.phone" @input="formatPhoneInput" :class="{ 'border-panda-orange': errors.phone }"><div class="error-message" v-if="errors.phone">{{ errors.phone }}</div></div>
+                    <div class="form-group"><input type="email" placeholder="@email" required v-model.trim="formData.email" @input="validateField('email')" :class="{ 'border-panda-orange': errors.email }"><div class="error-message" v-if="errors.email">{{ errors.email }}</div></div>
+                    <div class="form-group"><input type="text" placeholder="Компания" v-model.trim="formData.company"></div>
+                    <div class="form-group"><textarea placeholder="Опишите задачу" required v-model.trim="formData.task" @input="validateField('task')" :class="{ 'border-panda-orange': errors.task }"></textarea><div class="error-message" v-if="errors.task">{{ errors.task }}</div></div>
+                    <div class="form-group"><input type="text" placeholder="Промокод" v-model.trim="formData.promo"></div>
+                    
+                    <BaseButton type="submit" :disabled="isSubmitting || !isFormValid">
+                      <div v-if="isSubmitting" class="flex items-center justify-center">
+                        <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                          <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                          <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                        </svg>
+                        Отправка...
+                      </div>
+                      <span v-else>Отправить заявку</span>
+                    </BaseButton>
+                </form>
+            </div>
+        </div>
+        <div v-if="message" class="success-message mt-5" :class="[messageType === 'success' ? 'bg-panda-green' : 'bg-red-500']">{{ message }}</div>
+      </section>
 
-      </div>
-    </main>
+    </div>
+  </main>
 </template>
 
 <style scoped>

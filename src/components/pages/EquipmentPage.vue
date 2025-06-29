@@ -1,9 +1,15 @@
 <script setup>
+// --- ИЗМЕНЕНИЕ: Импортируем компонент заголовка ---
+import SectionHeader from '@/components/ui/SectionHeader.vue';
 </script>
 
 <template>
-  <main class="py-10 md:py-25"> <div class="max-w-6xl mx-auto px-4">
-        <h1 class="font-bold text-panda-black text-h1-panda mb-8">Наше Оборудование</h1>
+  <main class="py-10 md:py-25">
+    <div class="max-w-6xl mx-auto px-4">
+      
+      <SectionHeader class="gap-container">
+        Наше Оборудование
+      </SectionHeader>
         
         <section class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">

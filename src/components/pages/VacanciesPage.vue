@@ -1,6 +1,8 @@
 <script setup>
 import { ref } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
+// --- ИЗМЕНЕНИЕ: Импортируем компонент заголовка ---
+import SectionHeader from '@/components/ui/SectionHeader.vue';
 
 const vacancies = ref([
   { 
@@ -54,10 +56,14 @@ const submitApplication = () => {
 </script>
 
 <template>
-  <main class="py-10 md:py-25"> <div class="max-w-6xl mx-auto px-4">
+  <main class="py-10 md:py-25">
+    <div class="max-w-6xl mx-auto px-4">
       
       <section>
-        <h1 class="font-bold text-panda-black text-h1-panda mb-8">Вакансии</h1>
+        <SectionHeader class="gap-container">
+          Вакансии
+        </SectionHeader>
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div v-for="vacancy in vacancies" :key="vacancy.id" class="bg-gray-50 rounded-3xl p-8 relative">
                 <div class="flex justify-between items-start mb-4">
@@ -85,8 +91,10 @@ const submitApplication = () => {
       <section class="bg-white rounded-2xl p-8 talent-reserve-form gap-page">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
             <div>
-                <h2 class="text-h2-panda font-bold text-gray-900 mb-6 leading-tight">Кадровый<br>резерв</h2>
-                <p class="text-h5-panda text-gray-600">Хотите работать у нас, но нет подходящей вакансии? Оставьте заявку!</p>
+                <SectionHeader>
+                  Кадровый резерв
+                </SectionHeader>
+                <p class="text-h5-panda text-gray-600 text-center mt-4">Хотите работать у нас, но нет подходящей вакансии? Оставьте заявку!</p>
             </div>
             <div>
                 <form @submit.prevent="submitApplication" class="space-y-6">

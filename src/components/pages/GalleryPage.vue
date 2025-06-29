@@ -1,16 +1,21 @@
 <script setup>
 import { ref, reactive } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
+import SectionHeader from '@/components/ui/SectionHeader.vue';
 
 const categories = reactive([ { id: 'badges', name: 'Бейджи и номерки' }, { id: 'notebooks', name: 'Блокноты и тетради' }, { id: 'businessCards', name: 'Визитки' }, { id: 'outdoorAdvertising', name: 'Наружная реклама' }, { id: 'calendarsPlanners', name: 'Календари и планеры' }, { id: 'boxesPackaging', name: 'Коробки и Упаковка' }, { id: 'bags', name: 'Пакеты' }, { id: 'souvenirs', name: 'Сувенирная продукция' }, { id: 'merchGifts', name: 'Мерч и подарки' }, { id: 'catalogsAlbums', name: 'Каталоги и альбомы' }, { id: 'stickersLabels', name: 'Наклейки и этикетки' }, { id: 'certificatesInvitations', name: 'Сертификаты и пригласительные' }, { id: 'corporateIdentity', name: 'Фирменный стиль' } ]);
 const activeCategory = ref('catalogsAlbums');
 </script>
 
 <template>
-  <main class="py-10 md:py-25"> <div class="max-w-6xl mx-auto px-4">
+  <main class="py-10 md:py-25">
+    <div class="max-w-6xl mx-auto px-4">
         
-        <h1 class="font-bold text-panda-black text-h1-panda mb-4">Наши работы</h1>
-        <p class="text-h5-panda text-dark-gray leading-relaxed mb-10">Примеры наших проектов. Нажмите "Смотреть", чтобы увидеть детали.</p>
+        <SectionHeader class="gap-container">
+          Наши работы
+        </SectionHeader>
+
+        <p class="text-h5-panda text-dark-gray leading-relaxed text-center max-w-2xl mx-auto mb-10">Примеры наших проектов. Нажмите "Смотреть", чтобы увидеть детали.</p>
         
         <div class="flex flex-wrap gap-2 mb-10">
             <BaseButton
