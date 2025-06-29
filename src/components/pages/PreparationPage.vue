@@ -1,14 +1,16 @@
 <script setup>
 import BaseButton from '@/components/ui/BaseButton.vue';
+// --- ИЗМЕНЕНИЕ: Импортируем наш новый компонент заголовка ---
+import SectionHeader from '@/components/ui/SectionHeader.vue';
 </script>
 
 <template>
-  <main class="py-10 md:py-25"> <div class="max-w-6xl mx-auto px-4">
+  <main class="py-10 md:py-25">
+    <div class="max-w-6xl mx-auto px-4">
         
         <section>
-            <h2 class="font-semibold text-panda-orange text-[18px] leading-[130%] gap-container">
-                ШАБЛОНЫ
-            </h2>
+            <SectionHeader class="gap-container">Шаблоны</SectionHeader>
+            
             <div class="flex flex-wrap gap-4">
                 <div class="flex flex-col items-center">
                     <div class="w-20 h-28 bg-dark-gray rounded-sm flex items-center justify-center mb-2">
@@ -32,9 +34,8 @@ import BaseButton from '@/components/ui/BaseButton.vue';
         </section>
 
         <section class="gap-page">
-            <h2 class="font-semibold text-panda-orange text-[18px] leading-[130%] gap-container">
-                ТРЕБОВАНИЯ К МАКЕТАМ
-            </h2>
+            <SectionHeader class="gap-container">Требования к макетам</SectionHeader>
+
             <div class="space-y-6 text-body-panda">
                 <div>
                     <h3 class="font-bold text-panda-black text-h5-panda mb-2">Формат файла</h3>
