@@ -10,7 +10,6 @@ const props = defineProps({
     type: String,
     default: null,
   },
-  // ИЗМЕНЕНИЕ: Стиль по умолчанию теперь 'fill-black'
   variant: {
     type: String,
     default: 'fill-black', 
@@ -28,21 +27,22 @@ const baseClasses = 'px-5 py-2.5 rounded-full inline-block text-center transitio
 const variantClasses = computed(() => {
   switch (props.variant) {
     case 'stroke': 
-      return 'bg-white text-panda-orange border-2 border-panda-orange hover:bg-panda-orange hover:text-white';
+      return 'bg-white text-panda-orange border-2 border-panda-orange hover:bg-panda-orange hover:text-light-gray';
     
     case 'stroke-white':
-      return 'bg-white text-panda-black border border-gray-300 hover:bg-panda-orange hover:text-white hover:border-panda-orange';
+      return 'bg-white text-panda-black border border-gray-300 hover:bg-panda-orange hover:text-light-gray hover:border-panda-orange';
     
     case 'gray':
-      return 'bg-gray text-dark-gray hover:bg-panda-orange hover:text-white';
+      return 'bg-gray text-dark-gray hover:bg-panda-orange hover:text-light-gray';
       
     case 'fill-orange':
-      return 'bg-panda-orange text-white hover:bg-panda-black';
+      // Заменяем text-white на text-light-gray
+      return 'bg-panda-orange text-light-gray hover:bg-panda-black';
 
-    // ИЗМЕНЕНИЕ: Этот стиль теперь применяется по умолчанию
     case 'fill-black':
     default: 
-      return 'bg-panda-black text-white hover:bg-panda-orange';
+      // Заменяем text-white на text-light-gray
+      return 'bg-panda-black text-light-gray hover:bg-panda-orange';
   }
 });
 </script>

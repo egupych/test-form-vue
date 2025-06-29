@@ -1,9 +1,7 @@
 <script setup>
 import { ref } from 'vue';
-// 1. Импортируем useRoute для доступа к информации о текущем маршруте
 import { useRoute } from 'vue-router';
 
-// Массив с навигационными ссылками для шапки сайта
 const navLinks = [
   { name: 'Главная', path: '/', preview: '/src/images/previews/preview-home.jpg' },
   {
@@ -22,10 +20,7 @@ const navLinks = [
   { name: 'Подготовка к печати', path: '/preparation', preview: null },
 ];
 
-// 2. Получаем объект текущего маршрута
 const route = useRoute();
-
-// Логика для отображения превью при наведении на пункты меню
 const activeLink = ref(null);
 const previewStyle = ref({});
 const isPreviewVisible = ref(false);
@@ -33,16 +28,11 @@ let hideTimer = null;
 
 const handleMouseEnter = (event, link) => {
   if (hideTimer) clearTimeout(hideTimer);
-
-  // 3. Добавляем проверку: превью показывается, только если есть картинка
-  // и если путь ссылки не совпадает с текущим путем страницы.
   if (link.preview && route.path !== link.path) {
     const linkRect = event.currentTarget.getBoundingClientRect();
     const PREVIEW_WIDTH = 320;
-    
     const left = linkRect.left + (linkRect.width / 2) - (PREVIEW_WIDTH / 2);
     const top = linkRect.bottom + 20;
-
     previewStyle.value = { top: `${top}px`, left: `${left}px` };
     activeLink.value = link;
     isPreviewVisible.value = true;
@@ -51,23 +41,19 @@ const handleMouseEnter = (event, link) => {
     activeLink.value = null;
   }
 };
-
 const handleMouseLeave = () => {
   hideTimer = setTimeout(() => {
     isPreviewVisible.value = false;
     activeLink.value = null;
   }, 300);
 };
-
 const onPreviewEnter = () => {
   if (hideTimer) clearTimeout(hideTimer);
 };
 </script>
 
 <template>
-  <!-- Главный контейнер сайта -->
   <div class="site-container">
-    <!-- Шапка сайта -->
     <header class="site-header">
       <router-link to="/" class="cursor-pointer">
         <img src="/src/images/red-panda-logo-black.svg" alt="Логотип Red Panda" class="h-10">
@@ -82,11 +68,9 @@ const onPreviewEnter = () => {
             @mouseenter="handleMouseEnter($event, link)"
             @mouseleave="handleMouseLeave"
           >
-            <!-- Обычная ссылка -->
             <router-link v-if="!link.isDropdown" :to="link.path">
               {{ link.name }}
             </router-link>
-            <!-- Выпадающее меню -->
             <div v-else class="nav-item">
               {{ link.name }}
               <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
@@ -101,16 +85,13 @@ const onPreviewEnter = () => {
       </nav>
     </header>
 
-    <!-- Основной контент страницы (меняется в зависимости от URL) -->
     <main class="main-content">
       <router-view />
     </main>
 
-    <!-- Код подвала -->
     <footer class="bg-panda-black text-gray-400 font-medium">
       <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-x-8">
-
           <div class="flex flex-col space-y-6">
             <div class="flex items-center space-x-3">
               <img src="/src/images/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-10">
@@ -139,7 +120,6 @@ const onPreviewEnter = () => {
               </button>
             </form>
           </div>
-
           <div class="flex flex-col items-start md:items-center text-left md:text-center space-y-4">
             <div class="w-full max-w-sm h-48 rounded-lg overflow-hidden border border-gray-700">
               <iframe
@@ -155,7 +135,6 @@ const onPreviewEnter = () => {
               <p>ПН-ПТ 10:00-18:00</p>
             </div>
           </div>
-
           <div class="flex flex-col items-start lg:items-end space-y-5 text-left lg:text-right">
             <div class="flex space-x-4">
               <div class="text-center">
@@ -168,9 +147,9 @@ const onPreviewEnter = () => {
               </div>
             </div>
             <div class="flex flex-wrap justify-start lg:justify-end gap-2">
-              <a href="#" class="px-5 py-1.5 bg-gray-700 text-white text-sm font-semibold rounded-full hover:bg-gray-600 transition-colors">Whatsapp</a>
-              <a href="#" class="px-5 py-1.5 bg-gray-700 text-white text-sm font-semibold rounded-full hover:bg-gray-600 transition-colors">Instagram</a>
-              <a href="#" class="px-5 py-1.5 bg-gray-700 text-white text-sm font-semibold rounded-full hover:bg-gray-600 transition-colors">2GIS</a>
+              <a href="#" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold rounded-full hover:bg-gray-600 transition-colors">Whatsapp</a>
+              <a href="#" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold rounded-full hover:bg-gray-600 transition-colors">Instagram</a>
+              <a href="#" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold rounded-full hover:bg-gray-600 transition-colors">2GIS</a>
             </div>
             <div class="text-sm">
               <p>+7 700 725-77-99</p>
@@ -180,16 +159,12 @@ const onPreviewEnter = () => {
               <p>TOO «RED PANDA» БИН 221240030264</p>
             </div>
           </div>
-
         </div>
         <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500 text-xs">
           © 2024 TOO «RED PANDA». Все права защищены.
         </div>
       </div>
     </footer>
-    <!-- Конец кода подвала -->
-
-    <!-- Окно для предпросмотра страниц при наведении -->
     <transition name="preview">
       <router-link
         v-if="isPreviewVisible && activeLink"
