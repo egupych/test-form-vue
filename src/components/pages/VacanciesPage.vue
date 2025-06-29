@@ -1,7 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-// --- ИЗМЕНЕНИЕ: Обновлен путь к компоненту BaseButton ---
-import BaseButton from '../ui/BaseButton.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
 
 const vacancies = ref([
   { 
@@ -55,10 +54,11 @@ const submitApplication = () => {
 </script>
 
 <template>
-  <main>
-    <div class="main-container">
+  <main class="py-10 md:py-25"> <div class="max-w-6xl mx-auto px-4">
+      
+      <section>
         <h1 class="font-bold text-panda-black text-h1-panda mb-8">Вакансии</h1>
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-16">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <div v-for="vacancy in vacancies" :key="vacancy.id" class="bg-gray-50 rounded-3xl p-8 relative">
                 <div class="flex justify-between items-start mb-4">
                     <h3 class="text-h4-panda font-bold text-gray-900 leading-tight">{{ vacancy.title }}</h3>
@@ -80,23 +80,25 @@ const submitApplication = () => {
                 <BaseButton @click="applyForPosition(vacancy.title)" variant="fill-black">Откликнуться</BaseButton>
             </div>
         </div>
-        <div class="bg-white rounded-2xl p-8 talent-reserve-form mt-16">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-                <div>
-                    <h2 class="text-h2-panda font-bold text-gray-900 mb-6 leading-tight">Кадровый<br>резерв</h2>
-                    <p class="text-h5-panda text-gray-600">Хотите работать у нас, но нет подходящей вакансии? Оставьте заявку!</p>
-                </div>
-                <div>
-                    <form @submit.prevent="submitApplication" class="space-y-6">
-                        <div><input v-model="formData.desiredPosition" type="text" placeholder="Желаемая вакансия" class="w-full border-0 border-b border-gray-300 py-3 px-0 text-body-panda text-gray-900 placeholder-gray-500 bg-transparent focus:outline-none focus:border-orange-500 focus:ring-0" required></div>
-                        <div><input v-model="formData.name" type="text" placeholder="Ваше имя" class="w-full border-0 border-b border-gray-300 py-3 px-0 text-body-panda text-gray-900 placeholder-gray-500 bg-transparent focus:outline-none focus:border-orange-500 focus:ring-0" required></div>
-                        <div><input v-model="formData.phone" type="tel" placeholder="Телефон" class="w-full border-0 border-b border-gray-300 py-3 px-0 text-body-panda text-gray-900 placeholder-gray-500 bg-transparent focus:outline-none focus:border-orange-500 focus:ring-0" required></div>
-                        <div><label class="flex items-center gap-3 py-3 border-b border-gray-300 cursor-pointer text-gray-600 text-sm"><span class="text-2xl">📎</span><span>{{ formData.resume ? formData.resume.name : 'Приложите резюме или ссылку' }}</span><input type="file" @change="handleFileUpload" accept=".pdf,.doc,.docx" class="hidden"></label></div>
-                        <BaseButton type="submit" variant="fill-black">Отправить</BaseButton>
-                    </form>
-                </div>
+      </section>
+      
+      <section class="bg-white rounded-2xl p-8 talent-reserve-form gap-page">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
+            <div>
+                <h2 class="text-h2-panda font-bold text-gray-900 mb-6 leading-tight">Кадровый<br>резерв</h2>
+                <p class="text-h5-panda text-gray-600">Хотите работать у нас, но нет подходящей вакансии? Оставьте заявку!</p>
+            </div>
+            <div>
+                <form @submit.prevent="submitApplication" class="space-y-6">
+                    <div><input v-model="formData.desiredPosition" type="text" placeholder="Желаемая вакансия" class="w-full border-0 border-b border-gray-300 py-3 px-0 text-body-panda text-gray-900 placeholder-gray-500 bg-transparent focus:outline-none focus:border-orange-500 focus:ring-0" required></div>
+                    <div><input v-model="formData.name" type="text" placeholder="Ваше имя" class="w-full border-0 border-b border-gray-300 py-3 px-0 text-body-panda text-gray-900 placeholder-gray-500 bg-transparent focus:outline-none focus:border-orange-500 focus:ring-0" required></div>
+                    <div><input v-model="formData.phone" type="tel" placeholder="Телефон" class="w-full border-0 border-b border-gray-300 py-3 px-0 text-body-panda text-gray-900 placeholder-gray-500 bg-transparent focus:outline-none focus:border-orange-500 focus:ring-0" required></div>
+                    <div><label class="flex items-center gap-3 py-3 border-b border-gray-300 cursor-pointer text-gray-600 text-sm"><span class="text-2xl">📎</span><span>{{ formData.resume ? formData.resume.name : 'Приложите резюме или ссылку' }}</span><input type="file" @change="handleFileUpload" accept=".pdf,.doc,.docx" class="hidden"></label></div>
+                    <BaseButton type="submit" variant="fill-black">Отправить</BaseButton>
+                </form>
             </div>
         </div>
+      </section>
     </div>
   </main>
 </template>

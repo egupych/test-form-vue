@@ -42,3 +42,12 @@ img, a {
   -webkit-user-drag: none;
   user-select: none;
 }
+
+@layer components {
+  .gap-page {
+    @apply mt-25; /* Применяем отступ сверху 100px */
+  }
+  .gap-container {
+    @apply mb-15; /* Применяем отступ снизу 60px */
+  }
+}

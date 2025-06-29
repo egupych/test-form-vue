@@ -1,7 +1,6 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
-// --- ИЗМЕНЕНИЕ: Обновлен путь к компоненту BaseButton ---
-import BaseButton from '../ui/BaseButton.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
 
 const formData = reactive({ name: '', phone: '', email: '', company: '', task: '', promo: '' });
 const errors = reactive({ name: '', phone: '', email: '', task: '' });
@@ -96,8 +95,10 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-    <main>
-      <div class="main-container">
+    <main class="py-10 md:py-25">
+      <div class="max-w-6xl mx-auto px-4">
+        
+        <section>
           <h1 class="text-h1-panda font-bold text-panda-black mb-4">Добро пожаловать в Red Panda!</h1>
           <p class="text-h5-panda text-dark-gray">Мы — современное печатное агентство, которое предоставляет полный спектр полиграфических услуг.</p>
           <div class="p-6 mt-8 bg-white rounded-lg">
@@ -109,8 +110,9 @@ const handleSubmit = async () => {
                   <li>Гибкая система скидок и специальные предложения.</li>
               </ul>
           </div>
-      </div>
-      <div class="main-container mt-8">
+        </section>
+
+        <section class="gap-page">
           <div class="form-wrapper">
               <div class="form-info">
                   <h2 class="text-h2-panda font-bold">Расчёт<br>стоимости</h2>
@@ -138,7 +140,9 @@ const handleSubmit = async () => {
                   </form>
               </div>
           </div>
-          <div v-if="message" class="success-message" :class="[messageType === 'success' ? 'bg-panda-green' : 'bg-red-500']">{{ message }}</div>
+          <div v-if="message" class="success-message mt-5" :class="[messageType === 'success' ? 'bg-panda-green' : 'bg-red-500']">{{ message }}</div>
+        </section>
+
       </div>
     </main>
 </template>
@@ -157,5 +161,5 @@ textarea { resize: vertical; min-height: 100px; }
 .form-button { font-family: 'Gilroy-Semibold', sans-serif; padding: 12px 30px; color: #FFFFFF; background-color: #F15F31; border: none; border-radius: 9999px; cursor: pointer; transition: background-color 0.3s ease; min-width: 180px; font-size: 16px; }
 .form-button:hover { background-color: #d9532a; }
 .form-button:disabled { opacity: 0.5; cursor: not-allowed; }
-.success-message { margin-top: 20px; padding: 15px 20px; border-radius: 8px; color: #FFFFFF; }
+.success-message { padding: 15px 20px; border-radius: 8px; color: #FFFFFF; }
 </style>

@@ -1,13 +1,12 @@
 <script setup>
-// --- ИЗМЕНЕНИЕ: Исправляем путь, используя псевдоним '@' ---
-import BaseButton from '../ui/BaseButton.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
 </script>
 
 <template>
-  <main>
-    <div class="main-container">
+  <main class="py-10 md:py-25"> <div class="max-w-6xl mx-auto px-4">
         <h1 class="font-bold text-panda-black text-h1-panda mb-4">Акции</h1>
-        <p class="text-h5-panda text-dark-gray leading-relaxed mb-6">Ознакомьтесь с нашими текущими акциями и специальными предложениями!</p>
+        <p class="text-h5-panda text-dark-gray leading-relaxed mb-10">Ознакомьтесь с нашими текущими акциями и специальными предложениями!</p>
+        
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-light-gray rounded-lg overflow-hidden p-6 text-center">
                 <img src="https://placehold.co/400x250/F7F7F7/131C26?text=Скидка%20на%20первый%20заказ" alt="Скидка на первый заказ" class="w-full h-auto object-cover rounded-md mb-4">

@@ -2,10 +2,16 @@
 export default {
   content: [
     "./index.html",
+    // --- ИЗМЕНЕНИЕ: Добавляем папку pages в сканирование ---
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
     extend: {
+      // --- ИЗМЕНЕНИЕ: Блок spacing должен быть ВНУТРИ extend ---
+      spacing: {
+        '15': '3.75rem', // 60px
+        '25': '6.25rem', // 100px
+      },
       colors: {
         'panda-orange': '#F15F31',
         'panda-black': '#131C26',
@@ -20,7 +26,6 @@ export default {
         semibold: ['Gilroy-SemiBold', 'sans-serif'],
         bold: ['Gilroy-Bold', 'sans-serif'],
       },
-      // --- ИЗМЕНЕНИЕ: Добавляем вашу систему типографики ---
       fontSize: {
         'h1-panda': ['64px', { lineHeight: '110%' }],
         'h2-panda': ['48px', { lineHeight: '105%' }],

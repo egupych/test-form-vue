@@ -2,11 +2,10 @@
 </script>
 
 <template>
-  <main>
-    <div class="main-container">
+  <main class="py-10 md:py-25"> <div class="max-w-6xl mx-auto px-4">
         <h1 class="font-bold text-panda-black text-h1-panda mb-8">Наше Оборудование</h1>
-
-        <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
+        
+        <section class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
                 <img src="@/assets/images/pages/EquipmentPage/Roland VersaCAMM VS-640.png" alt="Изображение Roland VersaCAMM VS-640" class="w-full h-auto max-w-sm">
             </div>
@@ -25,11 +24,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <hr class="border-t border-gray my-16" />
 
-        <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
+        <section class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
              <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
                  <img src="@/assets/images/pages/EquipmentPage/Roland VersaUV LEF-200.png" alt="Изображение Roland VersaUV LEF-200" class="w-full h-auto max-w-sm">
              </div>
@@ -48,11 +47,11 @@
                     </div>
                  </div>
              </div>
-         </div>
-
+         </section>
+         
         <hr class="border-t border-gray my-16" />
 
-        <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
+        <section class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
                 <img src="@/assets/images/pages/EquipmentPage/Roland EGX-350.png" alt="Изображение Roland EGX-350" class="w-full h-auto max-w-sm">
             </div>
@@ -70,11 +69,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <hr class="border-t border-gray my-16" />
-
-        <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
+        
+        <section class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
                 <img src="@/assets/images/pages/EquipmentPage/XEROX Versant 280.png" alt="Изображение XEROX Versant 280" class="w-full h-auto max-w-sm">
             </div>
@@ -93,11 +92,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <hr class="border-t border-gray my-16" />
 
-        <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
+        <section class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
                 <img src="@/assets/images/pages/EquipmentPage/Duplo DC-616.png" alt="Изображение Duplo DC-616" class="w-full h-auto max-w-sm">
             </div>
@@ -114,11 +113,11 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
         <hr class="border-t border-gray my-16" />
 
-        <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+        <section class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
                 <img src="@/assets/images/pages/EquipmentPage/PFI Blade B3.png" alt="Изображение PFI Blade B3" class="w-full h-auto max-w-sm">
             </div>
@@ -135,7 +134,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </section>
 
     </div>
   </main>

@@ -1,13 +1,12 @@
 <script setup>
-// --- ИЗМЕНЕНИЕ: Обновлен путь к компоненту BaseButton ---
-import BaseButton from '../ui/BaseButton.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
 </script>
 
 <template>
-  <main>
-    <div class="main-container">
+  <main class="py-10 md:py-25"> <div class="max-w-6xl mx-auto px-4">
         <h1 class="font-bold text-panda-black text-h1-panda mb-4">Наш Магазин</h1>
-        <p class="text-h5-panda text-dark-gray leading-relaxed mb-6">Здесь вы найдете наши продукты и услуги. В будущем здесь будут динамически загружаться товары с ценами и возможностью добавления в корзину.</p>
+        <p class="text-h5-panda text-dark-gray leading-relaxed mb-10">Здесь вы найдете наши продукты и услуги. В будущем здесь будут динамически загружаться товары с ценами и возможностью добавления в корзину.</p>
+        
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <div class="bg-light-gray rounded-lg overflow-hidden">
                 <img src="https://placehold.co/400x300/F7F7F7/131C26?text=Товар%201" alt="Товар 1" class="w-full h-48 object-cover rounded-t-lg">

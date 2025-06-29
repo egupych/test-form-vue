@@ -1,14 +1,15 @@
 <script setup>
-// --- ИЗМЕНЕНИЕ: Импортируем наш компонент кнопки ---
-import BaseButton from '../ui/BaseButton.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
 </script>
 
 <template>
-  <main>
-    <div class="main-container">
+  <main class="py-10 md:py-25"> <div class="max-w-6xl mx-auto px-4">
+      
+      <section>
         <h1 class="font-bold text-panda-black text-h1-panda mb-4">Фирменный стиль для гостиницы Dostyk Lux</h1>
-        <p class="text-h5-panda text-dark-gray leading-relaxed mb-6">Современный стиль, с заботой о людях. Здесь представлены различные элементы разработанного фирменного стиля.</p>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+        <p class="text-h5-panda text-dark-gray leading-relaxed mb-8">Современный стиль, с заботой о людях. Здесь представлены различные элементы разработанного фирменного стиля.</p>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-light-gray rounded-lg overflow-hidden flex flex-col items-center">
                 <img src="https://placehold.co/800x400/F7F7F7/131C26?text=Визитка%20Dostyk%20lux" alt="Визитка Dostyk lux" class="w-full h-auto object-cover">
                 <div class="p-4 text-center">
@@ -35,13 +36,19 @@ import BaseButton from '../ui/BaseButton.vue';
                 </div>
             </div>
         </div>
-        <h2 class="font-bold text-panda-black text-h3-panda mb-4 mt-8">Дополнительные элементы стиля:</h2>
+      </section>
+
+      <section class="gap-page">
+        <h2 class="font-semibold text-panda-orange text-[18px] leading-[130%] gap-container">
+            ДОПОЛНИТЕЛЬНЫЕ ЭЛЕМЕНТЫ СТИЛЯ
+        </h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             <img src="https://placehold.co/600x400/F7F7F7/131C26?text=Рекламный%20макет" alt="Рекламный макет" class="w-full h-auto object-cover rounded-lg">
             <img src="https://placehold.co/600x400/F7F7F7/131C26?text=Набор%20фирменного%20стиля" alt="Набор фирменного стиля" class="w-full h-auto object-cover rounded-lg">
             <img src="https://placehold.co/600x400/F7F7F7/131C26?text=Пример%20вывески" alt="Пример вывески" class="w-full h-auto object-cover rounded-lg">
         </div>
         <BaseButton to="/gallery" variant="fill-black" class="mt-8">← Вернуться к нашим работам</BaseButton>
+      </section>
     </div>
   </main>
 </template>

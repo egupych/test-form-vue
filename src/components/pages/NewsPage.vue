@@ -1,8 +1,12 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { collection, getDocs } from 'firebase/firestore';
-// --- ИЗМЕНЕНИЕ: Исправляем путь к firebase.js ---
+// --- ИЗМЕНЕНИЕ: Исправляем путь к firebase.js на правильный относительный ---
 import { db } from '../../firebase.js';
+
+
+// УДАЛЕНО: defineProps(['navigateTo']);
+// Эта строка была удалена, так как навигация теперь управляется vue-router.
 
 const newsList = ref([]);
 const isLoading = ref(true);
@@ -26,10 +30,10 @@ onMounted(async () => {
 </script>
 
 <template>
-  <main>
-    <div class="main-container">
+  <main class="py-10 md:py-25">
+    <div class="max-w-6xl mx-auto px-4">
       <h1 class="font-bold text-panda-black text-4xl mb-4">Новости</h1>
-      <p class="text-xl text-dark-gray leading-relaxed mb-6">Будьте в курсе последних событий и достижений нашей компании.</p>
+      <p class="text-xl text-dark-gray leading-relaxed mb-10">Будьте в курсе последних событий и достижений нашей компании.</p>
       
       <div v-if="isLoading" class="text-center py-10">
         <p class="text-lg text-dark-gray">Загрузка новостей...</p>
@@ -59,6 +63,5 @@ onMounted(async () => {
         <p class="text-lg text-dark-gray">Новостей пока нет.</p>
       </div>
     </div>
-    
   </main>
 </template>
