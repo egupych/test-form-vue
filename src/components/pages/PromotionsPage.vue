@@ -1,5 +1,6 @@
 <script setup>
-import BaseButton from './BaseButton.vue';
+// --- ИЗМЕНЕНИЕ: Исправляем путь, используя псевдоним '@' ---
+import BaseButton from '../ui/BaseButton.vue';
 </script>
 
 <template>

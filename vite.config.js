@@ -1,14 +1,21 @@
+// vite.config.js
+
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
+// --- ИЗМЕНЕНИЕ: Импортируем 'fileURLToPath' и 'URL' ---
+import { fileURLToPath, URL } from 'node:url';
 
-// https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
-    // Мы убрали ошибочную опцию из плагина vue()
-    vue() 
+    vue()
   ],
+  resolve: {
+    alias: {
+      // --- ИЗМЕНЕНИЕ: Это правильный способ указать псевдоним в Vite ---
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    },
+  },
   server: {
-    // Настраиваем Vite для работы с вашим Node.js сервером
     proxy: {
       '/api': {
         target: 'http://localhost:3000',

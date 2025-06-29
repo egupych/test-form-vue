@@ -1,0 +1,44 @@
+/* src/assets/styles/main.css */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Глобальные стили, перенесенные из старого style.css */
+@font-face {
+    font-family: 'Gilroy-Medium';
+    /* <--- ИЗМЕНЕНИЕ: Пути к шрифтам обновлены */
+    src: url('../fonts/Gilroy-Medium.woff2') format('woff2'),
+         url('../fonts/Gilroy-Medium.woff') format('woff');
+    font-weight: 500;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Gilroy-SemiBold';
+    /* <--- ИЗМЕНЕНИЕ: Пути к шрифтам обновлены */
+    src: url('../fonts/Gilroy-SemiBold.woff2') format('woff2'),
+         url('../fonts/Gilroy-SemiBold.woff') format('woff');
+    font-weight: 600;
+    font-style: normal;
+}
+@font-face {
+    font-family: 'Gilroy-Bold';
+    /* <--- ИЗМЕНЕНИЕ: Пути к шрифтам обновлены */
+    src: url('../fonts/Gilroy-Bold.woff2') format('woff2'),
+         url('../fonts/Gilroy-Bold.woff') format('woff');
+    font-weight: 700;
+    font-style: normal;
+}
+
+body {
+    font-family: 'Gilroy-Medium', sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    background-color: #F7F7F7; /* Tailwind: bg-light-gray */
+}
+
+/* Глобальный запрет на перетаскивание и выделение */
+img, a {
+  -webkit-user-drag: none;
+  user-select: none;
+}

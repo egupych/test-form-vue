@@ -1,5 +1,6 @@
 <script setup>
-import BaseButton from './BaseButton.vue';
+// --- ИЗМЕНЕНИЕ: Обновлен путь к компоненту BaseButton ---
+import BaseButton from '../ui/BaseButton.vue';
 </script>
 
 <template>

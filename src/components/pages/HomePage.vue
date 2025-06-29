@@ -1,5 +1,7 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
+// --- ИЗМЕНЕНИЕ: Обновлен путь к компоненту BaseButton ---
+import BaseButton from '../ui/BaseButton.vue';
 
 const formData = reactive({ name: '', phone: '', email: '', company: '', task: '', promo: '' });
 const errors = reactive({ name: '', phone: '', email: '', task: '' });

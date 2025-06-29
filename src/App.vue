@@ -2,8 +2,14 @@
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 
+// --- ИЗМЕНЕНИЕ: Импортируем изображения как модули ---
+import previewHome from '@/assets/images/app/previews/preview-home.jpg';
+import previewGallery from '@/assets/images/app/previews/preview-gallery.jpg';
+import previewShop from '@/assets/images/app/previews/preview-shop.jpg';
+
 const navLinks = [
-  { name: 'Главная', path: '/', preview: '/src/images/previews/preview-home.jpg' },
+  // --- ИЗМЕНЕНИЕ: Используем импортированные переменные вместо строк ---
+  { name: 'Главная', path: '/', preview: previewHome },
   {
     name: 'О нас',
     isDropdown: true,
@@ -14,9 +20,9 @@ const navLinks = [
       { name: 'Оборудование', path: '/equipment' },
     ]
   },
-  { name: 'Наши работы', path: '/gallery', preview: '/src/images/previews/preview-gallery.jpg' },
+  { name: 'Наши работы', path: '/gallery', preview: previewGallery },
   { name: 'Акции', path: '/promotions', preview: null },
-  { name: 'Магазин', path: '/shop', preview: '/src/images/previews/preview-shop.jpg' },
+  { name: 'Магазин', path: '/shop', preview: previewShop },
   { name: 'Подготовка к печати', path: '/preparation', preview: null },
 ];
 
@@ -56,7 +62,7 @@ const onPreviewEnter = () => {
   <div class="site-container">
     <header class="site-header">
       <router-link to="/" class="cursor-pointer">
-        <img src="/src/images/red-panda-logo-black.svg" alt="Логотип Red Panda" class="h-10">
+        <img src="@/assets/images/layout/red-panda-logo-black.svg" alt="Логотип Red Panda" class="h-10">
       </router-link>
       <nav>
         <ul class="flex items-center space-x-8 text-header-panda">
@@ -94,7 +100,7 @@ const onPreviewEnter = () => {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-x-8">
           <div class="flex flex-col space-y-6">
             <div class="flex items-center space-x-3">
-              <img src="/src/images/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-10">
+              <img src="@/assets/images/layout/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-10">
             </div>
             <div class="pt-2">
               <h3 class="font-semibold text-white text-h5-panda">Подпишитесь на рассылку</h3>
@@ -138,11 +144,11 @@ const onPreviewEnter = () => {
           <div class="flex flex-col items-start lg:items-end space-y-5 text-left lg:text-right">
             <div class="flex space-x-4">
               <div class="text-center">
-                <img src="/src/images/QR-site.svg" alt="QR Code redpanda.kz" class="w-24 h-24 rounded-md p-1">
+                <img src="@/assets/images/layout/QR-site.svg" alt="QR Code redpanda.kz" class="w-24 h-24 rounded-md p-1">
                 <p class="text-xs mt-1">redpanda.kz</p>
               </div>
               <div class="text-center">
-                <img src="/src/images/QR-instagram.svg" alt="QR Code redpandakz" class="w-24 h-24 rounded-md p-1">
+                <img src="@/assets/images/layout/QR-instagram.svg" alt="QR Code redpandakz" class="w-24 h-24 rounded-md p-1">
                 <p class="text-xs mt-1">redpandakz</p>
               </div>
             </div>

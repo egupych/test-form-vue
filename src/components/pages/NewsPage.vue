@@ -1,11 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 import { collection, getDocs } from 'firebase/firestore';
-import { db } from '../firebase.js';
-
-
-// УДАЛЕНО: defineProps(['navigateTo']);
-// Эта строка была удалена, так как навигация теперь управляется vue-router.
+// --- ИЗМЕНЕНИЕ: Исправляем путь к firebase.js ---
+import { db } from '../../firebase.js';
 
 const newsList = ref([]);
 const isLoading = ref(true);

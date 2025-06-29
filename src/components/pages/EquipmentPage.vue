@@ -5,10 +5,10 @@
   <main>
     <div class="main-container">
         <h1 class="font-bold text-panda-black text-h1-panda mb-8">Наше Оборудование</h1>
-        
+
         <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
-                <img src="/src/images/Roland VersaCAMM VS-640.png" alt="Изображение Roland VersaCAMM VS-640" class="w-full h-auto max-w-sm">
+                <img src="@/assets/images/pages/EquipmentPage/Roland VersaCAMM VS-640.png" alt="Изображение Roland VersaCAMM VS-640" class="w-full h-auto max-w-sm">
             </div>
             <div class="space-y-6">
                 <h2 class="text-h3-panda font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">Roland VersaCAMM VS-640</h2>
@@ -31,7 +31,7 @@
 
         <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
              <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
-                 <img src="/src/images/Roland VersaUV LEF-200.png" alt="Изображение Roland VersaUV LEF-200" class="w-full h-auto max-w-sm">
+                 <img src="@/assets/images/pages/EquipmentPage/Roland VersaUV LEF-200.png" alt="Изображение Roland VersaUV LEF-200" class="w-full h-auto max-w-sm">
              </div>
              <div class="space-y-6">
                  <h2 class="text-h3-panda font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">Roland VersaUV LEF-200</h2>
@@ -49,12 +49,12 @@
                  </div>
              </div>
          </div>
-         
+
         <hr class="border-t border-gray my-16" />
 
         <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
-                <img src="/src/images/Roland EGX-350.png" alt="Изображение Roland EGX-350" class="w-full h-auto max-w-sm">
+                <img src="@/assets/images/pages/EquipmentPage/Roland EGX-350.png" alt="Изображение Roland EGX-350" class="w-full h-auto max-w-sm">
             </div>
             <div class="space-y-6">
                 <h2 class="text-h3-panda font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">Roland EGX-350</h2>
@@ -73,10 +73,10 @@
         </div>
 
         <hr class="border-t border-gray my-16" />
-        
+
         <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
-                <img src="/src/images/XEROX Versant 280.png" alt="Изображение XEROX Versant 280" class="w-full h-auto max-w-sm">
+                <img src="@/assets/images/pages/EquipmentPage/XEROX Versant 280.png" alt="Изображение XEROX Versant 280" class="w-full h-auto max-w-sm">
             </div>
             <div class="space-y-6">
                 <h2 class="text-h3-panda font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">XEROX Versant 280</h2>
@@ -99,7 +99,7 @@
 
         <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start mb-16">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
-                <img src="/src/images/Duplo DC-616.png" alt="Изображение Duplo DC-616" class="w-full h-auto max-w-sm">
+                <img src="@/assets/images/pages/EquipmentPage/Duplo DC-616.png" alt="Изображение Duplo DC-616" class="w-full h-auto max-w-sm">
             </div>
             <div class="space-y-6">
                 <h2 class="text-h3-panda font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">Duplo DC-616</h2>
@@ -120,7 +120,7 @@
 
         <div class="group grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
             <div class="bg-light-gray rounded-lg p-8 flex items-center justify-center">
-                <img src="/src/images/PFI Blade B3.png" alt="Изображение PFI Blade B3" class="w-full h-auto max-w-sm">
+                <img src="@/assets/images/pages/EquipmentPage/PFI Blade B3.png" alt="Изображение PFI Blade B3" class="w-full h-auto max-w-sm">
             </div>
             <div class="space-y-6">
                 <h2 class="text-h3-panda font-bold text-gray-900 transition-colors duration-300 group-hover:text-panda-orange">PFI Blade B3</h2>

@@ -1,7 +1,7 @@
 <script setup>
 import { ref, reactive } from 'vue';
-// ИЗМЕНЕНИЕ: Импортируем наш компонент кнопки
-import BaseButton from './BaseButton.vue';
+// --- ИЗМЕНЕНИЕ: Импортируем наш компонент кнопки ---
+import BaseButton from '../ui/BaseButton.vue';
 
 const categories = reactive([ { id: 'badges', name: 'Бейджи и номерки' }, { id: 'notebooks', name: 'Блокноты и тетради' }, { id: 'businessCards', name: 'Визитки' }, { id: 'outdoorAdvertising', name: 'Наружная реклама' }, { id: 'calendarsPlanners', name: 'Календари и планеры' }, { id: 'boxesPackaging', name: 'Коробки и Упаковка' }, { id: 'bags', name: 'Пакеты' }, { id: 'souvenirs', name: 'Сувенирная продукция' }, { id: 'merchGifts', name: 'Мерч и подарки' }, { id: 'catalogsAlbums', name: 'Каталоги и альбомы' }, { id: 'stickersLabels', name: 'Наклейки и этикетки' }, { id: 'certificatesInvitations', name: 'Сертификаты и пригласительные' }, { id: 'corporateIdentity', name: 'Фирменный стиль' } ]);
 const activeCategory = ref('catalogsAlbums');

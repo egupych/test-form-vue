@@ -1,6 +1,6 @@
 <script setup>
-// ИЗМЕНЕНИЕ: Импортируем наш компонент кнопки
-import BaseButton from './BaseButton.vue';
+// --- ИЗМЕНЕНИЕ: Импортируем наш компонент кнопки ---
+import BaseButton from '../ui/BaseButton.vue';
 </script>
 
 <template>
