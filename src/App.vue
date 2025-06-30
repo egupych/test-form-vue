@@ -1,6 +1,7 @@
 <script setup>
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
+import InteractiveMap from './components/ui/InteractiveMap.vue';
 
 // --- ИЗМЕНЕНИЕ: Импортируем изображения как модули ---
 import previewHome from '@/assets/images/app/previews/preview-home.jpg';
@@ -128,14 +129,8 @@ const onPreviewEnter = () => {
           </div>
           <div class="flex flex-col items-start md:items-center text-left md:text-center space-y-4">
             <div class="w-full max-w-sm h-48 rounded-lg overflow-hidden border border-gray-700">
-              <iframe
-                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2506.273103273479!2d71.4089980769351!3d51.12140683935391!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x424584343513481d%3A0x6a273b5e7838562b!2z0JrQvtGA0LPQsNC70LbQutC-0LTgaCBYeXlhLCBCYXNoa2lyc2tpaSAvIFNob3NzZSAySywgQXN0YW5hLCDQmtCw0LfQsNC20YHRgtCw0L0!5e0!3m2!1sen!2sus!4v1687853472000"
-                class="w-full h-full border-0"
-                allowfullscreen=""
-                loading="lazy"
-                referrerpolicy="no-referrer-when-downgrade">
-              </iframe>
-            </div>
+                <InteractiveMap />
+            </div>            
             <div class="text-sm">
               <p>Астана, Шоссе Коргалжын, 6</p>
               <p>ПН-ПТ 10:00-18:00</p>
