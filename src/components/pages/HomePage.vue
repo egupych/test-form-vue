@@ -1,8 +1,9 @@
 <script setup>
 import { ref, reactive, computed } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
-// --- ИЗМЕНЕНИЕ: Импортируем компонент заголовка ---
 import SectionHeader from '@/components/ui/SectionHeader.vue';
+// --- ИЗМЕНЕНИЕ: Импортируем новый компонент сетки услуг ---
+import ServicesGrid from '@/components/ui/ServicesGrid.vue';
 
 const formData = reactive({ name: '', phone: '', email: '', company: '', task: '', promo: '' });
 const errors = reactive({ name: '', phone: '', email: '', task: '' });
@@ -100,22 +101,17 @@ const handleSubmit = async () => {
   <main class="py-10 md:py-25">
     <div class="max-w-6xl mx-auto px-4">
       
-      <section>
-        <SectionHeader class="gap-container">
-          Добро пожаловать в Red Panda!
+      <section class="gap-page">
+        <SectionHeader class="gap-container text-center">
+            Все виды продукции от А до Я
         </SectionHeader>
 
-        <p class="text-h5-panda text-dark-gray text-center max-w-2xl mx-auto">Мы — современное печатное агентство, которое предоставляет полный спектр полиграфических услуг.</p>
+        <p class="text-h5-panda text-dark-gray text-center max-w-3xl mx-auto mb-15">
+          Мы — современное печатное агентство, которое предоставляет полный спектр полиграфических услуг. Наведите курсор на услугу в таблице ниже, чтобы увидеть краткий предпросмотр.
+        </p>
         
-        <div class="p-6 mt-10 bg-white rounded-lg">
-            <h3 class="mb-3 text-h4-panda font-semibold text-panda-black">Наши преимущества:</h3>
-            <ul class="space-y-2 text-body-panda list-disc list-inside text-dark-gray">
-                <li>Индивидуальный подход к каждому клиенту.</li>
-                <li>Высокое качество печати на современном оборудовании.</li>
-                <li>Быстрое выполнение заказов в установленные сроки.</li>
-                <li>Гибкая система скидок и специальные предложения.</li>
-            </ul>
-        </div>
+        <ServicesGrid />
+
       </section>
 
       <section class="gap-page">

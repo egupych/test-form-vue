@@ -15,13 +15,13 @@ import SectionHeader from '@/components/ui/SectionHeader.vue';
 
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-light-gray rounded-lg overflow-hidden p-6 text-center">
-                <img src="https://placehold.co/400x250/F7F7F7/131C26?text=Скидка%20на%20первый%20заказ" alt="Скидка на первый заказ" class="w-full h-auto object-cover rounded-md mb-4">
+                <img src="/src/assets/images/pages/PromotionsPage/cupon-new-client.svg" alt="Скидка на первый заказ" class="w-full h-auto object-cover rounded-md mb-4">
                 <h2 class="font-semibold text-panda-black text-h4-panda mb-2">Скидка 15% на первый заказ</h2>
                 <p class="text-body-panda text-dark-gray mb-4">Для всех новых клиентов Red Panda.</p>
                 <BaseButton to="/" variant="fill-orange">Воспользоваться</BaseButton>
             </div>
             <div class="bg-light-gray rounded-lg overflow-hidden p-6 text-center">
-                <img src="https://placehold.co/400x250/F7F7F7/131C26?text=Скидка%20к%20школе" alt="Скидка к школе" class="w-full h-auto object-cover rounded-md mb-4">
+                <img src="/src/assets/images/pages/PromotionsPage/cupom-back-to-school.svg" alt="Скидка к школе" class="w-full h-auto object-cover rounded-md mb-4">
                 <h2 class="font-semibold text-panda-black text-h4-panda mb-2">Скидка 10% до 1 сентября</h2>
                 <p class="text-body-panda text-dark-gray mb-4">Подготовьтесь к новому учебному году или сезону с выгодой!</p>
                 <BaseButton to="/" variant="fill-black">Воспользоваться</BaseButton>

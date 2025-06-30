@@ -96,7 +96,7 @@ const onPreviewEnter = () => {
       <router-view />
     </main>
 
-    <footer class="bg-panda-black text-gray-400 font-medium">
+    <footer class="text-light-gray bg-panda-black text-gray-400 font-medium">
       <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-x-8">
           <div class="flex flex-col space-y-6">
@@ -128,7 +128,7 @@ const onPreviewEnter = () => {
             </form>
           </div>
           <div class="flex flex-col items-start md:items-center text-left md:text-center space-y-4">
-            <div class="w-full max-w-sm h-48 rounded-lg overflow-hidden border border-gray-700">
+            <div class="w-full max-w-sm h-80 rounded-2xl overflow-hidden">
                 <InteractiveMap />
             </div>            
             <div class="text-sm">
@@ -148,21 +148,16 @@ const onPreviewEnter = () => {
               </div>
             </div>
             <div class="flex flex-wrap justify-start lg:justify-end gap-2">
-              <a href="#" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold rounded-full hover:bg-gray-600 transition-colors">Whatsapp</a>
-              <a href="#" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold rounded-full hover:bg-gray-600 transition-colors">Instagram</a>
-              <a href="#" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold rounded-full hover:bg-gray-600 transition-colors">2GIS</a>
+              <a href="https://wa.me/77007257799" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Whatsapp</a>
+              <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Instagram</a>
+              <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">2GIS</a>
             </div>
             <div class="text-sm">
-              <p>+7 700 725-77-99</p>
+              <p>+7 (700) 725-77-99</p>
               <p>infoprint@redpanda.kz</p>
-            </div>
-            <div class="text-xs">
               <p>TOO «RED PANDA» БИН 221240030264</p>
             </div>
           </div>
-        </div>
-        <div class="border-t border-gray-700 mt-12 pt-8 text-center text-gray-500 text-xs">
-          © 2024 TOO «RED PANDA». Все права защищены.
         </div>
       </div>
     </footer>
