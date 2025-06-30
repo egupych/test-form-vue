@@ -140,11 +140,11 @@ const onPreviewEnter = () => {
             <div class="flex space-x-4">
               <div class="text-center">
                 <img src="@/assets/images/layout/QR-site.svg" alt="QR Code redpanda.kz" class="w-24 h-24 rounded-md p-1">
-                <p class="text-xs mt-1">redpanda.kz</p>
+                <p class="text-md mt-1">redpanda.kz</p>
               </div>
               <div class="text-center">
                 <img src="@/assets/images/layout/QR-instagram.svg" alt="QR Code redpandakz" class="w-24 h-24 rounded-md p-1">
-                <p class="text-xs mt-1">redpandakz</p>
+                <p class="text-md mt-1">redpandakz</p>
               </div>
             </div>
             <div class="flex flex-wrap justify-start lg:justify-end gap-2">
