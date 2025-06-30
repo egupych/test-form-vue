@@ -189,11 +189,12 @@ const onPreviewEnter = () => {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 2rem;
-  background-color: white;
+  background-color: #f7f7f7b2;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
-  z-index: 10;
+  z-index: 1000;
+  backdrop-filter: blur(10px);
 }
 .main-content {
   flex-grow: 1;
@@ -242,7 +243,7 @@ nav a.router-link-exact-active::after {
   position: absolute;
   top: 100%;
   left: 0;
-  background-color: white;
+  background-color:#F7F7F7;
   min-width: 200px;
   box-shadow: 0 8px 16px rgba(0,0,0,0.1);
   z-index: 20;
