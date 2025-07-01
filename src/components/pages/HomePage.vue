@@ -118,7 +118,7 @@ const handleSubmit = async () => {
         <div class="form-wrapper">
             <div class="form-info">
                 <h2 class="text-h2-panda font-bold">Расчёт<br>стоимости</h2>
-                <p class="text-h5-panda font-medium">С вами свяжется наш менеджер<br>в ближайшее время. Спасибо, что<br>обратились в наше печатное агентство!</p>
+                <p class="text-h5-panda font-semibold">С вами свяжется наш менеджер<br>в ближайшее время. Спасибо, что<br>обратились в наше печатное агентство!</p>
             </div>
             <div class="form-body">
                 <form @submit.prevent="handleSubmit" novalidate>
