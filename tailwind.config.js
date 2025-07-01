@@ -2,12 +2,17 @@
 export default {
   content: [
     "./index.html",
-    // --- ИЗМЕНЕНИЕ: Добавляем папку pages в сканирование ---
     "./src/**/*.{vue,js,ts,jsx,tsx}",
   ],
   theme: {
+    // ЗАМЕНА: Мы не используем extend, а полностью переопределяем fontFamily,
+    // чтобы сделать Gilroy шрифтом по умолчанию для всего сайта.
+    fontFamily: {
+      sans: ['Gilroy-Medium', 'sans-serif'], // <--- ОСНОВНОЕ ИЗМЕНЕНИЕ
+      semibold: ['Gilroy-SemiBold', 'sans-serif'],
+      bold: ['Gilroy-Bold', 'sans-serif'],
+    },
     extend: {
-      // --- ИЗМЕНЕНИЕ: Блок spacing должен быть ВНУТРИ extend ---
       spacing: {
         '15': '3.75rem', // 60px
         '25': '6.25rem', // 100px
@@ -20,11 +25,6 @@ export default {
         'light-gray': '#F7F7F7',
         'gray': '#E3E3E3',
         'dark-gray': '#8F8F8F',
-      },
-      fontFamily: {
-        medium: ['Gilroy-Medium', 'sans-serif'],
-        semibold: ['Gilroy-SemiBold', 'sans-serif'],
-        bold: ['Gilroy-Bold', 'sans-serif'],
       },
       fontSize: {
         'h1-panda': ['64px', { lineHeight: '110%' }],

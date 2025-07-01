@@ -4,7 +4,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ДОБАВЬТЕ ЭТОТ БЛОК */
 @layer components {
   .gap-page {
     @apply mt-25; /* 100px */
@@ -14,14 +13,9 @@
   }
 }
 
-/* Объявляем переменные с цветами из вашей палитры */
-:root {
-  --panda-white: #FFFFFF;
-  --light-gray: #F7F7F7;
-  --panda-orange: #F15F31;
-}
-
-/* Глобальные стили, перенесенные из старого style.css */
+/* Глобальные стили теперь применяются через tailwind.config.js,
+  оставляем только подключение файлов шрифтов.
+*/
 @font-face {
     font-family: 'Gilroy-Medium';
     src: url('../fonts/Gilroy-Medium.woff2') format('woff2'),
@@ -44,22 +38,11 @@
     font-style: normal;
 }
 
-body {
-    font-family: 'Gilroy-Medium', sans-serif;
-    -webkit-font-smoothing: antialiased;
-    text-rendering: optimizeLegibility;
-    background-color: #F7F7F7; /* Tailwind: bg-light-gray */
-}
+/* УДАЛЕНО: Стили для body, так как они теперь в tailwind.config.js */
 
-img, a {
-  -webkit-user-drag: none;
-  user-select: none;
-}
+/* УДАЛЕНО: Стили для img, a - лучше управлять ими по месту через классы */
 
-/*::::::::::::::::::::::::::::::::::::::::::::::::::*/
-/* Скроллбар                                        */
-/*::::::::::::::::::::::::::::::::::::::::::::::::::*/
-
+/* Стили для скроллбара остаются, так как это кастомизация */
 ::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;

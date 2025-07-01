@@ -1,15 +1,32 @@
 <script setup>
+import { ref } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 
-// Данные для шаблонов, взятые из PDF
-const templates = [
-  { name: 'Визитки', href: '#' },
-  { name: 'Буклеты', href: '#' },
-  { name: 'Конверты', href: '#' },
-  { name: 'Коробки', href: '#' },
-  { name: 'Дорхолдеры', href: '#' },
-  { name: 'Календари', href: '#' },
+// Активная вкладка по умолчанию
+const activeTab = ref('packages');
+
+// Данные для вкладок и их содержимого
+const templatesData = [
+  { 
+    id: 'packages', 
+    name: 'Пакеты',
+    items: [
+      { name: '230 x 350 x 80 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=400', href: '#' },
+      { name: '170 x 190 x 105 мм', img: 'https://images.unsplash.com/photo-1555529771-83d3dba3c69c?w=400', href: '#' },
+      { name: '340 x 110 x 70 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=400&h=500', href: '#' },
+      { name: '200 x 200 x 90 мм', img: 'https://images.unsplash.com/photo-1555529771-83d3dba3c69c?w=400&h=400', href: '#' },
+      { name: '350 x 250 x 80 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=500&h=400', href: '#' },
+    ]
+  },
+  { id: 'booklets', name: 'Буклеты', items: [] },
+  { id: 'triplets', name: 'Триплеты', items: [] },
+  { id: 'envelopes', name: 'Конверты', items: [] },
+  { id: 'folders', name: 'Папки', items: [] },
+  { id: 'boxes', name: 'Коробки', items: [] },
+  { id: 'doorholders', name: 'Дорхолдеры', items: [] },
+  { id: 'calendars', name: 'Календари', items: [] },
+  { id: 'ribbons', name: 'Ленты', items: [] },
 ];
 </script>
 
@@ -19,16 +36,33 @@ const templates = [
 
       <section>
         <SectionHeader class="gap-container">Шаблоны</SectionHeader>
-        <div class="flex flex-wrap justify-center gap-6">
-          <div v-for="template in templates" :key="template.name" class="flex flex-col items-center group">
-            <div class="w-24 h-32 bg-dark-gray rounded-lg flex items-center justify-center mb-3 transition-colors duration-300 group-hover:bg-panda-orange">
-              <svg class="w-10 h-10 text-white" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z" />
-              </svg>
+        
+        <div class="flex flex-wrap gap-2 mb-10">
+          <BaseButton
+            v-for="tab in templatesData"
+            :key="tab.id"
+            @click="activeTab = tab.id"
+            :variant="activeTab === tab.id ? 'fill-black' : 'gray'"
+          >
+            {{ tab.name }}
+          </BaseButton>
+        </div>
+
+        <div v-for="tab in templatesData" :key="tab.id + '-content'">
+          <div v-if="activeTab === tab.id">
+            <div v-if="tab.items.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+              <div v-for="item in tab.items" :key="item.name" class="flex flex-col items-center group">
+                <div class="bg-light-gray w-full rounded-lg flex items-center justify-center mb-3 p-4 aspect-[3/4]">
+                  <img :src="item.img" :alt="item.name" class="max-h-full max-w-full object-contain">
+                </div>
+                <div class="text-center">
+                  <div class="text-body-panda text-panda-black mb-2 h-10 flex items-center justify-center">{{ item.name }}</div>
+                  <BaseButton :href="item.href" variant="fill-black" class="!px-3 !py-1 !text-xs">Скачать</BaseButton>
+                </div>
+              </div>
             </div>
-            <div class="text-center">
-              <div class="text-body-panda text-panda-black mb-2 h-10 flex items-center">{{ template.name }}</div>
-              <BaseButton :href="template.href" variant="fill-black" class="!px-3 !py-1 !text-xs">Скачать</BaseButton>
+            <div v-else class="text-center py-10 text-dark-gray text-xl">
+              Шаблоны для категории «{{ tab.name }}» скоро появятся.
             </div>
           </div>
         </div>
@@ -38,7 +72,7 @@ const templates = [
         <SectionHeader class="gap-container">Размеры</SectionHeader>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
-            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Стандартные DIN-форматы</h3>
+            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Стандартные DIN-форматы</h3>
             <ul class="space-y-2 text-dark-gray text-body-panda">
               <li>A0 – 841x1189 мм</li>
               <li>A1 – 594x841 мм</li>
@@ -63,28 +97,28 @@ const templates = [
         <div class="space-y-10">
 
           <div>
-            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Формат файла</h3>
+            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Формат файла</h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
               Макет желательно присылать в PDF. Если конвертации в PDF нет, допускается присылать макет в программах, где он был разработан (AI, CDR, PSD). Если макет был разработан в онлайн-редакторах (Figma, Canva), рекомендуется прикладывать ссылку для возможной корректировки.
             </p>
           </div>
 
           <div>
-            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Отступы</h3>
+            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Отступы</h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
-              Необходимо во всех дизайн-макетах оставлять отступы с фоном по периметру по 3 мм для обреза. Например, если вы делаете визитку размером 90x50 мм, то размер с фоном составит 96x56 мм. Отступ содержимого (текста, изображений) от края реза должен составлять от 5 мм.
+              Необходимо во всех дизайн-макетах оставлять отступы с фоном по периметру по 3 мм для обреза. Например, если вы делаете визитку размером 90x50 мм, то размер макета с вылетами должен быть 96x56 мм. Отступ содержимого (текста, изображений) от края реза должен составлять от 5 мм.
             </p>
           </div>
           
           <div>
-            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Цвета</h3>
+            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Цвета</h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
               Желательно отправлять файлы на печать в цветовой модели CMYK. Если вы работаете в программе, где нет цветовой модели CMYK, то старайтесь использовать цвета из палитры PANTONE. В таком случае, при работе в цветовой модели RGB (Figma, Canva), при использовании цветов PANTONE вы будете видеть макет почти таким же, каким он получится после печати.
             </p>
           </div>
 
           <div>
-            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Шрифты</h3>
+            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Шрифты</h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
               Шрифты необходимо перевести в кривые.
               <br><b>Corel Draw:</b> Ctrl+Q | <b>Illustrator/Figma:</b> Ctrl+Shift+O.
@@ -93,7 +127,7 @@ const templates = [
           </div>
           
           <div>
-            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Графические элементы</h3>
+            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Графические элементы</h3>
             <div class="space-y-3 text-dark-gray text-body-panda max-w-4xl">
               <p><b>Вектор — лучший выбор.</b> Для четкой печати желательно использовать логотипы и иконки в векторном формате (SVG, AI, EPS, CDR). Векторные изображения печатаются без искажений и потери качества.</p>
               <p><b>1 мм при 300 DPI = 12 пикселей.</b> Если вы делаете дизайн в программе, которая выдает размер только в пикселях (Figma, Canva), то нужно учитывать, что для 1 мм физического размера (при качественной печати 300 DPI) необходимо 12 пикселей.</p>
@@ -101,7 +135,7 @@ const templates = [
           </div>
           
           <div>
-            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Эффекты и прочее</h3>
+            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Эффекты и прочее</h3>
             <div class="space-y-3 text-dark-gray text-body-panda max-w-4xl">
                 <p>Тени, градиенты, прозрачность должны быть растрированы.</p>
                 <p>Линии должны иметь видимую толщину, от 0.2 pt.</p>
@@ -113,7 +147,8 @@ const templates = [
       </section>
 
       <section class="text-center bg-light-gray rounded-3xl p-12 gap-page">
-        <h3 class="text-h5-panda font-bold text-panda-black mb-4">Нет времени на подготовку файлов? <br>Оперативно сделаем за Вас!</h3>
+        <h3 class="text-h3-panda font-bold text-panda-black mb-4">Нет времени на подготовку файлов?</h3>
+        <p class="text-h5-panda text-panda-black mb-6">Оперативно сделаем за Вас!</p>
         <BaseButton to="/" variant="fill-orange">Написать менеджеру</BaseButton>
       </section>
 
