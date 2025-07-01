@@ -51,16 +51,12 @@ img, a {
 /*::::::::::::::::::::::::::::::::::::::::::::::::::*/
 
 ::-webkit-scrollbar {
-  width: 0.6rem;
-  height: 0.6rem;
-  background-color: var(--gray);
+  width: 0.5rem;
+  height: 0.5rem;
+  background-color: #E3E3E3;
   transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: var(--dark-gray);
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: var(--panda-orange);
+  background-color: #929292;
 }
