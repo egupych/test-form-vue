@@ -79,14 +79,14 @@ const templatesData = [
           <div>
             <h3 class="font-bold text-panda-black text-h4-panda mb-4">Стандартные DIN-форматы</h3>
             <ul class="space-y-2 text-dark-gray text-body-panda">
-              <li>A0 – 841x1189 мм</li>
-              <li>A1 – 594x841 мм</li>
-              <li>A2 – 420x594 мм</li>
-              <li>A3 – 297x420 мм</li>
-              <li>A4 – 210x297 мм (размер офисной бумаги)</li>
-              <li>A5 – 148x210 мм</li>
-              <li>A6 – 105x148 мм</li>
-              <li>A7 – 105x74 мм</li>
+              <li>A0 – 841×1189 мм</li>
+              <li>A1 – 594×841 мм</li>
+              <li>A2 – 420×594 мм</li>
+              <li>A3 – 297×420 мм</li>
+              <li>A4 – 210×297 мм (размер офисной бумаги)</li>
+              <li>A5 – 148×210 мм</li>
+              <li>A6 – 105×148 мм</li>
+              <li>A7 – 105×74 мм</li>
               <li class="pt-4">Визитка – 90x50 мм</li>
               <li>Евро-визитка – 85x55 мм</li>
             </ul>
