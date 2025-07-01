@@ -11,9 +11,9 @@ const templatesData = [
     name: 'Пакеты',
     items: [
       { name: '230 × 350 × 80 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=400', href: '#' },
-      { name: '170 × 190 × 105 мм', img: 'https://images.unsplash.com/photo-1555529771-83d3dba3c69c?w=400', href: '#' },
+      { name: '170 × 190 × 105 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=400', href: '#' },
       { name: '340 × 110 × 70 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=400&h=500', href: '#' },
-      { name: '200 × 200 × 90 мм', img: 'https://images.unsplash.com/photo-1555529771-83d3dba3c69c?w=400&h=400', href: '#' },
+      { name: '200 × 200 × 90 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=400', href: '#' },
       { name: '350 × 250 × 80 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=500&h=400', href: '#' },
     ]
   },
