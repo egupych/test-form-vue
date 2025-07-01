@@ -4,6 +4,16 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ДОБАВЬТЕ ЭТОТ БЛОК */
+@layer components {
+  .gap-page {
+    @apply mt-25; /* 100px */
+  }
+  .gap-container {
+    @apply mb-15; /* 60px */
+  }
+}
+
 /* Объявляем переменные с цветами из вашей палитры */
 :root {
   --panda-white: #FFFFFF;
