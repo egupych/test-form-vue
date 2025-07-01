@@ -3,13 +3,11 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import InteractiveMap from './components/ui/InteractiveMap.vue';
 
-// --- ИЗМЕНЕНИЕ: Импортируем изображения как модули ---
 import previewHome from '@/assets/images/app/previews/preview-home.jpg';
 import previewGallery from '@/assets/images/app/previews/preview-gallery.jpg';
 import previewShop from '@/assets/images/app/previews/preview-shop.jpg';
 
 const navLinks = [
-  // --- ИЗМЕНЕНИЕ: Используем импортированные переменные вместо строк ---
   { name: 'Главная', path: '/', preview: previewHome },
   {
     name: 'О нас',
@@ -39,7 +37,7 @@ const handleMouseEnter = (event, link) => {
     const linkRect = event.currentTarget.getBoundingClientRect();
     const PREVIEW_WIDTH = 320;
     const left = linkRect.left + (linkRect.width / 2) - (PREVIEW_WIDTH / 2);
-    const top = linkRect.bottom + 20;
+    const top = linkRect.bottom + 22; // Отступ = 12px зазор + 10px стрелка
     previewStyle.value = { top: `${top}px`, left: `${left}px` };
     activeLink.value = link;
     isPreviewVisible.value = true;
@@ -48,13 +46,15 @@ const handleMouseEnter = (event, link) => {
     activeLink.value = null;
   }
 };
+
 const handleMouseLeave = () => {
   hideTimer = setTimeout(() => {
     isPreviewVisible.value = false;
     activeLink.value = null;
-  }, 300);
+  }, 200);
 };
-const onPreviewEnter = () => {
+
+const cancelHideTimer = () => {
   if (hideTimer) clearTimeout(hideTimer);
 };
 </script>
@@ -62,34 +62,41 @@ const onPreviewEnter = () => {
 <template>
   <div class="site-container">
     <header class="site-header">
-      <router-link to="/" class="cursor-pointer">
-        <img src="@/assets/images/layout/red-panda-logo-black.svg" alt="Логотип Red Panda" class="h-10">
-      </router-link>
-      <nav>
-        <ul class="flex items-center space-x-8 text-header-panda">
-          <li
-            v-for="link in navLinks"
-            :key="link.name"
-            class="relative"
-            :class="{ 'dropdown': link.isDropdown }"
-            @mouseenter="handleMouseEnter($event, link)"
-            @mouseleave="handleMouseLeave"
-          >
-            <router-link v-if="!link.isDropdown" :to="link.path">
-              {{ link.name }}
-            </router-link>
-            <div v-else class="nav-item">
-              {{ link.name }}
-              <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-            </div>
-            <ul v-if="link.isDropdown" class="dropdown-menu">
-              <li v-for="child in link.children" :key="child.name">
-                <router-link :to="child.path" class="dropdown-item">{{ child.name }}</router-link>
-              </li>
-            </ul>
-          </li>
-        </ul>
-      </nav>
+      <div class="max-w-6xl mx-auto flex items-center justify-between w-full">
+        <router-link to="/" class="cursor-pointer">
+          <img src="@/assets/images/layout/red-panda-logo-black.svg" alt="Логотип Red Panda" class="h-10">
+        </router-link>
+        <nav>
+          <ul class="flex items-center space-x-8 text-header-panda">
+            <li
+              v-for="link in navLinks"
+              :key="link.name"
+              class="relative"
+              :class="{ 'dropdown': link.isDropdown }"
+              @mouseenter="handleMouseEnter($event, link)"
+              @mouseleave="handleMouseLeave"
+            >
+              <router-link v-if="!link.isDropdown" :to="link.path">
+                {{ link.name }}
+              </router-link>
+              <div v-else class="nav-item">
+                {{ link.name }}
+                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </div>
+              <ul
+                v-if="link.isDropdown"
+                class="dropdown-menu"
+                @mouseenter="cancelHideTimer"
+                @mouseleave="handleMouseLeave"
+              >
+                <li v-for="child in link.children" :key="child.name">
+                  <router-link :to="child.path" class="dropdown-item">{{ child.name }}</router-link>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </nav>
+      </div>
     </header>
 
     <main class="main-content">
@@ -130,7 +137,7 @@ const onPreviewEnter = () => {
           <div class="flex flex-col items-start md:items-center text-left md:text-center space-y-4">
             <div class="w-full max-w-sm h-80 rounded-2xl overflow-hidden">
                 <InteractiveMap />
-            </div>            
+            </div>
             <div class="text-sm">
               <p>Астана, Шоссе Коргалжын, 6</p>
               <p>ПН-ПТ 10:00-18:00</p>
@@ -167,7 +174,7 @@ const onPreviewEnter = () => {
         :to="activeLink.path"
         class="preview-window"
         :style="previewStyle"
-        @mouseenter="onPreviewEnter"
+        @mouseenter="cancelHideTimer"
         @mouseleave="handleMouseLeave"
       >
         <img :src="activeLink.preview" alt="Page preview" class="preview-image">
@@ -186,9 +193,11 @@ const onPreviewEnter = () => {
 }
 .site-header {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  padding: 1rem 2rem;
+  padding-top: 0.8rem;
+  padding-bottom: 1rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
   background-color: #f7f7f7b2;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: sticky;
@@ -237,20 +246,45 @@ nav a.router-link-exact-active::after {
   transform: scaleX(1);
 }
 
+.dropdown::after {
+  content: '';
+  position: absolute;
+  display: block;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 22px;
+}
+
 /* Стили для выпадающего меню */
 .dropdown-menu {
   display: none;
   position: absolute;
   top: 100%;
-  left: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 22px;
   background-color:#F7F7F7;
   min-width: 200px;
-  box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
   z-index: 20;
-  border-radius: 0 0 8px 8px;
+  border-radius: 8px;
   padding: 8px 0;
-  margin-top: 2px;
 }
+.dropdown-menu::before {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 10px 10px 10px;
+  border-color: transparent transparent #F7F7F7 transparent;
+  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.03));
+}
+
 .dropdown:hover .dropdown-menu {
   display: block;
 }
@@ -282,6 +316,19 @@ nav a.router-link-exact-active::after {
   overflow: hidden;
   z-index: 50;
   cursor: pointer;
+}
+.preview-window::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 10px 10px 10px;
+  border-color: transparent transparent white transparent;
+  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.03));
 }
 .preview-image {
   width: 100%;
