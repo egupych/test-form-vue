@@ -69,7 +69,7 @@ const submitApplication = () => {
                 <div class="flex justify-between items-start mb-4">
                     <h3 class="text-h4-panda font-bold text-gray-900 leading-tight">{{ vacancy.title }}</h3>
                     <div class="flex gap-2 ml-4">
-                        <span v-for="tag in vacancy.tags" :key="tag" class="bg-white rounded-full px-4 py-2 text-sm font-medium text-gray-700 border border-gray-200 whitespace-nowrap">{{ tag }}</span>
+                        <span v-for="tag in vacancy.tags" :key="tag" class="bg-white rounded-full py-2 text-sm font-medium text-gray-700 border border-gray-200 whitespace-nowrap">{{ tag }}</span>
                     </div>
                 </div>
                 <div class="text-dark-gray text-small-panda mb-6 font-semibold">{{ vacancy.salary }}</div>
