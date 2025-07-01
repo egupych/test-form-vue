@@ -92,7 +92,7 @@ const templatesData = [
             </ul>
           </div>
           <div class="bg-light-gray rounded-2xl p-4">
-            <img src="https://images.unsplash.com/photo-1619468129361-605ebea04b44?q=80&w=1280" alt="Схема форматов бумаги" class="rounded-lg object-cover">
+            <img src="/src/assets/images/pages/PreparationPage/formats.png" alt="Схема форматов бумаги" class="object-cover">
           </div>
         </div>
       </section>
