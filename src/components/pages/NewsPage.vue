@@ -28,7 +28,7 @@ onMounted(async () => {
 
 <template>
   <main class="py-10 md:py-25">
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-6xl mx-auto">
 
       <SectionHeader class="gap-container">
         Новости
