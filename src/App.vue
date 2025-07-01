@@ -198,7 +198,7 @@ const cancelHideTimer = () => {
   padding-bottom: 1rem;
   padding-left: 2rem;
   padding-right: 2rem;
-  background-color: #f7f7f7b2;
+  background-color: #f7f7f7cc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: sticky;
   top: 0;
