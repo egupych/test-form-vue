@@ -12,7 +12,7 @@ const props = defineProps({
   },
   variant: {
     type: String,
-    default: 'fill-black', 
+    default: 'fill-black',
   },
 });
 
@@ -22,33 +22,27 @@ const componentType = computed(() => {
   return 'button';
 });
 
-const baseClasses = 'px-5 py-2.5 rounded-full inline-block text-center transition-colors duration-200 ease-in-out cursor-pointer';
+const baseClasses = 'px-5 py-2.5 rounded-full inline-flex items-center justify-center gap-2 text-center transition-colors duration-200 ease-in-out cursor-pointer';
 
 const variantClasses = computed(() => {
   switch (props.variant) {
-    case 'stroke': 
+    case 'stroke':
       return 'bg-white text-panda-orange border-2 border-panda-orange hover:bg-panda-orange hover:text-light-gray';
-    
     case 'stroke-white':
       return 'bg-white text-panda-black border border-gray-300 hover:bg-panda-orange hover:text-light-gray hover:border-panda-orange';
-    
     case 'gray':
       return 'bg-gray text-dark-gray hover:bg-panda-orange hover:text-light-gray';
-      
     case 'fill-orange':
-      // Заменяем text-white на text-light-gray
       return 'bg-panda-orange text-light-gray hover:bg-panda-black';
-
     case 'fill-black':
-    default: 
-      // Заменяем text-white на text-light-gray
+    default:
       return 'bg-panda-black text-light-gray hover:bg-panda-orange';
   }
 });
 </script>
 
 <template>
-  <component 
+  <component
     :is="componentType"
     :to="to"
     :href="href"
@@ -57,7 +51,3 @@ const variantClasses = computed(() => {
     <slot></slot>
   </component>
 </template>
-
-<style scoped>
-/* Все стили управляются через Tailwind */
-</style>
