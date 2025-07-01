@@ -21,7 +21,7 @@ const navLinks = [
       { name: 'Оборудование', path: '/equipment' },
     ]
   },
-  { name: 'Наши работы', path: '/gallery', preview: previewGallery },
+  { name: 'Портфолио', path: '/gallery', preview: previewGallery },
   { name: 'Акции', path: '/promotions', preview: null },
   { name: 'Магазин', path: '/shop', preview: previewShop },
   { name: 'Подготовка к печати', path: '/preparation', preview: null },
