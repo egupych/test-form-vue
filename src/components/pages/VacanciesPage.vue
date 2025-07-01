@@ -65,14 +65,14 @@ const submitApplication = () => {
         </SectionHeader>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div v-for="vacancy in vacancies" :key="vacancy.id" class="bg-gray-50 rounded-3xl p-8 relative">
+            <div v-for="vacancy in vacancies" :key="vacancy.id" class="bg-white rounded-3xl p-8 relative">
                 <div class="flex justify-between items-start mb-4">
                     <h3 class="text-h4-panda font-bold text-gray-900 leading-tight">{{ vacancy.title }}</h3>
                     <div class="flex gap-2 ml-4">
-                        <span v-for="tag in vacancy.tags" :key="tag" class="bg-white rounded-full py-2 text-sm font-medium text-gray-700 border border-gray-200 whitespace-nowrap">{{ tag }}</span>
+                        <span v-for="tag in vacancy.tags" :key="tag" class="rounded-full py-2 px-4 text-sm font-medium text-gray-700 border border-gray-200 whitespace-nowrap">{{ tag }}</span>
                     </div>
                 </div>
-                <div class="text-dark-gray text-small-panda mb-6 font-semibold">{{ vacancy.salary }}</div>
+                <div class=" text-body-panda mb-6">{{ vacancy.salary }}</div>
                 <div class="mb-6">
                     <div class="text-panda-orange font-bold text-body-panda mb-3">Условия</div>
                     <div class="text-gray-800 text-body-panda leading-relaxed">{{ vacancy.conditions }}</div>
