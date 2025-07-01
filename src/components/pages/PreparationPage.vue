@@ -77,7 +77,7 @@ const templatesData = [
         <SectionHeader class="gap-container">Размеры</SectionHeader>
         <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
           <div>
-            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Стандартные DIN-форматы</h3>
+            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Стандартные DIN-форматы</h3>
             <ul class="space-y-2 text-dark-gray text-body-panda">
               <li>A0 – 841×1189 мм</li>
               <li>A1 – 594×841 мм</li>
@@ -100,25 +100,25 @@ const templatesData = [
         <SectionHeader class="gap-container">Требования к макетам</SectionHeader>
         <div class="space-y-10">
           <div>
-            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Формат файла</h3>
+            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Формат файла</h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
               Макет желательно присылать в PDF. Если конвертации в PDF нет, допускается присылать макет в программах, где он был разработан (AI, CDR, PSD). Если макет был разработан в онлайн-редакторах (Figma, Canva), рекомендуется прикладывать ссылку для возможной корректировки.
             </p>
           </div>
           <div>
-            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Отступы</h3>
+            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Отступы</h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
               Необходимо во всех дизайн-макетах оставлять отступы с фоном по периметру по 3 мм для обреза. Например, если вы делаете визитку размером 90x50 мм, то размер макета с вылетами должен быть 96x56 мм. Отступ содержимого (текста, изображений) от края реза должен составлять от 5 мм.
             </p>
           </div>
           <div>
-            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Цвета</h3>
+            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Цвета</h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
               Желательно отправлять файлы на печать в цветовой модели CMYK. Если вы работаете в программе, где нет цветовой модели CMYK, то старайтесь использовать цвета из палитры PANTONE. В таком случае, при работе в цветовой модели RGB (Figma, Canva), при использовании цветов PANTONE вы будете видеть макет почти таким же, каким он получится после печати.
             </p>
           </div>
           <div>
-            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Шрифты</h3>
+            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Шрифты</h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
               Шрифты необходимо перевести в кривые.
               <br><b>Corel Draw:</b> Ctrl+Q | <b>Illustrator/Figma:</b> Ctrl+Shift+O.
@@ -126,14 +126,14 @@ const templatesData = [
             </p>
           </div>
           <div>
-            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Графические элементы</h3>
+            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Графические элементы</h3>
             <div class="space-y-3 text-dark-gray text-body-panda max-w-4xl">
               <p><b>Вектор — лучший выбор.</b> Для четкой печати желательно использовать логотипы и иконки в векторном формате (SVG, AI, EPS, CDR). Векторные изображения печатаются без искажений и потери качества.</p>
               <p><b>1 мм при 300 DPI = 12 пикселей.</b> Если вы делаете дизайн в программе, которая выдает размер только в пикселях (Figma, Canva), то нужно учитывать, что для 1 мм физического размера (при качественной печати 300 DPI) необходимо 12 пикселей.</p>
             </div>
           </div>
           <div>
-            <h3 class="font-bold text-panda-black text-h4-panda mb-4">Эффекты и прочее</h3>
+            <h3 class="font-bold text-panda-black text-h5-panda mb-4">Эффекты и прочее</h3>
             <div class="space-y-3 text-dark-gray text-body-panda max-w-4xl">
                 <p>Тени, градиенты, прозрачность должны быть растрированы.</p>
                 <p>Линии должны иметь видимую толщину, от 0.2 pt.</p>
@@ -143,8 +143,7 @@ const templatesData = [
         </div>
       </section>
       <section class="text-center bg-light-gray rounded-3xl p-12 gap-page">
-        <h3 class="text-h3-panda font-bold text-panda-black mb-4">Нет времени на подготовку файлов?</h3>
-        <p class="text-h5-panda text-panda-black mb-6">Оперативно сделаем за Вас!</p>
+        <h3 class="text-h5-panda font-bold text-panda-black mb-4">Нет времени на подготовку файлов? <br>Оперативно сделаем за Вас!</h3>
         <BaseButton to="/" variant="fill-orange">Написать менеджеру</BaseButton>
       </section>
     </div>
