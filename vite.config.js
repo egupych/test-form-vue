@@ -2,7 +2,7 @@
 
 import { defineConfig } from 'vite';
 import vue from '@vitejs/plugin-vue';
-// --- ИЗМЕНЕНИЕ: Импортируем 'fileURLToPath' и 'URL' ---
+// --- ИЗМЕНЕНИЕ: Убедитесь, что эти импорты есть ---
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({

@@ -2,10 +2,14 @@
 import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import InteractiveMap from './components/ui/InteractiveMap.vue';
+import BaseButton from '@/components/ui/BaseButton.vue';
+import { useAuth } from '@/composables/useAuth.js';
 
 import previewHome from '@/assets/images/app/previews/preview-home.jpg';
 import previewGallery from '@/assets/images/app/previews/preview-gallery.jpg';
 import previewShop from '@/assets/images/app/previews/preview-shop.jpg';
+
+const { user, signInWithGoogle, signOut } = useAuth();
 
 const navLinks = [
   { name: 'Главная', path: '/', preview: previewHome },
@@ -37,7 +41,7 @@ const handleMouseEnter = (event, link) => {
     const linkRect = event.currentTarget.getBoundingClientRect();
     const PREVIEW_WIDTH = 320;
     const left = linkRect.left + (linkRect.width / 2) - (PREVIEW_WIDTH / 2);
-    const top = linkRect.bottom + 22; // Отступ = 12px зазор + 10px стрелка
+    const top = linkRect.bottom + 22;
     previewStyle.value = { top: `${top}px`, left: `${left}px` };
     activeLink.value = link;
     isPreviewVisible.value = true;
@@ -62,11 +66,12 @@ const cancelHideTimer = () => {
 <template>
   <div class="site-container">
     <header class="site-header">
-      <div class="max-w-6xl mx-auto flex items-center justify-between w-full">
-        <router-link to="/" class="cursor-pointer">
-          <img src="@/assets/images/layout/red-panda-logo-black.svg" alt="Логотип Red Panda" class="h-10">
+      <div class="max-w-6xl mx-auto flex items-center w-full">
+        <router-link to="/" class="cursor-pointer flex-none">
+          <img src="@/assets/images/layout/red-panda-logo-black.svg" alt="Логотип Red Panda" class="h-14 pr-2">
         </router-link>
-        <nav>
+
+        <nav class="mx-auto">
           <ul class="flex items-center space-x-8 text-header-panda">
             <li
               v-for="link in navLinks"
@@ -96,6 +101,25 @@ const cancelHideTimer = () => {
             </li>
           </ul>
         </nav>
+
+        <div class="flex items-center flex-none">
+          <BaseButton v-if="!user" @click="signInWithGoogle" variant="stroke">
+            Войти
+          </BaseButton>
+          <div v-else class="relative dropdown" @mouseleave="handleMouseLeave">
+            <div class="flex items-center gap-2 cursor-pointer nav-item">
+              <img :src="user.photoURL" alt="User Avatar" class="w-8 h-8 rounded-full border-2 border-gray">
+              <span class="font-semibold text-sm">{{ user.displayName }}</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+            </div>
+            <ul class="dropdown-menu !-left-4 !-translate-x-0" @mouseenter="cancelHideTimer">
+              <li>
+                <button @click="signOut" class="dropdown-item w-full">Выйти</button>
+              </li>
+            </ul>
+          </div>
+        </div>
+
       </div>
     </header>
 
@@ -108,7 +132,7 @@ const cancelHideTimer = () => {
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-x-8">
           <div class="flex flex-col space-y-6">
             <div class="flex items-center space-x-3">
-              <img src="@/assets/images/layout/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-10">
+              <img src="@/assets/images/layout/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-15">
             </div>
             <div class="pt-2">
               <h3 class="font-semibold text-white text-h5-panda">Подпишитесь на рассылку</h3>
@@ -194,8 +218,8 @@ const cancelHideTimer = () => {
 .site-header {
   display: flex;
   align-items: center;
-  padding-top: 0.8rem;
-  padding-bottom: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1.2rem;
   padding-left: 2rem;
   padding-right: 2rem;
   background-color: #f7f7f7cc;
@@ -216,10 +240,11 @@ nav a, .nav-item {
   color: #131C26;
   text-decoration: none;
   cursor: pointer;
-  padding: 8px 0;
+  padding: 6px 0;
   transition: color 0.2s ease-in-out;
   display: flex;
   align-items: center;
+  font-size: 16px;
 }
 nav a:hover, .dropdown:hover .nav-item {
   color: #F15F31;
@@ -346,4 +371,17 @@ nav a.router-link-exact-active::after {
   opacity: 0;
   transform: translateY(10px) scale(0.98);
 }
+
+/* Специфичные классы для выпадающего меню пользователя */
+.dropdown-menu.\!-left-4 {
+  left: auto !important;
+  right: 0;
+  transform: translateX(0) !important;
+}
+.dropdown-menu.\!-left-4::before {
+  left: auto;
+  right: 1rem;
+  transform: translateX(0);
+}
+
 </style>
