@@ -266,7 +266,7 @@ nav a.router-link-exact-active::after {
   margin-top: 22px;
   background-color:#F7F7F7;
   min-width: 200px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   z-index: 20;
   border-radius: 8px;
   padding: 8px 0;
@@ -312,7 +312,7 @@ nav a.router-link-exact-active::after {
   height: 240px;
   background-color: white;
   border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   z-index: 50;
   cursor: pointer;
