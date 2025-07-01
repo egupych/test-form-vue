@@ -11,8 +11,6 @@ import SectionHeader from '@/components/ui/SectionHeader.vue';
           Акции
         </SectionHeader>
         
-        <p class="text-h5-panda text-dark-gray leading-relaxed text-center max-w-2xl mx-auto mb-10">Ознакомьтесь с нашими текущими акциями и специальными предложениями!</p>
-
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div class="bg-light-gray rounded-lg overflow-hidden p-6 text-center">
                 <img src="/src/assets/images/pages/PromotionsPage/cupon-new-client.svg" alt="Скидка на первый заказ" class="w-full h-auto object-cover rounded-md mb-4">

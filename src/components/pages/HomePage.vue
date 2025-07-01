@@ -119,7 +119,7 @@ const handleSubmit = async () => {
           ПОЧЕМУ ВАМ ПОНРАВИТСЯ С НАМИ РАБОТАТЬ
         </SectionHeader>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           <div class="space-y-3 bg-white p-6">
             <h3 class="text-h4-panda font-semibold text-panda-black">1. Персональный подход</h3>
             <p class="text-body-panda text-dark-gray">Мы рассчитываем стоимость индивидуально — с учётом ваших задач и пожеланий. Вы платите только за то, что действительно нужно, без лишних расходов.</p>
