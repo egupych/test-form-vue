@@ -18,6 +18,18 @@ const isSubmitting = ref(false);
 const message = ref('');
 const messageType = ref('success');
 
+// Состояние для загруженного файла
+const file = ref(null);
+
+// Обработчик выбора файла
+const handleFileUpload = (event) => {
+  const target = event.target;
+  if (target && target.files) {
+    file.value = target.files[0];
+  }
+};
+
+
 watch(() => props.promoCode, (newPromo) => {
   if (newPromo) {
     formData.promo = newPromo;
@@ -112,6 +124,7 @@ const handleSubmit = async () => {
         if (!response.ok) throw new Error(result.message || 'Ошибка сервера');
         showMessage(result.message, 'success');
         Object.keys(formData).forEach(key => formData[key] = '');
+        file.value = null;
     } catch (error) {
         console.error('Ошибка отправки формы:', error);
         showMessage(error.message || 'Ошибка соединения с сервером. Проверьте консоль.', 'error');
@@ -126,6 +139,19 @@ const handleSubmit = async () => {
     <div class="form-info">
       <h2 class="text-h2-panda font-bold">Расчёт<br>стоимости</h2>
       <p class="text-h5-panda font-semibold">С вами свяжется наш менеджер<br>в ближайшее время. Спасибо, что<br>обратились в наше печатное агентство!</p>
+      
+      <div class="mt-auto pt-4">
+        <label for="file-upload" class="upload-button">
+          <svg xmlns="http://www.w3.org/2000/svg" class="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
+          </svg>
+          <span class="upload-text">
+            {{ file ? file.name : 'Прикрепить макет' }}
+          </span>
+        </label>
+        <input id="file-upload" type="file" class="hidden" @change="handleFileUpload">
+        <p class="upload-caption">DOC, PDF, CDR, AI, PSD до 20 МБ</p>
+      </div>
     </div>
     <div class="form-body">
       <form @submit.prevent="handleSubmit" novalidate class="flex flex-col gap-2">
@@ -187,14 +213,53 @@ const handleSubmit = async () => {
 </template>
 
 <style scoped>
-/* Изменяем стили .form-wrapper, чтобы он был более гибким */
-.form-wrapper {
-  display: grid;
-  grid-template-columns: 1fr; /* По умолчанию одна колонка */
-  gap: 40px; /* Уменьшаем отступ между колонками */
+.upload-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  padding: 24px;
+  border: 2px dashed #E3E3E3;
+  background-color: #F7F7F7;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  font-family: 'Gilroy-Semibold', sans-serif;
+  color: #8F8F8F;
+  border-radius: 16px;
 }
 
-/* Для экранов шире 768px возвращаем две колонки */
+.upload-button:hover {
+  border-color: #F15F31;
+  color: #F15F31;
+  background-color: #fff;
+}
+
+.upload-icon {
+  width: 24px;
+  height: 24px;
+  margin-right: 8px;
+}
+
+.upload-text {
+  font-size: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.upload-caption {
+  font-size: 12px;
+  color: #8F8F8F;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.form-wrapper {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 40px;
+}
+
 @media (min-width: 768px) {
   .form-wrapper {
     grid-template-columns: 1fr 1fr;
