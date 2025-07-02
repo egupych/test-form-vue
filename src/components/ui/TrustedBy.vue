@@ -3,7 +3,7 @@ import { ref, computed } from 'vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 
 // --- ИЗМЕНЕНИЕ: Исправлен синтаксис с () на {} ---
-const logoModules = import.meta.glob('@/assets/images/HomePage/TrustedBy/*.{svg,png,jpg,jpeg}', { eager: true });
+const logoModules = import.meta.glob('@/assets/images/pages/HomePage/TrustedBy/*.{svg,png,jpg,jpeg}', { eager: true });
 
 // Этот код обрабатывает найденные файлы и создает массив для отображения.
 const allLogos = Object.entries(logoModules).map(([path, module], index) => {
