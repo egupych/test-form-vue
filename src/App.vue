@@ -27,7 +27,7 @@ const navLinks = [
   { name: 'Портфолио', path: '/gallery', preview: previewGallery },
   { name: 'Акции', path: '/promotions', preview: null },
   { name: 'Магазин', path: '/shop', preview: previewShop },
-  { name: 'Подготовка к печати', path: '/preparation', preview: null },
+  { name: 'Подготовка', path: '/preparation', preview: null },
 ];
 
 const route = useRoute();

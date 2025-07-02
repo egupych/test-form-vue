@@ -2,6 +2,7 @@
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import ServicesGrid from '@/components/ui/ServicesGrid.vue';
 import CalculationForm from '@/components/ui/CalculationForm.vue';
+import TrustedBy from '@/components/ui/TrustedBy.vue';
 </script>
 
 
@@ -54,6 +55,8 @@ import CalculationForm from '@/components/ui/CalculationForm.vue';
           </div>
         </div>
       </section>
+
+      <TrustedBy />
 
       <section class="gap-page">
         <CalculationForm /> </section>
