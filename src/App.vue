@@ -3,6 +3,7 @@ import { ref } from 'vue';
 import { useRoute } from 'vue-router';
 import InteractiveMap from './components/ui/InteractiveMap.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
+import WeatherWidget from '@/components/ui/WeatherWidget.vue';
 import { useAuth } from '@/composables/useAuth.js';
 
 import previewHome from '@/assets/images/app/previews/preview-home.jpg';
@@ -16,6 +17,7 @@ const navLinks = [
   {
     name: 'О нас',
     isDropdown: true,
+    id: 'about', // ID для управления состоянием
     children: [
       { name: 'Команда', path: '/team' },
       { name: 'Новости', path: '/news' },
@@ -30,36 +32,53 @@ const navLinks = [
 ];
 
 const route = useRoute();
-const activeLink = ref(null);
-const previewStyle = ref({});
-const isPreviewVisible = ref(false);
+
+// --- Логика для отображения выпадающих меню ---
+const activeDropdown = ref(null);
 let hideTimer = null;
 
-const handleMouseEnter = (event, link) => {
+const showDropdown = (id) => {
   if (hideTimer) clearTimeout(hideTimer);
+  activeDropdown.value = id;
+};
+
+const hideDropdown = () => {
+  hideTimer = setTimeout(() => {
+    activeDropdown.value = null;
+  }, 100);
+};
+
+// --- Логика для превью страниц ---
+const activePreviewLink = ref(null);
+const previewStyle = ref({});
+const isPreviewVisible = ref(false);
+let hidePreviewTimer = null;
+
+const handleMouseEnterPreview = (event, link) => {
+  if (hidePreviewTimer) clearTimeout(hidePreviewTimer);
   if (link.preview && route.path !== link.path) {
     const linkRect = event.currentTarget.getBoundingClientRect();
     const PREVIEW_WIDTH = 320;
     const left = linkRect.left + (linkRect.width / 2) - (PREVIEW_WIDTH / 2);
     const top = linkRect.bottom + 22;
     previewStyle.value = { top: `${top}px`, left: `${left}px` };
-    activeLink.value = link;
+    activePreviewLink.value = link;
     isPreviewVisible.value = true;
   } else {
     isPreviewVisible.value = false;
-    activeLink.value = null;
+    activePreviewLink.value = null;
   }
 };
 
-const handleMouseLeave = () => {
-  hideTimer = setTimeout(() => {
+const handleMouseLeavePreview = () => {
+  hidePreviewTimer = setTimeout(() => {
     isPreviewVisible.value = false;
-    activeLink.value = null;
+    activePreviewLink.value = null;
   }, 200);
 };
 
-const cancelHideTimer = () => {
-  if (hideTimer) clearTimeout(hideTimer);
+const cancelHidePreviewTimer = () => {
+  if (hidePreviewTimer) clearTimeout(hidePreviewTimer);
 };
 </script>
 
@@ -78,8 +97,8 @@ const cancelHideTimer = () => {
               :key="link.name"
               class="relative"
               :class="{ 'dropdown': link.isDropdown }"
-              @mouseenter="handleMouseEnter($event, link)"
-              @mouseleave="handleMouseLeave"
+              @mouseenter="handleMouseEnterPreview($event, link); if (link.isDropdown) showDropdown(link.id);"
+              @mouseleave="handleMouseLeavePreview(); if (link.isDropdown) hideDropdown();"
             >
               <router-link v-if="!link.isDropdown" :to="link.path">
                 {{ link.name }}
@@ -88,35 +107,54 @@ const cancelHideTimer = () => {
                 {{ link.name }}
                 <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
               </div>
-              <ul
-                v-if="link.isDropdown"
-                class="dropdown-menu"
-                @mouseenter="cancelHideTimer"
-                @mouseleave="handleMouseLeave"
-              >
-                <li v-for="child in link.children" :key="child.name">
-                  <router-link :to="child.path" class="dropdown-item">{{ child.name }}</router-link>
-                </li>
-              </ul>
+              
+              <transition name="slide-down">
+                <ul
+                  v-if="link.isDropdown && activeDropdown === link.id"
+                  class="dropdown-menu"
+                  @mouseenter="showDropdown(link.id)"
+                  @mouseleave="hideDropdown()"
+                >
+                  <li v-for="child in link.children" :key="child.name">
+                    <router-link :to="child.path" class="dropdown-item">{{ child.name }}</router-link>
+                  </li>
+                </ul>
+              </transition>
+
             </li>
           </ul>
         </nav>
 
-        <div class="flex items-center flex-none">
+        <div class="flex items-center flex-none gap-4">
+          <WeatherWidget />
           <BaseButton v-if="!user" @click="signInWithGoogle" variant="stroke">
             Войти
           </BaseButton>
-          <div v-else class="relative dropdown" @mouseleave="handleMouseLeave">
+          <div 
+            v-else 
+            class="relative dropdown"
+            @mouseenter="showDropdown('user')"
+            @mouseleave="hideDropdown()"
+          >
             <div class="flex items-center gap-2 cursor-pointer nav-item">
               <img :src="user.photoURL" alt="User Avatar" class="w-8 h-8 rounded-full border-2 border-gray">
               <span class="font-semibold text-sm">{{ user.displayName }}</span>
               <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
             </div>
-            <ul class="dropdown-menu !-left-4 !-translate-x-0" @mouseenter="cancelHideTimer">
-              <li>
-                <button @click="signOut" class="dropdown-item w-full">Выйти</button>
-              </li>
-            </ul>
+
+            <transition name="slide-down">
+                <ul 
+                  v-if="activeDropdown === 'user'"
+                  class="dropdown-menu user-menu" 
+                  @mouseenter="showDropdown('user')"
+                  @mouseleave="hideDropdown()"
+                >
+                  <li>
+                    <button @click="signOut" class="dropdown-item w-full">Выйти</button>
+                  </li>
+                </ul>
+            </transition>
+
           </div>
         </div>
 
@@ -128,87 +166,88 @@ const cancelHideTimer = () => {
     </main>
 
     <footer class="text-light-gray bg-panda-black text-gray-400 font-medium">
-      <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-x-8">
-          <div class="flex flex-col space-y-6">
-            <div class="flex items-center space-x-3">
-              <img src="@/assets/images/layout/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-15">
+        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-x-8">
+                <div class="flex flex-col space-y-6">
+                    <div class="flex items-center space-x-3">
+                    <img src="@/assets/images/layout/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-15">
+                    </div>
+                    <div class="pt-2">
+                    <h3 class="font-semibold text-white text-h5-panda">Подпишитесь на рассылку</h3>
+                    <p class="text-sm text-dark-gray">о будущих акциях</p>
+                    </div>
+                    <form class="space-y-4 max-w-sm" @submit.prevent>
+                    <input
+                        type="email"
+                        placeholder="Ваш email-адрес"
+                        class="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
+                    >
+                    <div class="flex items-start">
+                        <input id="consent" type="checkbox" class="h-4 w-4 mt-1 bg-transparent rounded border-gray-500 text-panda-orange focus:ring-panda-orange focus:ring-offset-panda-black">
+                        <label for="consent" class="ml-3 text-xs">
+                        Вы соглашаетесь на информационную рассылку. Отписаться можно в любое время.
+                        </label>
+                    </div>
+                    <button
+                        type="submit"
+                        class="w-full bg-white text-panda-black font-bold py-3 px-4 rounded-full hover:bg-gray-200 transition-colors"
+                    >
+                        Подписаться
+                    </button>
+                    </form>
+                </div>
+                <div class="flex flex-col items-start md:items-center text-left md:text-center space-y-4">
+                    <div class="w-full max-w-sm h-80 rounded-2xl overflow-hidden">
+                        <InteractiveMap />
+                    </div>
+                    <div class="text-sm">
+                    <p>Астана, Шоссе Коргалжын, 6</p>
+                    <p>ПН-ПТ 10:00-18:00</p>
+                    </div>
+                </div>
+                <div class="flex flex-col items-start lg:items-end space-y-5 text-left lg:text-right">
+                    <div class="flex space-x-4">
+                    <div class="text-center">
+                        <img src="@/assets/images/layout/QR-site.svg" alt="QR Code redpanda.kz" class="w-24 h-24 rounded-md p-1">
+                        <p class="text-md mt-1">redpanda.kz</p>
+                    </div>
+                    <div class="text-center">
+                        <img src="@/assets/images/layout/QR-instagram.svg" alt="QR Code redpandakz" class="w-24 h-24 rounded-md p-1">
+                        <p class="text-md mt-1">redpandakz</p>
+                    </div>
+                    </div>
+                    <div class="flex flex-wrap justify-start lg:justify-end gap-2">
+                    <a href="https://wa.me/77007257799" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Whatsapp</a>
+                    <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Instagram</a>
+                    <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">2GIS</a>
+                    </div>
+                    <div class="text-sm">
+                    <p>+7 (700) 725-77-99</p>
+                    <p>infoprint@redpanda.kz</p>
+                    <p>TOO «RED PANDA» БИН 221240030264</p>
+                    </div>
+                </div>
             </div>
-            <div class="pt-2">
-              <h3 class="font-semibold text-white text-h5-panda">Подпишитесь на рассылку</h3>
-              <p class="text-sm text-dark-gray">о будущих акциях</p>
-            </div>
-            <form class="space-y-4 max-w-sm" @submit.prevent>
-              <input
-                type="email"
-                placeholder="Ваш email-адрес"
-                class="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
-              >
-              <div class="flex items-start">
-                <input id="consent" type="checkbox" class="h-4 w-4 mt-1 bg-transparent rounded border-gray-500 text-panda-orange focus:ring-panda-orange focus:ring-offset-panda-black">
-                <label for="consent" class="ml-3 text-xs">
-                  Вы соглашаетесь на информационную рассылку. Отписаться можно в любое время.
-                </label>
-              </div>
-              <button
-                type="submit"
-                class="w-full bg-white text-panda-black font-bold py-3 px-4 rounded-full hover:bg-gray-200 transition-colors"
-              >
-                Подписаться
-              </button>
-            </form>
-          </div>
-          <div class="flex flex-col items-start md:items-center text-left md:text-center space-y-4">
-            <div class="w-full max-w-sm h-80 rounded-2xl overflow-hidden">
-                <InteractiveMap />
-            </div>
-            <div class="text-sm">
-              <p>Астана, Шоссе Коргалжын, 6</p>
-              <p>ПН-ПТ 10:00-18:00</p>
-            </div>
-          </div>
-          <div class="flex flex-col items-start lg:items-end space-y-5 text-left lg:text-right">
-            <div class="flex space-x-4">
-              <div class="text-center">
-                <img src="@/assets/images/layout/QR-site.svg" alt="QR Code redpanda.kz" class="w-24 h-24 rounded-md p-1">
-                <p class="text-md mt-1">redpanda.kz</p>
-              </div>
-              <div class="text-center">
-                <img src="@/assets/images/layout/QR-instagram.svg" alt="QR Code redpandakz" class="w-24 h-24 rounded-md p-1">
-                <p class="text-md mt-1">redpandakz</p>
-              </div>
-            </div>
-            <div class="flex flex-wrap justify-start lg:justify-end gap-2">
-              <a href="https://wa.me/77007257799" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Whatsapp</a>
-              <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Instagram</a>
-              <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">2GIS</a>
-            </div>
-            <div class="text-sm">
-              <p>+7 (700) 725-77-99</p>
-              <p>infoprint@redpanda.kz</p>
-              <p>TOO «RED PANDA» БИН 221240030264</p>
-            </div>
-          </div>
         </div>
-      </div>
     </footer>
+    
     <transition name="preview">
       <router-link
-        v-if="isPreviewVisible && activeLink"
-        :to="activeLink.path"
+        v-if="isPreviewVisible && activePreviewLink"
+        :to="activePreviewLink.path"
         class="preview-window"
         :style="previewStyle"
-        @mouseenter="cancelHideTimer"
-        @mouseleave="handleMouseLeave"
+        @mouseenter="cancelHidePreviewTimer"
+        @mouseleave="handleMouseLeavePreview"
       >
-        <img :src="activeLink.preview" alt="Page preview" class="preview-image">
+        <img :src="activePreviewLink.preview" alt="Page preview" class="preview-image">
       </router-link>
     </transition>
   </div>
 </template>
 
 <style scoped>
-/* Стили для основного макета */
+/* Основные стили макета без изменений */
 .site-container {
   display: flex;
   flex-direction: column;
@@ -283,7 +322,6 @@ nav a.router-link-exact-active::after {
 
 /* Стили для выпадающего меню */
 .dropdown-menu {
-  display: none;
   position: absolute;
   top: 100%;
   left: 50%;
@@ -310,9 +348,6 @@ nav a.router-link-exact-active::after {
   filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.03));
 }
 
-.dropdown:hover .dropdown-menu {
-  display: block;
-}
 .dropdown-item {
   color: black;
   padding: 12px 16px;
@@ -364,6 +399,25 @@ nav a.router-link-exact-active::after {
 .preview-window:hover .preview-image {
   transform: scale(1.1) translateY(-10px);
 }
+
+/* ИСПРАВЛЕННАЯ АНИМАЦИЯ */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.slide-down-enter-from,
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateX(-50%) translateY(-10px);
+}
+
+.user-menu.slide-down-enter-from,
+.user-menu.slide-down-leave-to {
+    transform: translateY(-10px); /* Убираем translateX для меню пользователя */
+}
+
+/* Анимация для превью */
 .preview-enter-active, .preview-leave-active {
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
@@ -371,14 +425,13 @@ nav a.router-link-exact-active::after {
   opacity: 0;
   transform: translateY(10px) scale(0.98);
 }
-
-/* Специфичные классы для выпадающего меню пользователя */
-.dropdown-menu.\!-left-4 {
+/* Стили для меню пользователя */
+.user-menu {
   left: auto !important;
   right: 0;
   transform: translateX(0) !important;
 }
-.dropdown-menu.\!-left-4::before {
+.user-menu::before {
   left: auto;
   right: 1rem;
   transform: translateX(0);
