@@ -20,8 +20,8 @@
                 </span>
                 <img :src="getWeatherIcon(weather.daily.weathercode[index])" alt="Иконка погоды" class="forecast-icon">
                 <span class="forecast-temp">
-                  <span class="max-temp">{{ Math.round(weather.daily.temperature_2m_max[index]) }}°</span>
-                  <span class="min-temp">/ {{ Math.round(weather.daily.temperature_2m_min[index]) }}°</span>
+                  <span class="max-temp">{{ Math.round(weather.daily.temperature_2m_max[index]) }}</span>
+                  <span class="min-temp"> / {{ Math.round(weather.daily.temperature_2m_min[index]) }}</span>
                 </span>
               </div>
           </div>
@@ -96,12 +96,13 @@
   }
   
   .temperature {
-      margin-right: 8px;
+      padding-left: 8px;
+      padding-right: 2px;
   }
   
   .weather-icon-wrapper {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;

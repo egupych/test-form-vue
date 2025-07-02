@@ -163,3 +163,8 @@
 .button:hover:before {
   bottom: calc(var(--height) + var(--gap-between-tooltip-to-button));
 }
+
+::selection {
+  background-color: #89C869; /* Цвет фона выделения */
+  color: #131C26; /* Цвет текста внутри выделения */
+}

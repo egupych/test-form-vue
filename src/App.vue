@@ -5,7 +5,6 @@ import InteractiveMap from './components/ui/InteractiveMap.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import WeatherWidget from '@/components/ui/WeatherWidget.vue';
 import { useAuth } from '@/composables/useAuth.js';
-
 import previewHome from '@/assets/images/app/previews/preview-home.jpg';
 import previewGallery from '@/assets/images/app/previews/preview-gallery.jpg';
 import previewShop from '@/assets/images/app/previews/preview-shop.jpg';
