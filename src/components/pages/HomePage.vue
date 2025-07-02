@@ -1,8 +1,9 @@
 <script setup>
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import ServicesGrid from '@/components/ui/ServicesGrid.vue';
-import CalculationForm from '@/components/ui/CalculationForm.vue'; // <-- 1. Импортируем новый компонент формы
+import CalculationForm from '@/components/ui/CalculationForm.vue';
 </script>
+
 
 <template>
   <main class="py-10 md:py-25">
