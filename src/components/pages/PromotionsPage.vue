@@ -1,30 +1,137 @@
 <script setup>
+import { ref } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
-// --- ИЗМЕНЕНИЕ: Импортируем компонент заголовка ---
 import SectionHeader from '@/components/ui/SectionHeader.vue';
+import CalculationForm from '@/components/ui/CalculationForm.vue';
+
+const promotions = ref([
+  {
+    id: 1,
+    title: 'Скидка 15% на первый заказ',
+    description: 'Для всех новых клиентов Red Panda.',
+    image: '/src/assets/images/pages/PromotionsPage/cupon-new-client.svg',
+    promo: 'NEW15',
+    buttonVariant: 'fill-black',
+  },
+  {
+    id: 2,
+    title: 'Скидка 10% до 1 сентября',
+    description: 'Подготовьтесь к новому учебному году или сезону с выгодой!',
+    image: '/src/assets/images/pages/PromotionsPage/cupom-back-to-school.svg',
+    promo: 'SCHOOL10',
+    buttonVariant: 'fill-black',
+  }
+]);
+
+const isPopupVisible = ref(false);
+const activePromoCode = ref('');
+
+const openPopup = (promoCode) => {
+  activePromoCode.value = promoCode;
+  isPopupVisible.value = true;
+};
+
+const closePopup = () => {
+  isPopupVisible.value = false;
+  activePromoCode.value = '';
+};
 </script>
 
 <template>
-  <main class="py-10 md:py-25"> <div class="max-w-6xl mx-auto">
-        
-        <SectionHeader class="gap-container">
-          Акции
-        </SectionHeader>
+  <main class="py-10 md:py-25">
+    <div class="max-w-6xl mx-auto">
+        <SectionHeader class="gap-container">Акции</SectionHeader>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div class="bg-light-gray rounded-lg overflow-hidden p-6 text-center">
-                <img src="/src/assets/images/pages/PromotionsPage/cupon-new-client.svg" alt="Скидка на первый заказ" class="w-full h-auto object-cover rounded-md mb-4">
-                <h2 class="font-semibold text-panda-black text-h4-panda mb-2">Скидка 15% на первый заказ</h2>
-                <p class="text-body-panda text-dark-gray mb-4">Для всех новых клиентов Red Panda.</p>
-                <BaseButton to="/" variant="fill-orange">Воспользоваться</BaseButton>
-            </div>
-            <div class="bg-light-gray rounded-lg overflow-hidden p-6 text-center">
-                <img src="/src/assets/images/pages/PromotionsPage/cupom-back-to-school.svg" alt="Скидка к школе" class="w-full h-auto object-cover rounded-md mb-4">
-                <h2 class="font-semibold text-panda-black text-h4-panda mb-2">Скидка 10% до 1 сентября</h2>
-                <p class="text-body-panda text-dark-gray mb-4">Подготовьтесь к новому учебному году или сезону с выгодой!</p>
-                <BaseButton to="/" variant="fill-black">Воспользоваться</BaseButton>
+            <div v-for="promo in promotions" :key="promo.id" class="bg-light-gray rounded-lg overflow-hidden p-6 text-center">
+                <img :src="promo.image" :alt="promo.title" class="w-full h-auto object-cover rounded-md mb-4">
+                <h2 class="font-semibold text-panda-black text-h4-panda mb-2">{{ promo.title }}</h2>
+                <p class="text-body-panda text-dark-gray mb-4">{{ promo.description }}</p>
+                <BaseButton @click="openPopup(promo.promo)" :variant="promo.buttonVariant">
+                  Воспользоваться
+                </BaseButton>
             </div>
         </div>
     </div>
+
+    <Teleport to="body">
+      <transition name="popup">
+        <div v-if="isPopupVisible" class="popup-overlay" @click.self="closePopup">
+          <div class="popup-container">
+            <button @click="closePopup" class="popup-close-button">&times;</button>
+            <CalculationForm :promo-code="activePromoCode" />
+          </div>
+        </div>
+      </transition>
+    </Teleport>
   </main>
 </template>
+
+<style scoped>
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.4); /* Менее темный фон */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem; /* Добавим отступы для маленьких экранов */
+}
+
+.popup-container {
+  position: relative;
+  background: white;
+  /* border-radius: 16px; - убрали скругление */
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 100%; /* Ширина будет зависеть от контента */
+  max-width: 1140px; /* Ограничим максимальную ширину */
+  transform: scale(1);
+  transition: transform 0.3s ease;
+  overflow-y: auto; /* Добавим скролл на случай, если форма не помещается */
+  max-height: 95vh; /* Ограничим высоту */
+}
+
+/* Убираем padding у формы, когда она внутри попапа */
+.popup-container > :deep(.form-wrapper) {
+  padding: 7rem !important; /* Используем important, чтобы перебить Tailwind классы */
+}
+
+.popup-close-button {
+  position: absolute;
+  top: 15px;
+  right: 22px;
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  line-height: 1;
+  color: #8F8F8F;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 1;
+}
+
+.popup-close-button:hover {
+  color: #131C26;
+}
+
+.popup-enter-active,
+.popup-leave-active {
+  transition: opacity 0.3s ease;
+}
+.popup-enter-from,
+.popup-leave-to {
+  opacity: 0;
+}
+.popup-enter-active .popup-container,
+.popup-leave-active .popup-container {
+  transition: all 0.3s ease;
+}
+.popup-enter-from .popup-container,
+.popup-leave-to .popup-container {
+  transform: scale(0.95);
+}
+</style>

@@ -3,6 +3,13 @@ import { reactive, ref, computed, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import { useAuth } from '@/composables/useAuth.js';
 
+const props = defineProps({
+  promoCode: {
+    type: String,
+    default: ''
+  }
+});
+
 const { user } = useAuth();
 
 const formData = reactive({ name: '', phone: '', email: '', company: '', task: '', promo: '' });
@@ -10,6 +17,12 @@ const errors = reactive({ name: '', phone: '', email: '', task: '' });
 const isSubmitting = ref(false);
 const message = ref('');
 const messageType = ref('success');
+
+watch(() => props.promoCode, (newPromo) => {
+  if (newPromo) {
+    formData.promo = newPromo;
+  }
+}, { immediate: true });
 
 watch(user, (currentUser) => {
   if (currentUser) {
@@ -174,9 +187,29 @@ const handleSubmit = async () => {
 </template>
 
 <style scoped>
-.form-wrapper { display: flex; justify-content: space-between; gap: 60px; align-items: flex-start; }
-.form-info { display: flex; flex-direction: column; gap: 20px;}
-.form-body { flex-basis: 50%; }
+/* Изменяем стили .form-wrapper, чтобы он был более гибким */
+.form-wrapper {
+  display: grid;
+  grid-template-columns: 1fr; /* По умолчанию одна колонка */
+  gap: 40px; /* Уменьшаем отступ между колонками */
+}
+
+/* Для экранов шире 768px возвращаем две колонки */
+@media (min-width: 768px) {
+  .form-wrapper {
+    grid-template-columns: 1fr 1fr;
+    gap: 60px;
+  }
+}
+
+.form-info {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.form-body {
+  width: 100%;
+}
 
 .form-group .error-message {
   color: #F15F31;
@@ -190,12 +223,12 @@ input, textarea {
   width: 100%;
   border: none;
   border-bottom: 1px solid #E3E3E3;
-  padding: 10px 4px; /* Добавлен отступ слева и справа */
+  padding: 10px 4px;
   color: #131C26;
   background-color: transparent;
   transition: background-color 0.2s ease;
   position: relative;
-  z-index: 1; /* Чтобы текст был над анимированной линией */
+  z-index: 1;
 }
 
 input::placeholder, textarea::placeholder { color: #8F8F8F; }
@@ -222,12 +255,11 @@ input:hover, textarea:hover {
   bottom: 0;
   left: 0;
   transition: width 0.3s ease-in-out;
-  z-index: 2; /* Линия анимации над серой линией */
+  z-index: 2;
 }
 
-/* Корректировка для textarea */
 .form-control-textarea .input-border {
-  bottom: 8px; /* Поднимаем линию для textarea */
+  bottom: 8px;
 }
 
 input:focus ~ .input-border,
