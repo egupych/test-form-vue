@@ -3,6 +3,9 @@ import { reactive, ref, computed, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import { useAuth } from '@/composables/useAuth.js';
 
+const MAX_FILES = 10;
+const MAX_TOTAL_SIZE = 100 * 1024 * 1024; // 100 MB
+
 const props = defineProps({
   promoCode: {
     type: String,
@@ -18,15 +21,57 @@ const isSubmitting = ref(false);
 const message = ref('');
 const messageType = ref('success');
 
-// Состояние для загруженного файла
-const file = ref(null);
+const files = ref([]);
 
-// Обработчик выбора файла
+const hoveredFileUrl = ref(null);
+const previewStyle = ref({});
+
+const handleFileMouseEnter = (event, file) => {
+  if (file.type.startsWith('image/')) {
+    const rect = event.currentTarget.getBoundingClientRect();
+    hoveredFileUrl.value = URL.createObjectURL(file);
+    previewStyle.value = {
+      top: `${rect.top}px`,
+      left: `${rect.right + 15}px`,
+    };
+  }
+};
+
+const handleFileMouseLeave = () => {
+  if (hoveredFileUrl.value) {
+    URL.revokeObjectURL(hoveredFileUrl.value);
+    hoveredFileUrl.value = null;
+  }
+};
+
+
 const handleFileUpload = (event) => {
   const target = event.target;
   if (target && target.files) {
-    file.value = target.files[0];
+    const newFiles = Array.from(target.files);
+
+    if (files.value.length + newFiles.length > MAX_FILES) {
+      showMessage(`Вы не можете загрузить больше ${MAX_FILES} файлов.`, 'error');
+      target.value = '';
+      return;
+    }
+
+    const currentSize = files.value.reduce((acc, file) => acc + file.size, 0);
+    const newSize = newFiles.reduce((acc, file) => acc + file.size, 0);
+
+    if (currentSize + newSize > MAX_TOTAL_SIZE) {
+      showMessage(`Общий размер файлов не должен превышать 100 МБ.`, 'error');
+      target.value = '';
+      return;
+    }
+    
+    files.value.push(...newFiles);
   }
+  target.value = '';
+};
+
+const removeFile = (index) => {
+  files.value.splice(index, 1);
 };
 
 
@@ -114,17 +159,31 @@ const handleSubmit = async () => {
         return;
     }
     isSubmitting.value = true;
+    
+    const data = new FormData();
+    
+    for (const key in formData) {
+        data.append(key, formData[key]);
+    }
+    
+    if (files.value.length > 0) {
+        files.value.forEach(file => {
+            data.append('files', file);
+        });
+    }
+
     try {
         const response = await fetch('/api/submit-form', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
+            body: data
         });
+
         const result = await response.json();
         if (!response.ok) throw new Error(result.message || 'Ошибка сервера');
+        
         showMessage(result.message, 'success');
         Object.keys(formData).forEach(key => formData[key] = '');
-        file.value = null;
+        files.value = [];
     } catch (error) {
         console.error('Ошибка отправки формы:', error);
         showMessage(error.message || 'Ошибка соединения с сервером. Проверьте консоль.', 'error');
@@ -141,16 +200,29 @@ const handleSubmit = async () => {
       <p class="text-h5-panda font-semibold">С вами свяжется наш менеджер<br>в ближайшее время. Спасибо, что<br>обратились в наше печатное агентство!</p>
       
       <div class="mt-auto pt-4">
+        <div v-if="files.length > 0" class="file-list">
+          <div 
+            v-for="(file, index) in files" 
+            :key="file.name + index" 
+            class="file-item"
+            @mouseenter="handleFileMouseEnter($event, file)"
+            @mouseleave="handleFileMouseLeave"
+          >
+            <span class="file-name">{{ file.name }}</span>
+            <button @click="removeFile(index)" class="remove-file-button">&times;</button>
+          </div>
+        </div>
+
         <label for="file-upload" class="upload-button">
           <svg xmlns="http://www.w3.org/2000/svg" class="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
           <span class="upload-text">
-            {{ file ? file.name : 'Прикрепить макет' }}
+            {{ files.length > 0 ? `Добавить еще (${files.length} из ${MAX_FILES})` : 'Прикрепить макет' }}
           </span>
         </label>
-        <input id="file-upload" type="file" class="hidden" @change="handleFileUpload">
-        <p class="upload-caption">DOC, PDF, CDR, AI, PSD до 20 МБ</p>
+        <input id="file-upload" type="file" class="hidden" @change="handleFileUpload" multiple>
+        <p class="upload-caption">до 10 файлов, не более 100 МБ</p>
       </div>
     </div>
     <div class="form-body">
@@ -210,15 +282,89 @@ const handleSubmit = async () => {
        <div v-if="message" class="success-message mt-5" :class="[messageType === 'success' ? 'bg-panda-green' : 'bg-red-500']">{{ message }}</div>
     </div>
   </div>
+  
+  <Teleport to="body">
+    <transition name="preview">
+      <div v-if="hoveredFileUrl" class="file-preview-window" :style="previewStyle">
+        <img :src="hoveredFileUrl" alt="Предпросмотр файла" class="file-preview-image">
+      </div>
+    </transition>
+  </Teleport>
 </template>
 
 <style scoped>
+.file-preview-window {
+  position: fixed;
+  z-index: 9999;
+  width: 250px;
+  height: auto;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  pointer-events: none;
+  overflow: hidden;
+  /* border: 1px solid #e3e3e3; - убрали рамку */
+}
+.file-preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+.preview-enter-active,
+.preview-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.preview-enter-from,
+.preview-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+
+.file-list {
+  margin-bottom: 12px;
+  max-height: 125px;
+  overflow-y: auto;
+  padding: 4px;
+}
+.file-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background-color: #f7f7f7;
+  border-radius: 8px;
+  margin-bottom: 8px;
+}
+.file-item:last-child {
+  margin-bottom: 0;
+}
+.file-name {
+  font-size: 14px;
+  color: #131C26;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.remove-file-button {
+  background: none;
+  border: none;
+  color: #8F8F8F;
+  cursor: pointer;
+  font-size: 20px;
+  line-height: 1;
+  padding: 0 4px;
+  transition: color 0.2s;
+  margin-left: 8px;
+}
+.remove-file-button:hover {
+  color: #F15F31;
+}
 .upload-button {
   display: flex;
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 24px;
+  padding: 16px;
   border: 2px dashed #E3E3E3;
   background-color: #F7F7F7;
   cursor: pointer;
@@ -227,33 +373,28 @@ const handleSubmit = async () => {
   color: #8F8F8F;
   border-radius: 16px;
 }
-
 .upload-button:hover {
   border-color: #F15F31;
   color: #F15F31;
   background-color: #fff;
 }
-
 .upload-icon {
   width: 24px;
   height: 24px;
   margin-right: 8px;
 }
-
 .upload-text {
   font-size: 16px;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-
 .upload-caption {
   font-size: 12px;
   color: #8F8F8F;
   margin-top: 8px;
   text-align: center;
 }
-
 .form-wrapper {
   display: grid;
   grid-template-columns: 1fr;
@@ -262,6 +403,7 @@ const handleSubmit = async () => {
 
 @media (min-width: 768px) {
   .form-wrapper {
+    /* Меняем пропорции колонок */
     grid-template-columns: 1fr 1fr;
     gap: 60px;
   }
@@ -271,17 +413,17 @@ const handleSubmit = async () => {
   display: flex;
   flex-direction: column;
   gap: 20px;
+  /* Задаем максимальную ширину для левой колонки */
+  max-width: 450px; 
 }
 .form-body {
   width: 100%;
 }
-
 .form-group .error-message {
   color: #F15F31;
   font-size: 12px;
   margin-top: 4px;
 }
-
 input, textarea {
   font-family: 'Gilroy-Medium', sans-serif;
   font-size: 16px;
@@ -295,23 +437,18 @@ input, textarea {
   position: relative;
   z-index: 1;
 }
-
 input::placeholder, textarea::placeholder { color: #8F8F8F; }
 input:focus, textarea:focus { outline: none; }
-
 textarea {
   resize: vertical;
   min-height: 100px;
 }
-
 input:hover, textarea:hover {
   background-color: rgba(227, 227, 227, 0.2);
 }
-
 .form-control {
   position: relative;
 }
-
 .input-border {
   position: absolute;
   background: #F15F31;
@@ -322,16 +459,13 @@ input:hover, textarea:hover {
   transition: width 0.3s ease-in-out;
   z-index: 2;
 }
-
 .form-control-textarea .input-border {
   bottom: 8px;
 }
-
 input:focus ~ .input-border,
 textarea:focus ~ .input-border {
   width: 100%;
 }
-
 .form-button { font-family: 'Gilroy-Semibold', sans-serif; padding: 12px 30px; color: #FFFFFF; background-color: #F15F31; border: none; border-radius: 9999px; cursor: pointer; transition: background-color 0.3s ease; min-width: 180px; font-size: 16px; }
 .form-button:hover { background-color: #d9532a; }
 .form-button:disabled { opacity: 0.5; cursor: not-allowed; }
