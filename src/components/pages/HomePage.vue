@@ -3,6 +3,7 @@ import SectionHeader from '@/components/ui/SectionHeader.vue';
 import ServicesGrid from '@/components/ui/ServicesGrid.vue';
 import CalculationForm from '@/components/ui/CalculationForm.vue';
 import TrustedBy from '@/components/ui/TrustedBy.vue';
+import ReviewsSection from '@/components/ui/ReviewsSection.vue'; // <-- ДОБАВЛЕН ИМПОРТ
 </script>
 
 
@@ -58,8 +59,9 @@ import TrustedBy from '@/components/ui/TrustedBy.vue';
 
       <TrustedBy />
 
-      <section class="gap-page">
-        <CalculationForm /> </section>
+      <ReviewsSection class="gap-page" /> <section class="gap-page">
+        <CalculationForm /> 
+      </section>
 
     </div>
   </main>
