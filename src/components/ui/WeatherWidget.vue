@@ -13,7 +13,7 @@
   
       <transition name="slide-down">
           <div v-if="showForecast && weather" class="dropdown-menu">
-             <div v-for="(day, index) in weather.daily.time.slice(0, 7)" :key="index" class="forecast-day">
+             <div v-for="(day, index) in weather.daily.time.slice(0, 7)" :key="index" class="forecast-day" :class="{ 'next-week-text': isNextWeek(day) }">
                 <span class="day-info">
                   <span class="day-of-week">{{ new Date(day).toLocaleDateString('ru-RU', { weekday: 'short' }) }}</span>
                   <span class="day-number">{{ new Date(day).getDate() }}</span>
@@ -21,7 +21,7 @@
                 <img :src="getWeatherIcon(weather.daily.weathercode[index])" alt="Иконка погоды" class="forecast-icon">
                 <span class="forecast-temp">
                   <span class="max-temp">{{ Math.round(weather.daily.temperature_2m_max[index]) }}</span>
-                  <span class="min-temp"> / {{ Math.round(weather.daily.temperature_2m_min[index]) }}</span>
+                  <span class="min-temp">{{ Math.round(weather.daily.temperature_2m_min[index]) }}</span>
                 </span>
               </div>
           </div>
@@ -35,6 +35,22 @@
   const weather = ref(null);
   const error = ref(null);
   const showForecast = ref(false);
+  
+  const isNextWeek = (dateString) => {
+    const forecastDate = new Date(dateString);
+    forecastDate.setHours(0, 0, 0, 0);
+
+    const now = new Date();
+    now.setHours(0, 0, 0, 0);
+
+    const dayOfWeek = now.getDay();
+    const daysUntilSunday = (dayOfWeek === 0) ? 0 : 7 - dayOfWeek;
+
+    const endOfWeek = new Date(now);
+    endOfWeek.setDate(now.getDate() + daysUntilSunday);
+
+    return forecastDate > endOfWeek;
+  };
   
   const getWeatherIcon = (code) => {
     const base_url = 'https://www.amcharts.com/wp-content/themes/amcharts4/css/img/icons/weather/animated/';
@@ -117,7 +133,6 @@
     position: absolute;
     top: 100%;
     left: 50%;
-    /* Финальное состояние для анимации */
     transform: translateX(-50%) translateY(0);
     margin-top: 22px;
     background-color:#F7F7F7;
@@ -149,7 +164,9 @@
     padding: 8px;
     border-radius: 6px;
     transition: background-color 0.2s ease;
+    cursor: pointer;
   }
+  
   .forecast-day:hover {
     background-color: #E3E3E3;
   }
@@ -165,9 +182,11 @@
     font-family: 'Gilroy-SemiBold', sans-serif;
     font-size: 15px;
   }
+  
   .day-number {
     font-size: 14px;
-    color: #8F8F8F;
+    /* ИЗМЕНЕНИЕ: По умолчанию цвет числа стал основным (черным) */
+    color: #131C26;
   }
   
   .forecast-icon {
@@ -187,9 +206,10 @@
   .min-temp {
     font-size: 15px;
     color: #8F8F8F;
+    /* ИЗМЕНЕНИЕ: Добавлен отступ слева для отделения от максимальной температуры */
+    margin-left: 4px;
   }
   
-  /* ИСПРАВЛЕННАЯ АНИМАЦИЯ */
   .slide-down-enter-active,
   .slide-down-leave-active {
     transition: opacity 0.2s ease-out, transform 0.2s ease-out;
@@ -198,7 +218,18 @@
   .slide-down-enter-from,
   .slide-down-leave-to {
     opacity: 0;
-    /* ОБА СВОЙСТВА TRANSFORM В ОДНОМ МЕСТЕ */
     transform: translateX(-50%) translateY(-10px);
+  }
+
+  /* ИЗМЕНЕНИЕ: Теперь это правило также делает серым число (.day-number) */
+  .forecast-day.next-week-text .day-of-week,
+  .forecast-day.next-week-text .day-number,
+  .forecast-day.next-week-text .max-temp {
+    color: #8F8F8F;
+  }
+
+  .forecast-day.next-week-text .forecast-icon {
+    filter: grayscale(100%);
+    opacity: 0.8;
   }
   </style>
