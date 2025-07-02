@@ -13,7 +13,13 @@
   
       <transition name="slide-down">
           <div v-if="showForecast && weather" class="dropdown-menu">
-             <div v-for="(day, index) in weather.daily.time.slice(0, 7)" :key="index" class="forecast-day" :class="{ 'next-week-text': isNextWeek(day) }">
+             <div 
+                v-for="(day, index) in weather.daily.time.slice(0, 7)" 
+                :key="index" 
+                class="forecast-day" 
+                :class="{'next-week-text': isNextWeek(day)}"
+                :style="{'--bg-icon': `url(${getWeatherIcon(weather.daily.weathercode[index])})`}"
+              >
                 <span class="day-info">
                   <span class="day-of-week">{{ new Date(day).toLocaleDateString('ru-RU', { weekday: 'short' }) }}</span>
                   <span class="day-number">{{ new Date(day).getDate() }}</span>
@@ -27,9 +33,9 @@
           </div>
       </transition>
     </div>
-  </template>
+</template>
   
-  <script setup>
+<script setup>
   import { ref, onMounted } from 'vue';
   
   const weather = ref(null);
@@ -83,9 +89,9 @@
       console.error("Не удалось получить данные о погоде:", e);
     }
   });
-  </script>
+</script>
   
-  <style scoped>
+<style scoped>
   .weather-widget {
     position: relative;
   }
@@ -158,23 +164,31 @@
   
   .forecast-day {
     display: grid;
-    grid-template-columns: 60px 32px 1fr;
-    align-items: center;
+    grid-template-columns: 1fr auto 1fr;
     gap: 8px;
+    align-items: center;
     padding: 8px;
     border-radius: 6px;
     transition: background-color 0.2s ease;
     cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    z-index: 1;
+  }
+
+  .forecast-day > * {
+    position: relative;
+    z-index: 2;
   }
   
   .forecast-day:hover {
-    background-color: #E3E3E3;
+    background-color: #F7F7F7;
   }
   
   .day-info {
     display: flex;
     align-items: baseline;
-    gap: 5px;
+    gap: 4px;
   }
   
   .day-of-week {
@@ -185,18 +199,20 @@
   
   .day-number {
     font-size: 14px;
-    /* ИЗМЕНЕНИЕ: По умолчанию цвет числа стал основным (черным) */
     color: #131C26;
   }
   
   .forecast-icon {
-    width: 32px;
-    height: 32px;
+    width: 40px;
+    height: 40px;
     justify-self: center;
   }
+
   .forecast-temp {
-    text-align: right;
     font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
   }
   .max-temp {
     font-size: 16px;
@@ -206,8 +222,7 @@
   .min-temp {
     font-size: 15px;
     color: #8F8F8F;
-    /* ИЗМЕНЕНИЕ: Добавлен отступ слева для отделения от максимальной температуры */
-    margin-left: 4px;
+    margin-left: 8px;
   }
   
   .slide-down-enter-active,
@@ -221,7 +236,6 @@
     transform: translateX(-50%) translateY(-10px);
   }
 
-  /* ИЗМЕНЕНИЕ: Теперь это правило также делает серым число (.day-number) */
   .forecast-day.next-week-text .day-of-week,
   .forecast-day.next-week-text .day-number,
   .forecast-day.next-week-text .max-temp {
@@ -232,4 +246,39 @@
     filter: grayscale(100%);
     opacity: 0.8;
   }
-  </style>
+
+  /* ДОБАВЛЕНО: Новый стиль для фоновой иконки */
+  .forecast-day::before {
+    content: '';
+    position: absolute;
+    top: -10%; /* Немного выходим за границы для лучшего вида */
+    left: -10%;
+    width: 120%;
+    height: 120%;
+    z-index: 1; /* Под контентом */
+
+    /* Используем переменную, которую задали в :style */
+    background-image: var(--bg-icon); 
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+
+    /* Начальное состояние (скрыто) */
+    opacity: 0;
+    transform: scale(0.8);
+    transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+  }
+  
+  /* При наведении на строку, показываем иконку */
+  .forecast-day:hover::before {
+    opacity: 0.07; /* Очень низкая прозрачность для тонкого эффекта */
+    transform: scale(3);
+    filter: grayscale(100%);
+  }
+
+  /* Для серых дней делаем иконку тоже серой */
+  .forecast-day.next-week-text::before {
+    filter: grayscale(100%);
+  }
+
+</style>
