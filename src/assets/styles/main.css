@@ -1,3 +1,22 @@
+/* --- ЭТАП 4: СТИЛИ ДЛЯ ПЛАВНОЙ ПРОКРУТКИ --- */
+html.lenis {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
+/* --- КОНЕЦ СТИЛЕЙ ДЛЯ ПРОКРУТКИ --- */
+
+
 /* src/assets/styles/main.css */
 
 @tailwind base;
