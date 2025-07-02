@@ -1,12 +1,26 @@
 <script setup>
-import { reactive, ref, computed } from 'vue';
+import { reactive, ref, computed, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
+import { useAuth } from '@/composables/useAuth.js';
+
+const { user } = useAuth();
 
 const formData = reactive({ name: '', phone: '', email: '', company: '', task: '', promo: '' });
 const errors = reactive({ name: '', phone: '', email: '', task: '' });
 const isSubmitting = ref(false);
 const message = ref('');
 const messageType = ref('success');
+
+watch(user, (currentUser) => {
+  if (currentUser) {
+    if (!formData.name) {
+      formData.name = currentUser.displayName || '';
+    }
+    if (!formData.email) {
+      formData.email = currentUser.email || '';
+    }
+  }
+}, { immediate: true });
 
 const isFormValid = computed(() => (
     formData.name && !errors.name && formData.phone && !errors.phone &&
@@ -101,15 +115,49 @@ const handleSubmit = async () => {
       <p class="text-h5-panda font-semibold">С вами свяжется наш менеджер<br>в ближайшее время. Спасибо, что<br>обратились в наше печатное агентство!</p>
     </div>
     <div class="form-body">
-      <form @submit.prevent="handleSubmit" novalidate>
-        <div class="form-group"><input type="text" placeholder="Ваше имя" required v-model.trim="formData.name" @input="validateField('name')" :class="{ 'border-panda-orange': errors.name }"><div class="error-message" v-if="errors.name">{{ errors.name }}</div></div>
-        <div class="form-group"><input type="tel" placeholder="Телефон" required v-model="formData.phone" @input="formatPhoneInput" :class="{ 'border-panda-orange': errors.phone }"><div class="error-message" v-if="errors.phone">{{ errors.phone }}</div></div>
-        <div class="form-group"><input type="email" placeholder="@email" required v-model.trim="formData.email" @input="validateField('email')" :class="{ 'border-panda-orange': errors.email }"><div class="error-message" v-if="errors.email">{{ errors.email }}</div></div>
-        <div class="form-group"><input type="text" placeholder="Компания" v-model.trim="formData.company"></div>
-        <div class="form-group"><textarea placeholder="Опишите задачу" required v-model.trim="formData.task" @input="validateField('task')" :class="{ 'border-panda-orange': errors.task }"></textarea><div class="error-message" v-if="errors.task">{{ errors.task }}</div></div>
-        <div class="form-group"><input type="text" placeholder="Промокод" v-model.trim="formData.promo"></div>
-
-        <BaseButton type="submit" :disabled="isSubmitting || !isFormValid">
+      <form @submit.prevent="handleSubmit" novalidate class="flex flex-col gap-2">
+        <div class="form-group">
+          <div class="form-control">
+            <input type="text" placeholder="Ваше имя" required v-model.trim="formData.name" @input="validateField('name')" >
+            <span class="input-border"></span>
+          </div>
+          <div class="error-message" v-if="errors.name">{{ errors.name }}</div>
+        </div>
+        <div class="form-group">
+          <div class="form-control">
+            <input type="tel" placeholder="Телефон" required v-model="formData.phone" @input="formatPhoneInput">
+            <span class="input-border"></span>
+          </div>
+          <div class="error-message" v-if="errors.phone">{{ errors.phone }}</div>
+        </div>
+        <div class="form-group">
+          <div class="form-control">
+            <input type="email" placeholder="@email" required v-model.trim="formData.email" @input="validateField('email')">
+            <span class="input-border"></span>
+          </div>
+          <div class="error-message" v-if="errors.email">{{ errors.email }}</div>
+        </div>
+        <div class="form-group">
+          <div class="form-control">
+            <input type="text" placeholder="Компания" v-model.trim="formData.company">
+            <span class="input-border"></span>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="form-control form-control-textarea">
+            <textarea placeholder="Опишите задачу" required v-model.trim="formData.task" @input="validateField('task')"></textarea>
+            <span class="input-border"></span>
+          </div>
+          <div class="error-message" v-if="errors.task">{{ errors.task }}</div>
+        </div>
+        <div class="form-group">
+          <div class="form-control">
+            <input type="text" placeholder="Промокод" v-model.trim="formData.promo">
+            <span class="input-border"></span>
+          </div>
+        </div>
+        
+        <BaseButton type="submit" :disabled="isSubmitting || !isFormValid" class="mt-9">
           <div v-if="isSubmitting" class="flex items-center justify-center">
             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -126,18 +174,67 @@ const handleSubmit = async () => {
 </template>
 
 <style scoped>
-/* ИЗМЕНЕНИЕ: Классы p-25 и bg-panda-white добавлены прямо в тег <template> */
 .form-wrapper { display: flex; justify-content: space-between; gap: 60px; align-items: flex-start; }
 .form-info { display: flex; flex-direction: column; gap: 20px;}
 .form-body { flex-basis: 50%; }
-.form-group { margin-bottom: 20px; position: relative; }
-input, textarea {font-family: 'Gilroy-Medium', sans-serif; font-size: 16px;}
-/* ИЗМЕНЕНИЕ: Фон у полей ввода теперь прозрачный, чтобы был виден новый белый фон формы */
-input[type="text"], input[type="tel"], input[type="email"], textarea { width: 100%; border: none; border-bottom: 1px solid #E3E3E3; padding: 10px 0; color: #131C26; background-color: transparent; transition: border-color 0.3s ease; }
+
+.form-group .error-message {
+  color: #F15F31;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+input, textarea {
+  font-family: 'Gilroy-Medium', sans-serif;
+  font-size: 16px;
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #E3E3E3;
+  padding: 10px 4px; /* Добавлен отступ слева и справа */
+  color: #131C26;
+  background-color: transparent;
+  transition: background-color 0.2s ease;
+  position: relative;
+  z-index: 1; /* Чтобы текст был над анимированной линией */
+}
+
 input::placeholder, textarea::placeholder { color: #8F8F8F; }
-input:focus, textarea:focus { outline: none; border-bottom-color: #F15F31; }
-textarea { resize: vertical; min-height: 100px; }
-.form-group .error-message { color: #F15F31; font-size: 12px; position: absolute; bottom: -18px; left: 0; }
+input:focus, textarea:focus { outline: none; }
+
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+input:hover, textarea:hover {
+  background-color: rgba(227, 227, 227, 0.2);
+}
+
+.form-control {
+  position: relative;
+}
+
+.input-border {
+  position: absolute;
+  background: #F15F31;
+  width: 0%;
+  height: 2px;
+  bottom: 0;
+  left: 0;
+  transition: width 0.3s ease-in-out;
+  z-index: 2; /* Линия анимации над серой линией */
+}
+
+/* Корректировка для textarea */
+.form-control-textarea .input-border {
+  bottom: 8px; /* Поднимаем линию для textarea */
+}
+
+input:focus ~ .input-border,
+textarea:focus ~ .input-border {
+  width: 100%;
+}
+
 .form-button { font-family: 'Gilroy-Semibold', sans-serif; padding: 12px 30px; color: #FFFFFF; background-color: #F15F31; border: none; border-radius: 9999px; cursor: pointer; transition: background-color 0.3s ease; min-width: 180px; font-size: 16px; }
 .form-button:hover { background-color: #d9532a; }
 .form-button:disabled { opacity: 0.5; cursor: not-allowed; }

@@ -51,10 +51,3 @@ const variantClasses = computed(() => {
     <slot></slot>
   </component>
 </template>
-
-
-<!-- background-image: linear-gradient(180deg,#fff,#f5f5fa);
-                box-shadow: 0 4px 11px 0 rgb(37 44 97 / 15%), 0 1px 3px 0 rgb(93 100 148 / 20%);
-                transition: all .2s ease-out;
-                :hover{
-                    box-shadow: 0 8px 22px 0 rgb(37 44 97 / 15%), 0 4px 6px 0 rgb(93 100 148 / 20%); -->
