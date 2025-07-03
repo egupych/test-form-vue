@@ -8,14 +8,11 @@ import path from 'path';
 import admin from 'firebase-admin';
 import { fileURLToPath } from 'url';
 import 'dotenv/config';
-
-// 1. Импортируем multer
 import multer from 'multer';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// 2. Настраиваем multer для сохранения файлов в папку 'uploads'
 const upload = multer({ dest: 'uploads/' });
 
 const requiredEnv = [
@@ -59,10 +56,11 @@ transporter.verify((error) => {
     }
 });
 
+// --- ИЗМЕНЕНИЕ: Добавляем bodyParser для чтения JSON-тела запроса ---
+app.use(express.json());
 app.use(helmet());
-// Мы больше не используем глобальный bodyParser.json(), так как multer обрабатывает тело запроса
-// app.use(bodyParser.json()); 
 app.use(cors());
+
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
     max: 100,
@@ -71,12 +69,10 @@ app.use('/api/', limiter);
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// 3. Обновляем обработчик роута, добавляя middleware от multer
 app.post(
     '/api/submit-form',
-    upload.single('file'), // 'file' - это имя поля, которое мы указали в FormData на клиенте
+    upload.single('file'), 
     [
-        // Валидация остается без изменений
         body('name').trim().notEmpty().withMessage('Имя не может быть пустым'),
         body('phone').trim().notEmpty().withMessage('Телефон не может быть пустым'),
         body('email').trim().isEmail().withMessage('Некорректный email адрес'),
@@ -88,7 +84,6 @@ app.post(
             return res.status(400).json({ success: false, message: 'Ошибка валидации', errors: errors.array() });
         }
 
-        // Текстовые поля теперь в req.body, а файл в req.file
         const { name, phone, email, company, task, promo } = req.body;
         const file = req.file;
 
@@ -104,13 +99,12 @@ app.post(
         };
         
         try {
-            // 4. Добавляем прикрепленный файл в письмо
             const mailOptions = {
                 from: `"Форма с сайта RedPanda" <${process.env.EMAIL_USER}>`,
                 to: process.env.EMAIL_RECEIVER,
                 subject: `Новая заявка с сайта от ${name}`,
                 html: `<div style="font-family: Arial, sans-serif; line-height: 1.6;"><h2>Новая заявка на расчёт стоимости</h2><p><strong>Имя:</strong> ${name}</p><p><strong>Телефон:</strong> ${phone}</p><p><strong>Email:</strong> ${email}</p><p><strong>Компания:</strong> ${newSubmission.company}</p><p><strong>Промокод:</strong> ${newSubmission.promo}</p><hr><h3>Задача:</h3><p>${task}</p></div>`,
-                attachments: [] // Создаем массив для вложений
+                attachments: []
             };
 
             if (file) {
@@ -121,19 +115,48 @@ app.post(
             }
 
             await transporter.sendMail(mailOptions);
-            console.log(`Письмо с заявкой от ${name} успешно отправлено.`);
-
             const docRef = await db.collection('submissions').add(newSubmission);
-            console.log(`Заявка сохранена в Firestore с ID: ${docRef.id}`);
             
             res.status(200).json({ success: true, message: 'Заявка успешно отправлена!' });
         } catch (error) {
-            console.error('\x1b[31m=====================================');
-            console.error('      ОШИБКА ПРИ ОБРАБОТКЕ ЗАЯВКИ');
-            console.error('=====================================\x1b[0m');
-            console.error('Время:', new Date().toISOString());
-            console.error('Полные детали ошибки:', error);
-            res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера. См. консоль сервера.' });
+            console.error('ОШИБКА ПРИ ОБРАБОТКЕ ЗАЯВКИ:', error);
+            res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера.' });
+        }
+    }
+);
+
+// --- НОВЫЙ ENDPOINT ДЛЯ ПОДПИСКИ ---
+app.post(
+    '/api/subscribe',
+    [ // Валидация на сервере
+        body('email').trim().isEmail().withMessage('Некорректный email адрес.')
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            return res.status(400).json({ success: false, message: errors.array()[0].msg });
+        }
+
+        const { email } = req.body;
+        const subscribersRef = db.collection('subscribers');
+
+        try {
+            // Проверяем, не подписан ли уже такой email
+            const snapshot = await subscribersRef.where('email', '==', email).get();
+            if (!snapshot.empty) {
+                return res.status(409).json({ success: false, message: 'Вы уже подписаны на нашу рассылку!' });
+            }
+
+            // Добавляем нового подписчика
+            await subscribersRef.add({
+                email: email,
+                subscribedAt: admin.firestore.FieldValue.serverTimestamp()
+            });
+
+            res.status(200).json({ success: true, message: 'Спасибо за подписку!' });
+        } catch (error) {
+            console.error('ОШИБКА ПРИ ПОДПИСКЕ:', error);
+            res.status(500).json({ success: false, message: 'Произошла ошибка. Попробуйте снова.' });
         }
     }
 );

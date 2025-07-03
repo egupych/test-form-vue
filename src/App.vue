@@ -1,27 +1,25 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, reactive } from 'vue'; // --- ИЗМЕНЕНИЕ: Добавили reactive ---
 import { useRoute } from 'vue-router';
 import InteractiveMap from './components/ui/InteractiveMap.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import WeatherWidget from '@/components/ui/WeatherWidget.vue';
 import { useAuth } from '@/composables/useAuth.js';
-// --- ЭТАП 3: ИМПОРТ ФУНКЦИИ ---
 import { useSmoothScroll } from '@/composables/useSmoothScroll.js'; 
 import previewHome from '@/assets/images/app/previews/preview-home.jpg';
 import previewGallery from '@/assets/images/app/previews/preview-gallery.jpg';
 import previewShop from '@/assets/images/app/previews/preview-shop.jpg';
 
-// --- ЭТАП 3: ВЫЗОВ ФУНКЦИИ ---
 useSmoothScroll();
 
-const { user, signInWithGoogle, signOut } = useAuth();
+const { user, signOut } = useAuth(); // --- ИЗМЕНЕНИЕ: Убрали signInWithGoogle, он не нужен здесь ---
 
 const navLinks = [
   { name: 'Главная', path: '/', preview: previewHome },
   {
     name: 'О нас',
     isDropdown: true,
-    id: 'about', // ID для управления состоянием
+    id: 'about',
     children: [
       { name: 'Команда', path: '/team' },
       { name: 'Новости', path: '/news' },
@@ -36,8 +34,6 @@ const navLinks = [
 ];
 
 const route = useRoute();
-
-// --- Логика для отображения выпадающих меню ---
 const activeDropdown = ref(null);
 let hideTimer = null;
 
@@ -52,7 +48,6 @@ const hideDropdown = () => {
   }, 100);
 };
 
-// --- Логика для превью страниц ---
 const activePreviewLink = ref(null);
 const previewStyle = ref({});
 const isPreviewVisible = ref(false);
@@ -84,6 +79,51 @@ const handleMouseLeavePreview = () => {
 const cancelHidePreviewTimer = () => {
   if (hidePreviewTimer) clearTimeout(hidePreviewTimer);
 };
+
+// --- НОВАЯ ЛОГИКА ДЛЯ ФОРМЫ ПОДПИСКИ ---
+const subscription = reactive({
+  email: '',
+  consent: false,
+  isSubmitting: false,
+  message: '',
+  messageType: 'success' // 'success' или 'error'
+});
+
+const handleSubscription = async () => {
+  subscription.message = '';
+  if (!subscription.consent) {
+    subscription.message = 'Пожалуйста, дайте согласие на рассылку.';
+    subscription.messageType = 'error';
+    return;
+  }
+  
+  subscription.isSubmitting = true;
+  try {
+    const response = await fetch('/api/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: subscription.email })
+    });
+    const result = await response.json();
+
+    subscription.message = result.message;
+    if (!response.ok) {
+      subscription.messageType = 'error';
+    } else {
+      subscription.messageType = 'success';
+      subscription.email = '';
+      subscription.consent = false;
+    }
+
+  } catch (error) {
+    subscription.messageType = 'error';
+    subscription.message = 'Ошибка сети. Попробуйте позже.';
+    console.error('Ошибка подписки:', error);
+  } finally {
+    subscription.isSubmitting = false;
+  }
+};
+
 </script>
 
 <template>
@@ -124,7 +164,6 @@ const cancelHidePreviewTimer = () => {
                   </li>
                 </ul>
               </transition>
-
             </li>
           </ul>
         </nav>
@@ -158,10 +197,8 @@ const cancelHidePreviewTimer = () => {
                   </li>
                 </ul>
             </transition>
-
           </div>
         </div>
-
       </div>
     </header>
 
@@ -174,30 +211,43 @@ const cancelHidePreviewTimer = () => {
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-x-8">
                 <div class="flex flex-col space-y-6">
                     <div class="flex items-center space-x-3">
-                    <img src="@/assets/images/layout/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-15">
+                      <img src="@/assets/images/layout/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-15">
                     </div>
                     <div class="pt-2">
-                    <h3 class="font-semibold text-white text-h5-panda">Подпишитесь на рассылку</h3>
-                    <p class="text-sm text-dark-gray">о будущих акциях</p>
+                      <h3 class="font-semibold text-white text-h5-panda">Подпишитесь на рассылку</h3>
+                      <p class="text-sm text-dark-gray">о будущих акциях</p>
                     </div>
-                    <form class="space-y-4 max-w-sm" @submit.prevent>
-                    <input
-                        type="email"
-                        placeholder="Ваш email-адрес"
-                        class="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
-                    >
-                    <div class="flex items-start">
-                        <input id="consent" type="checkbox" class="h-4 w-4 mt-1 bg-transparent rounded border-gray-500 text-panda-orange focus:ring-panda-orange focus:ring-offset-panda-black">
-                        <label for="consent" class="ml-3 text-xs">
-                        Вы соглашаетесь на информационную рассылку. Отписаться можно в любое время.
-                        </label>
-                    </div>
-                    <button
-                        type="submit"
-                        class="w-full bg-white text-panda-black font-bold py-3 px-4 rounded-full hover:bg-gray-200 transition-colors"
-                    >
-                        Подписаться
-                    </button>
+                    <form class="space-y-4 max-w-sm" @submit.prevent="handleSubscription">
+                      <input
+                          v-model="subscription.email"
+                          type="email"
+                          placeholder="Ваш email-адрес"
+                          class="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
+                          required
+                      >
+                      <div class="flex items-start">
+                          <input 
+                            v-model="subscription.consent"
+                            id="consent" 
+                            type="checkbox" 
+                            class="h-4 w-4 mt-1 bg-transparent rounded border-gray-500 text-panda-orange focus:ring-panda-orange focus:ring-offset-panda-black"
+                          >
+                          <label for="consent" class="ml-3 text-xs">
+                            Вы соглашаетесь на информационную рассылку. Отписаться можно в любое время.
+                          </label>
+                      </div>
+                      <button
+                          type="submit"
+                          :disabled="subscription.isSubmitting"
+                          class="w-full bg-white text-panda-black font-bold py-3 px-4 rounded-full hover:bg-gray-200 transition-colors disabled:opacity-50"
+                      >
+                          {{ subscription.isSubmitting ? 'Отправка...' : 'Подписаться' }}
+                      </button>
+                       <div v-if="subscription.message" 
+                          :class="[subscription.messageType === 'success' ? 'text-panda-green' : 'text-panda-orange']"
+                          class="text-sm text-center pt-2">
+                          {{ subscription.message }}
+                      </div>
                     </form>
                 </div>
                 <div class="flex flex-col items-start md:items-center text-left md:text-center space-y-4">
@@ -211,24 +261,24 @@ const cancelHidePreviewTimer = () => {
                 </div>
                 <div class="flex flex-col items-start lg:items-end space-y-5 text-left lg:text-right">
                     <div class="flex space-x-4">
-                    <div class="text-center">
-                        <img src="@/assets/images/layout/QR-site.svg" alt="QR Code redpanda.kz" class="w-24 h-24 rounded-md p-1">
-                        <p class="text-md mt-1">redpanda.kz</p>
-                    </div>
-                    <div class="text-center">
-                        <img src="@/assets/images/layout/QR-instagram.svg" alt="QR Code redpandakz" class="w-24 h-24 rounded-md p-1">
-                        <p class="text-md mt-1">redpandakz</p>
-                    </div>
+                      <div class="text-center">
+                          <img src="@/assets/images/layout/QR-site.svg" alt="QR Code redpanda.kz" class="w-24 h-24 rounded-md p-1">
+                          <p class="text-md mt-1">redpanda.kz</p>
+                      </div>
+                      <div class="text-center">
+                          <img src="@/assets/images/layout/QR-instagram.svg" alt="QR Code redpandakz" class="w-24 h-24 rounded-md p-1">
+                          <p class="text-md mt-1">redpandakz</p>
+                      </div>
                     </div>
                     <div class="flex flex-wrap justify-start lg:justify-end gap-2">
-                    <a href="https://wa.me/77007257799" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Whatsapp</a>
-                    <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Instagram</a>
-                    <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">2GIS</a>
+                      <a href="https://wa.me/77007257799" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Whatsapp</a>
+                      <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Instagram</a>
+                      <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">2GIS</a>
                     </div>
                     <div class="text-sm">
-                    <p>+7 (700) 725-77-99</p>
-                    <p>infoprint@redpanda.kz</p>
-                    <p>TOO «RED PANDA» БИН 221240030264</p>
+                      <p>+7 (700) 725-77-99</p>
+                      <p>infoprint@redpanda.kz</p>
+                      <p>TOO «RED PANDA» БИН 221240030264</p>
                     </div>
                 </div>
             </div>
@@ -251,7 +301,7 @@ const cancelHidePreviewTimer = () => {
 </template>
 
 <style scoped>
-/* Основные стили макета без изменений */
+/* Все стили остаются прежними, здесь нет изменений */
 .site-container {
   display: flex;
   flex-direction: column;
@@ -275,8 +325,6 @@ const cancelHidePreviewTimer = () => {
 .main-content {
   flex-grow: 1;
 }
-
-/* Стили для навигации */
 nav a, .nav-item {
   position: relative;
   font-family: 'Gilroy-SemiBold', sans-serif;
@@ -323,8 +371,6 @@ nav a.router-link-exact-active::after {
   right: 0;
   height: 22px;
 }
-
-/* Стили для выпадающего меню */
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -368,8 +414,6 @@ nav a.router-link-exact-active::after {
   background-color: #f1f1f1;
   color: #F15F31;
 }
-
-/* Стили для окна предпросмотра */
 .preview-window {
   position: fixed;
   width: 320px;
@@ -403,25 +447,19 @@ nav a.router-link-exact-active::after {
 .preview-window:hover .preview-image {
   transform: scale(1.1) translateY(-10px);
 }
-
-/* ИСПРАВЛЕННАЯ АНИМАЦИЯ */
 .slide-down-enter-active,
 .slide-down-leave-active {
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
-
 .slide-down-enter-from,
 .slide-down-leave-to {
   opacity: 0;
   transform: translateX(-50%) translateY(-10px);
 }
-
 .user-menu.slide-down-enter-from,
 .user-menu.slide-down-leave-to {
-    transform: translateY(-10px); /* Убираем translateX для меню пользователя */
+    transform: translateY(-10px);
 }
-
-/* Анимация для превью */
 .preview-enter-active, .preview-leave-active {
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
@@ -429,7 +467,6 @@ nav a.router-link-exact-active::after {
   opacity: 0;
   transform: translateY(10px) scale(0.98);
 }
-/* Стили для меню пользователя */
 .user-menu {
   left: auto !important;
   right: 0;
@@ -440,5 +477,4 @@ nav a.router-link-exact-active::after {
   right: 1rem;
   transform: translateX(0);
 }
-
 </style>

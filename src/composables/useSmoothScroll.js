@@ -5,10 +5,23 @@ export function useSmoothScroll() {
   let lenis;
 
   onMounted(() => {
-    // Возвращаем первоначальные настройки
     lenis = new Lenis({
-      duration: 1.3, // Скорость анимации (чем больше, тем медленнее)
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), // Функция для плавности
+      // --- НОВЫЕ СБАЛАНСИРОВАННЫЕ НАСТРОЙКИ ---
+      
+      // `lerp` (коэффициент интерполяции) ~0.1 - это стандарт.
+      // Он дает заметную плавность, но не слишком "тягучую".
+      lerp: 0.1,
+      
+      // `duration` - оставляем стандартное значение,
+      // так как `lerp` теперь главный параметр.
+      duration: 1.2,
+      
+      // Убираем все кастомные `easing` функции,
+      // чтобы Lenis использовал свой внутренний,
+      // наиболее оптимизированный алгоритм.
+      
+      // --- КОНЕЦ НАСТРОЕК ---
+      
       direction: 'vertical',
       gestureDirection: 'vertical',
       smooth: true,
@@ -18,18 +31,15 @@ export function useSmoothScroll() {
       infinite: false,
     });
 
-    // Функция, которая будет вызываться на каждом кадре анимации
     function raf(time) {
       lenis.raf(time);
       requestAnimationFrame(raf);
     }
 
-    // Запускаем анимацию
     requestAnimationFrame(raf);
   });
 
   onUnmounted(() => {
-    // Уничтожаем экземпляр Lenis при уходе со страницы, чтобы избежать утечек памяти
     if (lenis) {
       lenis.destroy();
     }
