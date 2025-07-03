@@ -80,9 +80,10 @@ const cancelHidePreviewTimer = () => {
   if (hidePreviewTimer) clearTimeout(hidePreviewTimer);
 };
 
-// --- НОВАЯ ЛОГИКА ДЛЯ ФОРМЫ ПОДПИСКИ ---
+// --- ИЗМЕНЕНИЕ: ЛОГИКА ДЛЯ ФОРМЫ ПОДПИСКИ ---
 const subscription = reactive({
   email: '',
+  sphere: '', // <-- ДОБАВЛЕНО НОВОЕ ПОЛЕ
   consent: false,
   isSubmitting: false,
   message: '',
@@ -102,7 +103,8 @@ const handleSubscription = async () => {
     const response = await fetch('/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: subscription.email })
+      // --- ИЗМЕНЕНИЕ: Отправляем новое поле на сервер ---
+      body: JSON.stringify({ email: subscription.email, sphere: subscription.sphere }) 
     });
     const result = await response.json();
 
@@ -111,7 +113,9 @@ const handleSubscription = async () => {
       subscription.messageType = 'error';
     } else {
       subscription.messageType = 'success';
+      // --- ИЗМЕНЕНИЕ: Очищаем все поля формы ---
       subscription.email = '';
+      subscription.sphere = '';
       subscription.consent = false;
     }
 
@@ -224,6 +228,12 @@ const handleSubscription = async () => {
                           placeholder="Ваш email-адрес"
                           class="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
                           required
+                      >
+                      <input
+                          v-model="subscription.sphere"
+                          type="text"
+                          placeholder="Сфера вашего бизнеса"
+                          class="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
                       >
                       <div class="flex items-start">
                           <input 

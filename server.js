@@ -56,7 +56,6 @@ transporter.verify((error) => {
     }
 });
 
-// --- ИЗМЕНЕНИЕ: Добавляем bodyParser для чтения JSON-тела запроса ---
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
@@ -125,10 +124,10 @@ app.post(
     }
 );
 
-// --- НОВЫЙ ENDPOINT ДЛЯ ПОДПИСКИ ---
+// --- ИЗМЕНЕНИЕ: ENDPOINT ДЛЯ ПОДПИСКИ ---
 app.post(
     '/api/subscribe',
-    [ // Валидация на сервере
+    [ 
         body('email').trim().isEmail().withMessage('Некорректный email адрес.')
     ],
     async (req, res) => {
@@ -137,19 +136,20 @@ app.post(
             return res.status(400).json({ success: false, message: errors.array()[0].msg });
         }
 
-        const { email } = req.body;
+        // --- ИЗМЕНЕНИЕ: Получаем новое поле из запроса ---
+        const { email, sphere } = req.body;
         const subscribersRef = db.collection('subscribers');
 
         try {
-            // Проверяем, не подписан ли уже такой email
             const snapshot = await subscribersRef.where('email', '==', email).get();
             if (!snapshot.empty) {
                 return res.status(409).json({ success: false, message: 'Вы уже подписаны на нашу рассылку!' });
             }
 
-            // Добавляем нового подписчика
+            // --- ИЗМЕНЕНИЕ: Сохраняем новое поле в базу данных ---
             await subscribersRef.add({
                 email: email,
+                sphere: sphere || 'Не указана', // Если поле пустое, сохраняем заглушку
                 subscribedAt: admin.firestore.FieldValue.serverTimestamp()
             });
 
