@@ -131,7 +131,7 @@ const cancelHidePreviewTimer = () => {
 
         <div class="flex items-center flex-none gap-4">
           <WeatherWidget />
-          <BaseButton v-if="!user" @click="signInWithGoogle" variant="stroke">
+          <BaseButton v-if="!user" to="/auth" variant="stroke">
             Войти
           </BaseButton>
           <div 

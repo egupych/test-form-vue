@@ -13,9 +13,11 @@ import EquipmentPage from '../components/pages/EquipmentPage.vue';
 import PromotionsPage from '../components/pages/PromotionsPage.vue';
 import PreparationPage from '../components/pages/PreparationPage.vue';
 import NotFoundPage from '../components/pages/NotFoundPage.vue';
+import AuthPage from '../components/pages/AuthPage.vue'; // <-- ДОБАВЛЕН ИМПОРТ
 
 const routes = [
   { path: '/', name: 'Home', component: HomePage },
+  { path: '/auth', name: 'Auth', component: AuthPage }, // <-- ДОБАВЛЕН МАРШРУТ
   { path: '/gallery', name: 'Gallery', component: GalleryPage },
   { path: '/project-detail', name: 'ProjectDetail', component: ProjectDetailPage },
   { path: '/shop', name: 'Shop', component: ShopPage },

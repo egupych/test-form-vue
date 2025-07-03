@@ -1,8 +1,16 @@
 import { ref, onUnmounted } from 'vue';
-import { GoogleAuthProvider, signInWithPopup, signOut as firebaseSignOut, onAuthStateChanged } from 'firebase/auth';
+import {
+  GoogleAuthProvider,
+  signInWithPopup,
+  signOut as firebaseSignOut,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword, // <-- ДОБАВЛЕНО
+  signInWithEmailAndPassword,   // <-- ДОБАВЛЕНО
+} from 'firebase/auth';
 import { auth } from '../firebase'; // Импортируем auth из нашего файла
 
 const user = ref(null);
+const authError = ref(null); // <-- ДОБАВЛЕНО: для хранения ошибок
 
 const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
   if (firebaseUser) {
@@ -15,6 +23,7 @@ const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
   } else {
     user.value = null;
   }
+  authError.value = null; // Сбрасываем ошибку при изменении состояния
 });
 
 onUnmounted(() => {
@@ -22,22 +31,72 @@ onUnmounted(() => {
 });
 
 const signInWithGoogle = async () => {
+  authError.value = null;
   const provider = new GoogleAuthProvider();
   try {
     await signInWithPopup(auth, provider);
   } catch (error) {
     console.error("Ошибка аутентификации Google:", error);
+    authError.value = "Не удалось войти с помощью Google. Попробуйте снова.";
   }
 };
 
+// --- НОВАЯ ФУНКЦИЯ РЕГИСТРАЦИИ ---
+const signUpWithEmail = async (email, password) => {
+  authError.value = null;
+  try {
+    await createUserWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    console.error("Ошибка регистрации:", error.code);
+    switch (error.code) {
+      case 'auth/email-already-in-use':
+        authError.value = 'Этот email уже зарегистрирован.';
+        break;
+      case 'auth/weak-password':
+        authError.value = 'Пароль слишком слабый. Он должен содержать не менее 6 символов.';
+        break;
+      case 'auth/invalid-email':
+        authError.value = 'Некорректный email адрес.';
+        break;
+      default:
+        authError.value = 'Произошла ошибка при регистрации.';
+    }
+  }
+};
+
+// --- НОВАЯ ФУНКЦИЯ ВХОДА ---
+const signInWithEmail = async (email, password) => {
+  authError.value = null;
+  try {
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (error) {
+    console.error("Ошибка входа:", error.code);
+    switch (error.code) {
+      case 'auth/user-not-found':
+      case 'auth/wrong-password':
+      case 'auth/invalid-credential':
+        authError.value = 'Неправильный email или пароль.';
+        break;
+      case 'auth/invalid-email':
+        authError.value = 'Некорректный email адрес.';
+        break;
+      default:
+        authError.value = 'Произошла ошибка при входе.';
+    }
+  }
+};
+
+
 const signOut = async () => {
+  authError.value = null;
   try {
     await firebaseSignOut(auth);
   } catch (error) {
     console.error("Ошибка выхода:", error);
+    authError.value = "Произошла ошибка при выходе.";
   }
 };
 
 export function useAuth() {
-  return { user, signInWithGoogle, signOut };
+  return { user, authError, signInWithGoogle, signOut, signUpWithEmail, signInWithEmail };
 }
