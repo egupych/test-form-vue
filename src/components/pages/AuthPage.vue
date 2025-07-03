@@ -9,6 +9,7 @@ const router = useRouter();
 
 const isLoginView = ref(true);
 
+const name = ref(''); // <-- ДОБАВЛЕНО
 const email = ref('');
 const password = ref('');
 const isSubmitting = ref(false);
@@ -20,7 +21,8 @@ const handleAuth = async () => {
   if (isLoginView.value) {
     await signInWithEmail(email.value, password.value);
   } else {
-    await signUpWithEmail(email.value, password.value);
+    // Передаем имя в функцию регистрации
+    await signUpWithEmail(email.value, password.value, name.value); 
   }
   
   isSubmitting.value = false;
@@ -53,6 +55,13 @@ const handleGoogleSignIn = async () => {
         </p>
         
         <form @submit.prevent="handleAuth" class="space-y-6">
+          <div v-if="!isLoginView" class="form-group">
+            <div class="form-control">
+              <input type="text" placeholder="Ваше имя" required v-model.trim="name">
+              <span class="input-border"></span>
+            </div>
+          </div>
+
           <div class="form-group">
             <div class="form-control">
               <input type="email" placeholder="Email" required v-model.trim="email">
@@ -89,7 +98,7 @@ const handleGoogleSignIn = async () => {
         </div>
 
         <button @click="handleGoogleSignIn" class="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray rounded-full hover:bg-light-gray transition-colors">
-            <img src="/src/assets/images/pages/AuthPage/google-gradient-icon.svg" alt="Google" class="w-8 h-8">
+            <img src="@/assets/images/pages/AuthPage/google-gradient-icon.svg" alt="Google" class="w-7 h-7">
             <span class="text-panda-black font-semibold text-sm">Войти через Google</span>
         </button>
 

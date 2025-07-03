@@ -4,13 +4,15 @@ import {
   signInWithPopup,
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  createUserWithEmailAndPassword, // <-- ДОБАВЛЕНО
-  signInWithEmailAndPassword,   // <-- ДОБАВЛЕНО
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  updateProfile // <-- ДОБАВЛЕНО
 } from 'firebase/auth';
 import { auth } from '../firebase'; // Импортируем auth из нашего файла
+import defaultAvatar from '@/assets/images/app/avatar.svg'; // <-- ДОБАВЛЕНО
 
 const user = ref(null);
-const authError = ref(null); // <-- ДОБАВЛЕНО: для хранения ошибок
+const authError = ref(null);
 
 const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
   if (firebaseUser) {
@@ -23,7 +25,7 @@ const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
   } else {
     user.value = null;
   }
-  authError.value = null; // Сбрасываем ошибку при изменении состояния
+  authError.value = null;
 });
 
 onUnmounted(() => {
@@ -41,11 +43,26 @@ const signInWithGoogle = async () => {
   }
 };
 
-// --- НОВАЯ ФУНКЦИЯ РЕГИСТРАЦИИ ---
-const signUpWithEmail = async (email, password) => {
+// --- ОБНОВЛЕННАЯ ФУНКЦИЯ РЕГИСТРАЦИИ ---
+const signUpWithEmail = async (email, password, displayName) => {
   authError.value = null;
   try {
-    await createUserWithEmailAndPassword(auth, email, password);
+    // 1. Создаем пользователя
+    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+    
+    // 2. Обновляем его профиль, добавляя имя и аватарку
+    await updateProfile(userCredential.user, {
+      displayName: displayName,
+      photoURL: defaultAvatar 
+    });
+
+    // 3. Обновляем локальное состояние пользователя, чтобы изменения сразу отразились
+    user.value = {
+        ...user.value,
+        displayName: displayName,
+        photoURL: defaultAvatar,
+    };
+
   } catch (error) {
     console.error("Ошибка регистрации:", error.code);
     switch (error.code) {
@@ -64,7 +81,6 @@ const signUpWithEmail = async (email, password) => {
   }
 };
 
-// --- НОВАЯ ФУНКЦИЯ ВХОДА ---
 const signInWithEmail = async (email, password) => {
   authError.value = null;
   try {
