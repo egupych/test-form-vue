@@ -74,7 +74,10 @@ const closePopup = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.4); /* Менее темный фон */
+  /* --- ИЗМЕНЕНИЯ ЗДЕСЬ --- */
+  background-color: rgba(19, 28, 38, 0.8); /* Цвет как на главной для единообразия */
+  backdrop-filter: blur(5px);               /* Эффект размытия фона */
+  /* --- КОНЕЦ ИЗМЕНЕНИЙ --- */
   display: flex;
   justify-content: center;
   align-items: center;

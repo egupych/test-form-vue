@@ -1,10 +1,11 @@
 <script setup>
-import HeroSection from '@/components/ui/HeroSection.vue'; // <-- ДОБАВЛЕН ИМПОРТ
+import HeroSection from '@/components/ui/HeroSection.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import ServicesGrid from '@/components/ui/ServicesGrid.vue';
 import CalculationForm from '@/components/ui/CalculationForm.vue';
 import TrustedBy from '@/components/ui/TrustedBy.vue';
 import ReviewsSection from '@/components/ui/ReviewsSection.vue'; 
+import FaqAccordion from '@/components/ui/FaqAccordion.vue'; // <-- ДОБАВЛЕН ИМПОРТ
 </script>
 
 
@@ -62,7 +63,16 @@ import ReviewsSection from '@/components/ui/ReviewsSection.vue';
 
       <TrustedBy />
 
-      <ReviewsSection class="gap-page" /> <section class="gap-page">
+      <ReviewsSection class="gap-page" />
+      
+      <section class="gap-page">
+        <SectionHeader class="gap-container">
+          Частые вопросы
+        </SectionHeader>
+        <FaqAccordion />
+      </section>
+      
+      <section class="gap-page">
         <CalculationForm /> 
       </section>
 
