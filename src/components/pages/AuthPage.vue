@@ -1,42 +1,64 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 import { useAuth } from '@/composables/useAuth.js';
+import { auth } from '@/firebase.js';
 import BaseButton from '@/components/ui/BaseButton.vue';
 
-const { user, authError, signInWithGoogle, signUpWithEmail, signInWithEmail } = useAuth();
+const { 
+  authError, 
+  signInWithGoogle, 
+  sendSignInLink,
+  isSignInWithEmailLink,
+  signInWithEmailLink
+} = useAuth();
+
 const router = useRouter();
 
-const isLoginView = ref(true);
-
-const name = ref(''); // <-- ДОБАВЛЕНО
 const email = ref('');
-const password = ref('');
 const isSubmitting = ref(false);
+const linkSent = ref(false);
 
-const handleAuth = async () => {
-  isSubmitting.value = true;
-  authError.value = null;
-
-  if (isLoginView.value) {
-    await signInWithEmail(email.value, password.value);
-  } else {
-    // Передаем имя в функцию регистрации
-    await signUpWithEmail(email.value, password.value, name.value); 
+onMounted(async () => {
+  if (isSignInWithEmailLink(auth, window.location.href)) {
+    let storedEmail = window.localStorage.getItem('emailForSignIn');
+    if (!storedEmail) {
+      storedEmail = window.prompt('Пожалуйста, введите ваш email для завершения входа.');
+    }
+    
+    if (storedEmail) {
+      isSubmitting.value = true;
+      try {
+        await signInWithEmailLink(auth, storedEmail, window.location.href);
+        window.localStorage.removeItem('emailForSignIn');
+        router.push('/');
+      } catch (error) {
+        console.error("Ошибка при входе по ссылке:", error);
+        authError.value = "Неверная или истекшая ссылка. Попробуйте снова.";
+      } finally {
+        isSubmitting.value = false;
+      }
+    }
   }
-  
-  isSubmitting.value = false;
+});
 
-  if (user.value) {
-    router.push('/');
-  }
-};
+const handleSendLink = async () => {
+    isSubmitting.value = true;
+    authError.value = null;
+    linkSent.value = false;
+    
+    const success = await sendSignInLink(email.value);
+    
+    if (success) {
+        linkSent.value = true;
+    }
+    
+    isSubmitting.value = false;
+}
 
 const handleGoogleSignIn = async () => {
     await signInWithGoogle();
-    if (user.value) {
-        router.push('/');
-    }
+    router.push('/');
 }
 </script>
 
@@ -44,51 +66,31 @@ const handleGoogleSignIn = async () => {
   <main class="py-10 md:py-25">
     <div class="max-w-md mx-auto">
       <div class="bg-white p-8 rounded-3xl shadow-lg">
-        <h2 class="text-h3-panda font-bold text-center mb-2">
-          {{ isLoginView ? 'Вход в аккаунт' : 'Создание аккаунта' }}
-        </h2>
-        <p class="text-center text-dark-gray mb-8">
-          {{ isLoginView ? 'Нет аккаунта?' : 'Уже есть аккаунт?' }}
-          <button @click="isLoginView = !isLoginView" class="text-panda-orange font-semibold hover:underline">
-            {{ isLoginView ? 'Зарегистрироваться' : 'Войти' }}
-          </button>
-        </p>
         
-        <form @submit.prevent="handleAuth" class="space-y-6">
-          <div v-if="!isLoginView" class="form-group">
-            <div class="form-control">
-              <input type="text" placeholder="Ваше имя" required v-model.trim="name">
-              <span class="input-border"></span>
-            </div>
-          </div>
+        <h2 class="text-h3-panda font-bold text-center mb-2">Вход или регистрация</h2>
+        <p class="text-center text-dark-gray mb-8">
+            Введите ваш email, чтобы войти или создать аккаунт
+        </p>
 
-          <div class="form-group">
-            <div class="form-control">
-              <input type="email" placeholder="Email" required v-model.trim="email">
-              <span class="input-border"></span>
+        <div v-if="linkSent" class="text-center p-4 bg-green-100 text-green-800 rounded-lg mb-6">
+            <h3 class="font-bold">Ссылка отправлена!</h3>
+            <p>Проверьте вашу почту <span class="font-semibold">{{ email }}</span> и перейдите по ссылке для завершения входа.</p>
+        </div>
+        
+        <form v-else @submit.prevent="handleSendLink" class="space-y-6">
+            <div class="form-group">
+                <div class="form-control">
+                <input type="email" placeholder="Email" required v-model.trim="email">
+                <span class="input-border"></span>
+                </div>
             </div>
-          </div>
-          <div class="form-group">
-            <div class="form-control">
-              <input type="password" placeholder="Пароль" required v-model.trim="password" minlength="6">
-              <span class="input-border"></span>
+            <div v-if="authError" class="error-message text-center">
+                {{ authError }}
             </div>
-          </div>
-
-          <div v-if="authError" class="error-message text-center">
-            {{ authError }}
-          </div>
-
-          <BaseButton type="submit" :disabled="isSubmitting" class="w-full">
-            <div v-if="isSubmitting" class="flex items-center justify-center">
-              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Обработка...
-            </div>
-            <span v-else>{{ isLoginView ? 'Войти' : 'Создать аккаунт' }}</span>
-          </BaseButton>
+            <BaseButton type="submit" :disabled="isSubmitting" class="w-full">
+                <span v-if="!isSubmitting">Получить ссылку для входа</span>
+                <span v-else>Отправка...</span>
+            </BaseButton>
         </form>
 
         <div class="flex items-center my-6">
@@ -108,11 +110,12 @@ const handleGoogleSignIn = async () => {
 </template>
 
 <style scoped>
-/* Стили для полей ввода взяты из CalculationForm.vue для единообразия */
+/* Стили остаются такими же, как и были */
 .form-group .error-message {
   color: #F15F31;
   font-size: 14px;
   margin-top: 4px;
+  min-height: 20px;
 }
 input {
   font-family: 'Gilroy-Medium', sans-serif;

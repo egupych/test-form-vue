@@ -4,24 +4,34 @@ import {
   signInWithPopup,
   signOut as firebaseSignOut,
   onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  updateProfile // <-- ДОБАВЛЕНО
+  updateProfile, // Оставляем для возможных будущих обновлений профиля
+  sendSignInLinkToEmail,
+  isSignInWithEmailLink,
+  signInWithEmailLink
 } from 'firebase/auth';
-import { auth } from '../firebase'; // Импортируем auth из нашего файла
-import defaultAvatar from '@/assets/images/app/avatar.svg'; // <-- ДОБАВЛЕНО
+import { auth } from '../firebase';
+import defaultAvatar from '@/assets/images/app/avatar.svg';
 
 const user = ref(null);
 const authError = ref(null);
 
 const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
   if (firebaseUser) {
+    // При входе по ссылке может не быть displayName. Установим email в качестве имени, если его нет.
+    const displayName = firebaseUser.displayName || firebaseUser.email;
+    
+    // Если у нового пользователя нет фото, устанавливаем аватарку по умолчанию
+    if (firebaseUser.photoURL === null) {
+      updateProfile(firebaseUser, { photoURL: defaultAvatar });
+    }
+
     user.value = {
       uid: firebaseUser.uid,
-      displayName: firebaseUser.displayName,
+      displayName: displayName,
       email: firebaseUser.email,
-      photoURL: firebaseUser.photoURL,
+      photoURL: firebaseUser.photoURL || defaultAvatar,
     };
+
   } else {
     user.value = null;
   }
@@ -43,65 +53,29 @@ const signInWithGoogle = async () => {
   }
 };
 
-// --- ОБНОВЛЕННАЯ ФУНКЦИЯ РЕГИСТРАЦИИ ---
-const signUpWithEmail = async (email, password, displayName) => {
-  authError.value = null;
-  try {
-    // 1. Создаем пользователя
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    
-    // 2. Обновляем его профиль, добавляя имя и аватарку
-    await updateProfile(userCredential.user, {
-      displayName: displayName,
-      photoURL: defaultAvatar 
-    });
-
-    // 3. Обновляем локальное состояние пользователя, чтобы изменения сразу отразились
-    user.value = {
-        ...user.value,
-        displayName: displayName,
-        photoURL: defaultAvatar,
+const sendSignInLink = async (email) => {
+    authError.value = null;
+    const actionCodeSettings = {
+        url: `${window.location.origin}/auth`,
+        handleCodeInApp: true,
     };
 
-  } catch (error) {
-    console.error("Ошибка регистрации:", error.code);
-    switch (error.code) {
-      case 'auth/email-already-in-use':
-        authError.value = 'Этот email уже зарегистрирован.';
-        break;
-      case 'auth/weak-password':
-        authError.value = 'Пароль слишком слабый. Он должен содержать не менее 6 символов.';
-        break;
-      case 'auth/invalid-email':
-        authError.value = 'Некорректный email адрес.';
-        break;
-      default:
-        authError.value = 'Произошла ошибка при регистрации.';
+    try {
+        await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+        window.localStorage.setItem('emailForSignIn', email);
+        return true; 
+    } catch (error) {
+        console.error("Ошибка отправки ссылки:", error.code);
+        switch (error.code) {
+            case 'auth/invalid-email':
+                authError.value = 'Некорректный email адрес.';
+                break;
+            default:
+                authError.value = 'Не удалось отправить ссылку. Попробуйте позже.';
+        }
+        return false;
     }
-  }
 };
-
-const signInWithEmail = async (email, password) => {
-  authError.value = null;
-  try {
-    await signInWithEmailAndPassword(auth, email, password);
-  } catch (error) {
-    console.error("Ошибка входа:", error.code);
-    switch (error.code) {
-      case 'auth/user-not-found':
-      case 'auth/wrong-password':
-      case 'auth/invalid-credential':
-        authError.value = 'Неправильный email или пароль.';
-        break;
-      case 'auth/invalid-email':
-        authError.value = 'Некорректный email адрес.';
-        break;
-      default:
-        authError.value = 'Произошла ошибка при входе.';
-    }
-  }
-};
-
 
 const signOut = async () => {
   authError.value = null;
@@ -114,5 +88,13 @@ const signOut = async () => {
 };
 
 export function useAuth() {
-  return { user, authError, signInWithGoogle, signOut, signUpWithEmail, signInWithEmail };
+  return { 
+    user, 
+    authError, 
+    signInWithGoogle, 
+    signOut, 
+    sendSignInLink,
+    isSignInWithEmailLink,
+    signInWithEmailLink
+  };
 }
