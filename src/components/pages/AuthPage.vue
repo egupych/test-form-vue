@@ -89,7 +89,7 @@ const handleGoogleSignIn = async () => {
         </div>
 
         <button @click="handleGoogleSignIn" class="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray rounded-full hover:bg-light-gray transition-colors">
-            <img src="@/assets/images/pages/HomePage/TrustedBy/Rixos.svg" alt="Google" class="w-5 h-5">
+            <img src="/src/assets/images/pages/AuthPage/google-gradient-icon.svg" alt="Google" class="w-8 h-8">
             <span class="text-panda-black font-semibold text-sm">Войти через Google</span>
         </button>
 
