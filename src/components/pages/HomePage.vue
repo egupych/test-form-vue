@@ -1,17 +1,20 @@
 <script setup>
+import HeroSection from '@/components/ui/HeroSection.vue'; // <-- ДОБАВЛЕН ИМПОРТ
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import ServicesGrid from '@/components/ui/ServicesGrid.vue';
 import CalculationForm from '@/components/ui/CalculationForm.vue';
 import TrustedBy from '@/components/ui/TrustedBy.vue';
-import ReviewsSection from '@/components/ui/ReviewsSection.vue'; // <-- ДОБАВЛЕН ИМПОРТ
+import ReviewsSection from '@/components/ui/ReviewsSection.vue'; 
 </script>
 
 
 <template>
+  <HeroSection /> 
+
   <main class="py-10 md:py-25">
     <div class="max-w-6xl mx-auto px-4">
       
-      <section class="gap-page">
+      <section class=""> 
         <SectionHeader class="gap-container text-center">
             Все виды продукции от А до Я
         </SectionHeader>
@@ -68,5 +71,5 @@ import ReviewsSection from '@/components/ui/ReviewsSection.vue'; // <-- ДОБА
 </template>
 
 <style scoped>
-/* Все стили, связанные с формой, удалены, так как они теперь в CalculationForm.vue */
+/* Стили не нужны */
 </style>
