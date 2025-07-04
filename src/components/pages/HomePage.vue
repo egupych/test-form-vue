@@ -4,18 +4,19 @@ import SectionHeader from '@/components/ui/SectionHeader.vue';
 import ServicesGrid from '@/components/ui/ServicesGrid.vue';
 import CalculationForm from '@/components/ui/CalculationForm.vue';
 import TrustedBy from '@/components/ui/TrustedBy.vue';
-import ReviewsSection from '@/components/ui/ReviewsSection.vue'; 
-import FaqAccordion from '@/components/ui/FaqAccordion.vue'; // <-- ДОБАВЛЕН ИМПОРТ
+import ReviewsSection from '@/components/ui/ReviewsSection.vue';
+import FaqAccordion from '@/components/ui/FaqAccordion.vue';
+import FeedbackBlock from '@/components/ui/FeedbackBlock.vue'; // <-- ДОБАВЛЕН ИМПОРТ
 </script>
 
 
 <template>
-  <HeroSection /> 
+  <HeroSection />
 
   <main class="py-10 md:py-25">
     <div class="max-w-6xl mx-auto px-4">
-      
-      <section class=""> 
+
+      <section class="">
         <SectionHeader class="gap-container text-center">
             Все виды продукции от А до Я
         </SectionHeader>
@@ -23,7 +24,7 @@ import FaqAccordion from '@/components/ui/FaqAccordion.vue'; // <-- ДОБАВЛ
         <p class="text-h5-panda text-dark-gray text-center max-w-3xl mx-auto mb-15">
           Мы — современное печатное агентство, которое предоставляет полный спектр полиграфических услуг. Наведите курсор на услугу в таблице ниже, чтобы увидеть краткий предпросмотр.
         </p>
-        
+
         <ServicesGrid />
 
       </section>
@@ -63,17 +64,26 @@ import FaqAccordion from '@/components/ui/FaqAccordion.vue'; // <-- ДОБАВЛ
 
       <TrustedBy />
 
-      <ReviewsSection class="gap-page" />
-      
+      <section class="gap-page">
+        <ReviewsSection />
+      </section>
+
+      <section class="gap-page">
+        <SectionHeader class="gap-container">
+          Обратная связь
+        </SectionHeader>
+        <FeedbackBlock />
+      </section>
+
       <section class="gap-page">
         <SectionHeader class="gap-container">
           Частые вопросы
         </SectionHeader>
         <FaqAccordion />
       </section>
-      
+
       <section class="gap-page">
-        <CalculationForm /> 
+        <CalculationForm />
       </section>
 
     </div>
