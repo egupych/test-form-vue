@@ -1,3 +1,5 @@
+// egupych/test-form-vue/test-form-vue-e89867af06c86f9f3bb70c52bd333eef7bd73db6/server.js
+
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -9,11 +11,40 @@ import admin from 'firebase-admin';
 import { fileURLToPath } from 'url';
 import 'dotenv/config';
 import multer from 'multer';
+import fs from 'fs'; // <-- ДОБАВЛЕНО: модуль для работы с файлами
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const upload = multer({ dest: 'uploads/' });
+// --- ИЗМЕНЕНИЕ: Улучшенная конфигурация Multer ---
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB на один файл
+const ALLOWED_MIMETYPES = [
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+    'application/pdf', 'application/msword', 
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+    'application/vnd.ms-excel',
+    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
+    'application/vnd.ms-powerpoint',
+    'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
+    'application/zip', 'application/x-rar-compressed', 'application/x-7z-compressed',
+    'application/postscript', // .ai, .eps
+    'image/vnd.adobe.photoshop' // .psd
+];
+
+const upload = multer({
+    dest: 'uploads/',
+    limits: {
+        fileSize: MAX_FILE_SIZE 
+    },
+    fileFilter: (req, file, cb) => {
+        if (ALLOWED_MIMETYPES.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Недопустимый тип файла!'), false);
+        }
+    }
+});
+// --- КОНЕЦ ИЗМЕНЕНИЙ MULTER ---
 
 const requiredEnv = [
     'PORT', 'EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_SECURE', 'EMAIL_USER', 'EMAIL_PASS', 'EMAIL_RECEIVER',
@@ -58,7 +89,20 @@ transporter.verify((error) => {
 
 app.use(express.json());
 app.use(helmet());
-app.use(cors());
+
+// --- ИЗМЕНЕНИЕ: Более строгая политика CORS для продакшена ---
+const whitelist = ['http://localhost:5173', 'https://your-production-domain.com']; // Замените на ваш домен
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || whitelist.indexOf(origin) !== -1) {
+      callback(null, true)
+    } else {
+      callback(new Error('Not allowed by CORS'))
+    }
+  }
+}
+app.use(cors(corsOptions));
+// --- КОНЕЦ ИЗМЕНЕНИЙ CORS ---
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -68,9 +112,10 @@ app.use('/api/', limiter);
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
+// --- ИЗМЕНЕНИЕ: Обработчик теперь для нескольких файлов ---
 app.post(
     '/api/submit-form',
-    upload.single('file'), 
+    upload.array('files', 10), // Принимаем до 10 файлов
     [
         body('name').trim().notEmpty().withMessage('Имя не может быть пустым'),
         body('phone').trim().notEmpty().withMessage('Телефон не может быть пустым'),
@@ -80,11 +125,15 @@ app.post(
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
+            // Если есть ошибки валидации, удаляем загруженные файлы
+            if (req.files) {
+                req.files.forEach(file => fs.unlinkSync(file.path));
+            }
             return res.status(400).json({ success: false, message: 'Ошибка валидации', errors: errors.array() });
         }
 
         const { name, phone, email, company, task, promo } = req.body;
-        const file = req.file;
+        const files = req.files; // Теперь это массив
 
         const newSubmission = { 
             name, phone, email, 
@@ -94,7 +143,7 @@ app.post(
             timestamp: admin.firestore.FieldValue.serverTimestamp(), 
             ip: req.ip, 
             userAgent: req.headers['user-agent'],
-            fileName: file ? file.originalname : 'Нет файла'
+            fileNames: files && files.length > 0 ? files.map(f => f.originalname) : ['Нет файлов']
         };
         
         try {
@@ -106,25 +155,29 @@ app.post(
                 attachments: []
             };
 
-            if (file) {
-                mailOptions.attachments.push({
+            if (files && files.length > 0) {
+                mailOptions.attachments = files.map(file => ({
                     filename: file.originalname,
                     path: file.path
-                });
+                }));
             }
 
             await transporter.sendMail(mailOptions);
-            const docRef = await db.collection('submissions').add(newSubmission);
+            await db.collection('submissions').add(newSubmission);
             
             res.status(200).json({ success: true, message: 'Заявка успешно отправлена!' });
         } catch (error) {
             console.error('ОШИБКА ПРИ ОБРАБОТКЕ ЗАЯВКИ:', error);
             res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера.' });
+        } finally {
+            // --- ИЗМЕНЕНИЕ: Удаляем файлы после отправки ---
+            if (files && files.length > 0) {
+                files.forEach(file => fs.unlinkSync(file.path));
+            }
         }
     }
 );
 
-// --- ИЗМЕНЕНИЕ: ENDPOINT ДЛЯ ПОДПИСКИ ---
 app.post(
     '/api/subscribe',
     [ 
@@ -136,7 +189,6 @@ app.post(
             return res.status(400).json({ success: false, message: errors.array()[0].msg });
         }
 
-        // --- ИЗМЕНЕНИЕ: Получаем новое поле из запроса ---
         const { email, sphere } = req.body;
         const subscribersRef = db.collection('subscribers');
 
@@ -146,10 +198,9 @@ app.post(
                 return res.status(409).json({ success: false, message: 'Вы уже подписаны на нашу рассылку!' });
             }
 
-            // --- ИЗМЕНЕНИЕ: Сохраняем новое поле в базу данных ---
             await subscribersRef.add({
                 email: email,
-                sphere: sphere || 'Не указана', // Если поле пустое, сохраняем заглушку
+                sphere: sphere || 'Не указана',
                 subscribedAt: admin.firestore.FieldValue.serverTimestamp()
             });
 
@@ -160,6 +211,18 @@ app.post(
         }
     }
 );
+
+// --- ИЗМЕНЕНИЕ: Обработчик ошибок Multer ---
+app.use((error, req, res, next) => {
+    if (error instanceof multer.MulterError) {
+        if (error.code === 'LIMIT_FILE_SIZE') {
+            return res.status(400).json({ success: false, message: 'Файл слишком большой. Максимальный размер 10 МБ.' });
+        }
+    } else if (error) {
+        return res.status(400).json({ success: false, message: error.message });
+    }
+    next();
+});
 
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'dist', 'index.html'));
