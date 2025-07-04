@@ -2,11 +2,12 @@
 import HeroSection from '@/components/ui/HeroSection.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import ServicesGrid from '@/components/ui/ServicesGrid.vue';
+import PageSearch from '@/components/ui/PageSearch.vue'; // <-- [ИЗМЕНЕНИЕ] Импортируем новый компонент
 import CalculationForm from '@/components/ui/CalculationForm.vue';
 import TrustedBy from '@/components/ui/TrustedBy.vue';
 import ReviewsSection from '@/components/ui/ReviewsSection.vue';
 import FaqAccordion from '@/components/ui/FaqAccordion.vue';
-import FeedbackBlock from '@/components/ui/FeedbackBlock.vue'; // <-- ДОБАВЛЕН ИМПОРТ
+import FeedbackBlock from '@/components/ui/FeedbackBlock.vue';
 </script>
 
 
@@ -27,6 +28,10 @@ import FeedbackBlock from '@/components/ui/FeedbackBlock.vue'; // <-- ДОБАВ
 
         <ServicesGrid />
 
+      </section>
+
+      <section class="gap-page">
+        <PageSearch />
       </section>
 
       <section class="gap-page">

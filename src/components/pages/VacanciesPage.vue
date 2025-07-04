@@ -1,71 +1,65 @@
 <script setup>
 import { ref } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
-// --- ИЗМЕНЕНИЕ: Импортируем компонент заголовка ---
 import SectionHeader from '@/components/ui/SectionHeader.vue';
+// [НОВОЕ] 1. Импортируем наш новый компонент формы
+import TalentReserveForm from '@/components/ui/TalentReserveForm.vue';
 
+// --- Данные для списка вакансий (остаются без изменений) ---
 const vacancies = ref([
-  { 
-    id: 1, 
-    title: 'Офис-менеджер', 
-    salary: 'от 350 000 до 900 000 KZT', 
-    tags: ['Девушка', 'Без опыта'], 
-    conditions: 'Официальное трудоустройство. Рабочий день 09:00-18:00 (5/2).', 
+  {
+    id: 1,
+    title: 'Офис-менеджер',
+    salary: 'от 350 000 до 900 000 KZT',
+    tags: ['Девушка', 'Без опыта'],
+    conditions: 'Официальное трудоустройство. Рабочий день 09:00-18:00 (5/2).',
     responsibilities: [
-      'Ответы на телефонные звонки;', 
-      'Ведение деловой корреспонденции;', 
-      'Логистика;', 
-      'Административно-хозяйственная часть;', 
+      'Ответы на телефонные звонки;',
+      'Ведение деловой корреспонденции;',
+      'Логистика;',
+      'Административно-хозяйственная часть;',
       'Выполнение поручений руководителя.'
-    ] 
-  }, 
-  { 
-    id: 2, 
-    title: 'Печатник', 
-    salary: 'от 350 000 до 900 000 KZT', 
-    tags: ['Мужчина', 'Опыт 1-3 года'], 
-    conditions: 'Официальное трудоустройство. Рабочий день 09:00-18:00 (5/2).', 
+    ]
+  },
+  {
+    id: 2,
+    title: 'Печатник',
+    salary: 'от 350 000 до 900 000 KZT',
+    tags: ['Мужчина', 'Опыт 1-3 года'],
+    conditions: 'Официальное трудоустройство. Рабочий день 09:00-18:00 (5/2).',
     responsibilities: [
-      'Работа на машинах: Mimaki, Roland, XEROX;', 
+      'Работа на машинах: Mimaki, Roland, XEROX;',
       'Постпечатная обработка продукции.'
-    ] 
+    ]
   }
 ]);
 
-const formData = ref({ desiredPosition: '', name: '', phone: '', resume: null });
+// --- [ИЗМЕНЕНИЕ] Упрощенная логика страницы ---
+// Теперь нам нужна только одна переменная, чтобы передавать
+// название вакансии в компонент формы.
+const selectedPosition = ref('');
 
+// Функция для скролла к форме и передачи ей названия вакансии.
 const applyForPosition = (vacancyTitle) => {
-  formData.value.desiredPosition = vacancyTitle;
+  selectedPosition.value = vacancyTitle;
   const formElement = document.querySelector('.talent-reserve-form');
   if (formElement) {
     formElement.scrollIntoView({ behavior: 'smooth' });
   }
-};
-
-const handleFileUpload = (event) => {
-  const file = event.target.files[0];
-  if (file) {
-    formData.value.resume = file;
-  }
-};
-
-const submitApplication = () => {
-  alert(`Спасибо за отклик, ${formData.value.name}! Мы свяжемся с вами.`);
-  formData.value = { desiredPosition: '', name: '', phone: '', resume: null };
 };
 </script>
 
 <template>
   <main class="py-10 md:py-25">
     <div class="max-w-6xl mx-auto">
-      
+
       <section>
         <SectionHeader class="gap-container">
           Вакансии
         </SectionHeader>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div v-for="vacancy in vacancies" :key="vacancy.id" class="bg-white rounded-3xl p-8 relative">
+            <div v-for="vacancy in vacancies" :key="vacancy.id" class="bg-white p-8 relative">
                 <div class="flex justify-between items-start mb-4">
                     <h3 class="text-h4-panda font-bold text-gray-900 leading-tight">{{ vacancy.title }}</h3>
                     <div class="flex gap-2 ml-4">
@@ -87,26 +81,15 @@ const submitApplication = () => {
             </div>
         </div>
       </section>
-      
-      <section class="bg-white rounded-2xl p-8 talent-reserve-form gap-page">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-            <div>
-                <SectionHeader>
-                  Кадровый резерв
-                </SectionHeader>
-                <p class="text-h5-panda text-gray-600 text-center mt-4">Хотите работать у нас, но нет подходящей вакансии? Оставьте заявку!</p>
-            </div>
-            <div>
-                <form @submit.prevent="submitApplication" class="space-y-6">
-                    <div><input v-model="formData.desiredPosition" type="text" placeholder="Желаемая вакансия" class="w-full border-0 border-b border-gray-300 py-3 px-0 text-body-panda text-gray-900 placeholder-gray-500 bg-transparent focus:outline-none focus:border-orange-500 focus:ring-0" required></div>
-                    <div><input v-model="formData.name" type="text" placeholder="Ваше имя" class="w-full border-0 border-b border-gray-300 py-3 px-0 text-body-panda text-gray-900 placeholder-gray-500 bg-transparent focus:outline-none focus:border-orange-500 focus:ring-0" required></div>
-                    <div><input v-model="formData.phone" type="tel" placeholder="Телефон" class="w-full border-0 border-b border-gray-300 py-3 px-0 text-body-panda text-gray-900 placeholder-gray-500 bg-transparent focus:outline-none focus:border-orange-500 focus:ring-0" required></div>
-                    <div><label class="flex items-center gap-3 py-3 border-b border-gray-300 cursor-pointer text-gray-600 text-sm"><span class="text-2xl">📎</span><span>{{ formData.resume ? formData.resume.name : 'Приложите резюме или ссылку' }}</span><input type="file" @change="handleFileUpload" accept=".pdf,.doc,.docx" class="hidden"></label></div>
-                    <BaseButton type="submit" variant="fill-black">Отправить</BaseButton>
-                </form>
-            </div>
-        </div>
-      </section>
+
+      <div class="gap-page">
+        <TalentReserveForm :initialPosition="selectedPosition" />
+      </div>
+
     </div>
   </main>
 </template>
+
+<style scoped>
+/* Стили для этой страницы больше не нужны */
+</style>
