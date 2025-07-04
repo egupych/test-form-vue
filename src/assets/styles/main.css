@@ -57,10 +57,6 @@ html.lenis {
     font-style: normal;
 }
 
-/* УДАЛЕНО: Стили для body, так как они теперь в tailwind.config.js */
-
-/* УДАЛЕНО: Стили для img, a - лучше управлять ими по месту через классы */
-
 /* Стили для скроллбара остаются, так как это кастомизация */
 ::-webkit-scrollbar {
   width: 0.5rem;
@@ -73,13 +69,14 @@ html.lenis {
   background-color: #929292;
 }
 
-/* From Uiverse.io by satyamchaudharydev */ 
+/* --- ИЗМЕНЕНИЯ В СТИЛЯХ КНОПКИ-ПОДСКАЗКИ --- */
+/* From Uiverse.io by satyamchaudharydev - адаптировано */
 .button {
   --width: 100px;
   --height: 35px;
   --tooltip-height: 35px;
   --tooltip-width: 90px;
-  --gap-between-tooltip-to-button: 18px;
+  --gap-between-tooltip-to-button: 12px; /* Расстояние от кнопки до подсказки */
   --button-color: #131C26;
   --tooltip-color: #E3E3E3;
   width: var(--width);
@@ -101,26 +98,18 @@ html.lenis {
   color: #111;
   border-radius: .25em;
   line-height: var(--tooltip-height);
-  bottom: calc(var(--height) + var(--gap-between-tooltip-to-button) + 10px);
+  /* Позиционируем подсказку снизу */
+  top: calc(100% + var(--gap-between-tooltip-to-button));
   left: calc(50% - var(--tooltip-width) / 2);
-}
-
-.button::after {
-  position: absolute;
-  content: '';
-  width: 0;
-  height: 0;
-  border: 10px solid transparent;
-  border-top-color: var(--tooltip-color);
-  left: calc(50% - 10px);
-  bottom: calc(100% + var(--gap-between-tooltip-to-button) - 10px);
-}
-
-.button::after,.button::before {
+  /* Анимация */
   opacity: 0;
   visibility: hidden;
-  transition: all 0.2s;
+  transform: translateY(8px);
+  transition: all 0.25s ease;
+  pointer-events: none; /* Чтобы подсказка не мешала курсору */
 }
+
+/* Правило для стрелки (.button::after) полностью удалено */
 
 .text {
   display: flex;
@@ -170,17 +159,11 @@ html.lenis {
   top: 0;
 }
 
-.button:hover:before,.button:hover:after {
+.button:hover:before {
   opacity: 1;
   visibility: visible;
-}
-
-.button:hover:after {
-  bottom: calc(var(--height) + var(--gap-between-tooltip-to-button) - 20px);
-}
-
-.button:hover:before {
-  bottom: calc(var(--height) + var(--gap-between-tooltip-to-button));
+  /* Возвращаем в нормальное положение при наведении */
+  transform: translateY(0);
 }
 
 ::selection {

@@ -142,10 +142,23 @@ const templatesData = [
           </div>
         </div>
       </section>
-      <section class="text-center bg-light-gray rounded-3xl gap-page">
-        <h3 class="text-h5-panda font-semibold text-panda-black mb-4">Нет времени на подготовку файлов? <br>Оперативно сделаем за Вас!</h3>
-        <BaseButton to="/" variant="fill-orange">Написать менеджеру</BaseButton>
-      </section>
+
+      <div class="bg-light-gray rounded-2xl p-8 flex flex-col items-center justify-center text-center h-full">
+        <img src="/src/assets/images/pages/PreparationPage/call.svg" alt="Иконка документа" class="w-20 h-20 mb-6">
+        
+        <p class="text-h5-panda font-semibold text-panda-black mb-6 max-w-sm leading-tight">
+          Нет времени на подготовку файлов? <br>Оперативно сделаем за Вас!
+        </p>
+  
+        <BaseButton 
+          href="https://wa.me/77007257799" 
+          target="_blank" 
+          variant="fill-black"
+        >
+          Написать менеджеру
+        </BaseButton>
+      </div>
+
     </div>
   </main>
 </template>
