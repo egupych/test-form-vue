@@ -17,7 +17,7 @@ const stages = ref([
 ]);
 
 const activeIndex = ref(0);
-const containerRef = ref(null);
+const containerRef = ref(null); // Теперь это наш высокий контейнер-"трасса"
 let scrollListenerActive = false;
 
 const listWrapperRef = ref(null);
@@ -33,14 +33,35 @@ const setActiveStage = (index) => {
 
 const onScroll = () => {
   if (!containerRef.value) return;
-  const listContainer = containerRef.value.querySelector('.stages-list-container');
-  if (!listContainer) return;
-  const listRect = listContainer.getBoundingClientRect();
+
+  const trackRect = containerRef.value.getBoundingClientRect();
   const windowHeight = window.innerHeight;
+
+  // Точка активации, когда верх "трассы" доходит до середины экрана
   const activationPoint = windowHeight * 0.5;
-  const scrollableHeight = listRect.height - windowHeight * 0.4;
-  const progressPx = activationPoint - listRect.top;
+
+  // Сколько пикселей "трассы" можно проскроллить, пока эффект активен
+  // Вычитаем высоту окна, чтобы "отлипание" произошло, когда низ трассы достигнет низа окна
+  const scrollableHeight = trackRect.height - windowHeight;
+
+  // Прогресс в пикселях от начала "трассы"
+  const progressPx = activationPoint - trackRect.top;
+
+  // Прогресс в процентах (от 0 до 1)
   const progress = Math.max(0, Math.min(1, progressPx / scrollableHeight));
+  
+  if (trackRect.top > activationPoint) {
+      // Если мы еще не доскроллили до начала, показываем первый слайд
+      activeIndex.value = 0;
+      return;
+  }
+
+  if (trackRect.bottom < windowHeight) {
+      // Если мы уже проскроллили "трассу" до конца, показываем последний слайд
+      activeIndex.value = stages.value.length - 1;
+      return;
+  }
+
   const newIndex = Math.floor(progress * stages.value.length);
   activeIndex.value = Math.min(newIndex, stages.value.length - 1);
 };
@@ -48,6 +69,8 @@ const onScroll = () => {
 onMounted(() => {
   if (!containerRef.value) return;
 
+  // Наблюдатель, который включает/выключает обработчик скролла,
+  // когда "трасса" появляется или исчезает из вида. Это экономит ресурсы.
   const scrollObserver = new IntersectionObserver((entries) => {
     const entry = entries[0];
     if (entry.isIntersecting) {
@@ -63,7 +86,8 @@ onMounted(() => {
     }
   });
   scrollObserver.observe(containerRef.value);
-
+  
+  // Этот код синхронизирует высоту блока с картинкой и блока со списком
   let resizeObserver = null;
   if (listWrapperRef.value && imageContainerRef.value) {
     resizeObserver = new ResizeObserver(entries => {
@@ -74,6 +98,7 @@ onMounted(() => {
     });
     resizeObserver.observe(listWrapperRef.value);
   }
+
 
   onUnmounted(() => {
     scrollObserver.disconnect();
@@ -88,57 +113,61 @@ onMounted(() => {
 </script>
 
 <template>
-  <div ref="containerRef" class="">
+  <div>
     <SectionHeader class="gap-container">
       Стадии жизненного цикла заказа
     </SectionHeader>
     
-    <div class="grid grid-cols-1 lg:grid-cols-[261px_auto] lg:gap-x-8 items-start">
+    <div ref="containerRef" class="relative h-[300vh]">
       
-      <div class="lg:sticky top-32 mb-8 lg:mb-0">
-        <h2 class="text-h2-panda font-bold text-panda-black">Стадии заказа</h2>
-        <p class="text-h5-panda text-dark-gray mt-2">Постарались организовать всё быстро и удобно</p>
-      </div>
+      <div class="lg:sticky top-32 w-full">
 
-      <div class="w-full">
-         <div class="grid grid-cols-1 md:grid-cols-2">
-            
-            <div class="stages-list-container lg:h-[180vh] w-full">
-              <div class="lg:sticky top-32">
-                <div ref="listWrapperRef" class="bg-white">
-                  <ul class="">
-                    <li
-                      v-for="(stage, index) in stages"
-                      :key="stage.id"
-                      @click="setActiveStage(index)"
-                      class="transition-all duration-300 h-[51px] flex items-center px-4 cursor-pointer"
-                      :class="[
-                        'text-button-panda font-semibold',
-                        activeIndex === index 
-                          ? 'bg-panda-black text-white' 
-                          : 'bg-white text-panda-black'
-                      ]"
-                    >
-                      {{ index + 1 }}. {{ stage.title }}
-                    </li>
-                  </ul>
+        <div class="grid grid-cols-1 lg:grid-cols-[261px_auto] lg:gap-x-8 items-start">
+          
+          <div>
+            <h2 class="text-h2-panda font-bold text-panda-black">Стадии заказа</h2>
+            <p class="text-h5-panda text-dark-gray mt-2">Постарались организовать всё быстро и удобно</p>
+          </div>
+
+          <div class="w-full">
+             <div class="grid grid-cols-1 md:grid-cols-2">
+                
+                <div>
+                  <div ref="listWrapperRef" class="bg-white">
+                    <ul class="">
+                      <li
+                        v-for="(stage, index) in stages"
+                        :key="stage.id"
+                        @click="setActiveStage(index)"
+                        class="transition-all duration-300 h-[51px] flex items-center px-4 cursor-pointer"
+                        :class="[
+                          'text-button-panda font-semibold',
+                          activeIndex === index 
+                            ? 'bg-panda-black text-white' 
+                            : 'bg-white text-panda-black'
+                        ]"
+                      >
+                        {{ index + 1 }}. {{ stage.title }}
+                      </li>
+                    </ul>
+                  </div>
                 </div>
-              </div>
-            </div>
-            
-            <div class="lg:sticky top-32 mt-8 md:mt-0">
-              <div ref="imageContainerRef" class="relative w-full h-full overflow-hidden">
-                 <transition name="slide-up" mode="out-in">
-                  <img
-                    :key="activeImage"
-                    :src="activeImage"
-                    alt="Этап заказа"
-                    class="absolute inset-0 w-full h-full object-cover"
-                  >
-                </transition>
-              </div>
-            </div>
-         </div>
+                
+                <div class="mt-8 md:mt-0">
+                  <div ref="imageContainerRef" class="relative w-full h-full overflow-hidden">
+                     <transition name="slide-up" mode="out-in">
+                      <img
+                        :key="activeImage"
+                        :src="activeImage"
+                        alt="Этап заказа"
+                        class="absolute inset-0 w-full h-full object-cover"
+                      >
+                    </transition>
+                  </div>
+                </div>
+             </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
