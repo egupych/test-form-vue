@@ -231,7 +231,6 @@ input:hover, textarea:hover {
   z-index: 2;
 }
 .form-control-textarea .input-border {
-    /* 👇 ВОТ ИСПРАВЛЕНИЕ: добавлена точка с запятой */
     bottom: 8px;
 }
 input:focus ~ .input-border, textarea:focus ~ .input-border {
