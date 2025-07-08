@@ -45,7 +45,7 @@ const departments = ref([
 
 <template>
   <main class="py-10 md:py-25">
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-6xl mx-auto">
 
       <section class="mb-16">
         <SectionHeader class="gap-container">
@@ -134,10 +134,6 @@ const departments = ref([
 .group:hover .vacancy-card {
   border-color: #F15F31; /* Оранжевый цвет */
   background-color: #F7F7F7; /* Белый фон при наведении */
-}
-
-.vacancy-card-icon-wrapper {
-  /* Можно добавить обертку для иконки при необходимости */
 }
 
 .vacancy-card-icon {
