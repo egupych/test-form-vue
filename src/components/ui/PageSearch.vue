@@ -109,14 +109,13 @@ const noResultsFound = computed(() => {
   border-radius: 9999px; /* Круглые края */
   background-color: #FFFFFF;
   border: 1px solid #E3E3E3;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   transition: box-shadow 0.2s ease-in-out;
   position: relative; /* Для z-index */
   z-index: 10;
 }
 
 .search-container:focus-within {
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
   border-color: #d1d1d1;
 }
 
