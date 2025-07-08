@@ -10,8 +10,8 @@ const vacancies = ref([
   {
     id: 1,
     title: 'Офис-менеджер',
-    salary: 'от 350 000 до 900 000 KZT',
-    tags: ['Девушка', 'Без опыта'],
+    salary: 'от 250 000 тенге до вычета налогов',
+    tags: ['Девушка', '20-35 лет'],
     conditions: 'Официальное трудоустройство. Рабочий день 09:00-18:00 (5/2).',
     responsibilities: [
       'Ответы на телефонные звонки;',
@@ -24,11 +24,13 @@ const vacancies = ref([
   {
     id: 2,
     title: 'Печатник',
-    salary: 'от 350 000 до 900 000 KZT',
-    tags: ['Мужчина', 'Опыт 1-3 года'],
+    salary: 'от 250 000 тенге до вычета налогов',
+    tags: ['Мужчина', '20-40 лет'],
     conditions: 'Официальное трудоустройство. Рабочий день 09:00-18:00 (5/2).',
+    // 👇 ВОТ ИЗМЕНЕНИЕ: добавлены теги <br> для переноса строк
     responsibilities: [
-      'Работа на машинах: Mimaki, Roland, XEROX;',
+      'Знание CorelDRAW, Acrobat, Illustrator',
+      'Работа на машинах (или похожих):<br>– Mimaki UJV100-160<br>– принтер сублимационный Epson L1800<br>– принтер Roland VersanCAMM VS-640i<br>– принтер планшетный УФ Roland VersanUV LEF-200<br>– гравировальная машина Roland Desktop EGX-350;',
       'Постпечатная обработка продукции.'
     ]
   }
@@ -58,7 +60,7 @@ const applyForPosition = (vacancyTitle) => {
           Вакансии
         </SectionHeader>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
             <div v-for="vacancy in vacancies" :key="vacancy.id" class="bg-white p-8 relative">
                 <div class="flex justify-between items-start">
                     <h3 class="text-h4-panda font-bold text-gray-900 leading-tight">{{ vacancy.title }}</h3>
@@ -74,7 +76,7 @@ const applyForPosition = (vacancyTitle) => {
                 <div class="mb-4">
                     <div class="text-panda-orange font-bold text-body-panda mb-1">Обязанности</div>
                     <ol class="list-decimal list-inside text-gray-800 text-body-panda leading-relaxed space-y-1">
-                        <li v-for="resp in vacancy.responsibilities" :key="resp" class="pl-1">{{ resp }}</li>
+                        <li v-for="(resp, index) in vacancy.responsibilities" :key="index" class="pl-1" v-html="resp"></li>
                     </ol>
                 </div>
                 <BaseButton @click="applyForPosition(vacancy.title)" variant="fill-black">Откликнуться</BaseButton>

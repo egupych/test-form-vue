@@ -1,8 +1,8 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
 
 // Полный список услуг с данными для ссылок и изображений.
-// В качестве изображения для предпросмотра используется временный заполнитель.
+// Просто добавляйте сюда новые объекты, и они автоматически отсортируются и появятся в таблице.
 const allServices = [
   { id: 'badges', name: 'Бейджи', link: '/services/badges', previewImage: 'https://optim.tildacdn.com/tild6139-3965-4432-b839-393363343431/-/format/webp/2.jpg.webp' },
   { id: 'wobblers', name: 'Воблеры', link: '/services/wobblers', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
@@ -47,20 +47,32 @@ const allServices = [
   { id: 'stickers_2', name: 'Этикетки', link: '/services/stickers_2', previewImage: 'https://images.unsplash.com/photo-1620336224333-135b0210a6dd?q=80&w=2070&auto=format&fit=crop' },
 ];
 
-// Структура таблицы, повторяющая макет из изображения. Пустые строки нужны для корректного отображения.
-const gridLayout = [
-    ['Бейджи', 'Воблеры', 'Конверты', 'Печати', 'Флаера', 'Ярлыки'],
-    ['Билеты', 'Дипломы', 'Листовки', 'Плакаты', 'Фотобуки', 'Ящики'],
-    ['Бирки', 'Значки', 'Меню', 'Фотопостеры', 'Футболки', ''],
-    ['Бланки', 'Инструкции', 'Наклейки', 'Презентации', 'Штампы', ''],
-    ['Блокноты', 'Календари', 'Открытки', 'Приглашения', 'Холсты', ''],
-    ['Брошюры', 'Картины', 'Пакеты', 'Сертификаты', 'Хэнгеры', ''],
-    ['Буклеты', 'Каталоги', 'Папки', 'Сувениры', 'Ценники', ''],
-    ['Визитки', 'Книги', 'Плакаты', 'Таблички', 'Этикетки', '']
-];
-
 const hoveredService = ref(null);
 const hoveredCell = ref(null);
+
+// Динамически создаем сетку услуг
+const servicesGrid = computed(() => {
+    // Сортируем услуги по названию в алфавитном порядке
+    const sortedServices = [...allServices].sort((a, b) => a.name.localeCompare(b.name, 'ru'));
+    
+    const grid = [];
+    const cols = 6; // Задаем количество колонок
+    
+    // Распределяем услуги по ячейкам
+    for (let i = 0; i < sortedServices.length; i += cols) {
+        grid.push(sortedServices.slice(i, i + cols));
+    }
+    
+    // Если последняя строка неполная, добиваем ее пустыми ячейками
+    const lastRow = grid[grid.length - 1];
+    if (lastRow && lastRow.length < cols) {
+        while (lastRow.length < cols) {
+            lastRow.push({ name: '', isPlaceholder: true }); // Используем объект-заглушку
+        }
+    }
+    
+    return grid;
+});
 
 // Функция для поиска полной информации об услуге по её названию
 const getServiceByName = (name) => {
@@ -68,9 +80,8 @@ const getServiceByName = (name) => {
     return allServices.find(s => s.name === name);
 };
 
-const handleMouseEnter = (serviceName, event) => {
-    const service = getServiceByName(serviceName);
-    if (service) {
+const handleMouseEnter = (service, event) => {
+    if (service && !service.isPlaceholder) {
         hoveredService.value = service;
         hoveredCell.value = event.target.closest('td');
     }
@@ -81,20 +92,20 @@ const handleMouseEnter = (serviceName, event) => {
   <div class="relative" @mouseleave="hoveredService = null; hoveredCell = null">
     <table class="w-full border-collapse overflow-hidden">
       <tbody>
-        <tr v-for="(row, rowIndex) in gridLayout" :key="rowIndex">
+        <tr v-for="(row, rowIndex) in servicesGrid" :key="rowIndex">
           <td
-            v-for="(serviceName, colIndex) in row"
+            v-for="(service, colIndex) in row"
             :key="colIndex"
             class="border p-3 h-12 text-left cursor-pointer transition-colors duration-200 ease-in-out"
             :class="{ 
-              'bg-panda-black text-light-gray': hoveredService && hoveredService.name === serviceName, 
-              'text-panda-black': !hoveredService || hoveredService.name !== serviceName,
-              'border-gray': rowIndex < gridLayout.length -1 || colIndex < row.length -1,
-              'hover:bg-panda-black hover:text-panda-white': serviceName
+              'bg-panda-black text-light-gray': hoveredService && hoveredService.name === service.name, 
+              'text-panda-black': !hoveredService || hoveredService.name !== service.name,
+              'border-gray': rowIndex < servicesGrid.length -1 || colIndex < row.length -1,
+              'hover:bg-panda-black hover:text-panda-white': service.name
             }"
-            @mouseenter="serviceName && handleMouseEnter(serviceName, $event)"
+            @mouseenter="handleMouseEnter(service, $event)"
           >
-            <span v-if="serviceName" class="font-semibold text-header-panda">{{ serviceName }}</span>
+            <span v-if="!service.isPlaceholder" class="font-semibold text-header-panda">{{ service.name }}</span>
           </td>
         </tr>
       </tbody>
@@ -129,13 +140,5 @@ const handleMouseEnter = (serviceName, event) => {
 <style scoped>
 td {
   border-color: #E3E3E3; /* 'gray' from tailwind config */
-}
-/* Обеспечиваем, чтобы у последней строки не было нижней границы */
-tr:last-child td {
-  border-bottom: none;
-}
-/* Обеспечиваем, чтобы у последней ячейки в строке не было правой границы */
-td:last-child {
-  border-right: none;
 }
 </style>
