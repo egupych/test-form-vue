@@ -7,13 +7,13 @@ const stages = ref([
   { id: 1, title: 'Заявка', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
   { id: 2, title: 'Расчёт стоимости', image: 'https://images.unsplash.com/photo-1554224155-1696413565d3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
   { id: 3, title: 'Оплата', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
-  { id: 4, title: 'Проверка макета', image: 'https://images.unsplash.com/photo-1558986518-86d341934938?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
+  { id: 4, title: 'Проверка макета', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
   { id: 5, title: 'Допечатная подготовка', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
   { id: 6, title: 'Согласование', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
   { id: 7, title: 'Печать', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
-  { id: 8, title: 'Постпечатная обработка', image: 'https://images.unsplash.com/photo-1605334656910-096a52504892?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
+  { id: 8, title: 'Постпечатная обработка', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
   { id: 9, title: 'Контроль качества', image: '/src/assets/images/pages/HomePage/OrderStages/9. Контроль качества.png' },
-  { id: 10, title: 'Доставка/самовывоз', image: 'https://images.unsplash.com/photo-1586528116311-08dd4c424d87?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
+  { id: 10, title: 'Доставка/самовывоз', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
 ]);
 
 const activeIndex = ref(0);
@@ -25,10 +25,11 @@ const activeImage = computed(() => {
 });
 
 const setActiveStage = (index) => {
+  if (activeIndex.value === index) return;
   activeIndex.value = index;
 };
 
-// Этот код синхронизирует высоту блока с картинкой и блока со списком, чтобы они были одинаковыми.
+// Синхронизация высоты
 onMounted(() => {
   let resizeObserver = null;
   if (listWrapperRef.value && imageContainerRef.value) {
@@ -72,7 +73,7 @@ onMounted(() => {
                     <li
                       v-for="(stage, index) in stages"
                       :key="stage.id"
-                      @click="setActiveStage(index)"
+                      @mouseenter="setActiveStage(index)"
                       class="transition-all duration-300 h-[51px] flex items-center px-4 cursor-pointer"
                       :class="[
                         'text-button-panda font-semibold',
@@ -89,7 +90,7 @@ onMounted(() => {
               
               <div class="mt-8 md:mt-0">
                 <div ref="imageContainerRef" class="relative w-full h-full overflow-hidden">
-                   <transition name="slide-up" mode="out-in">
+                   <transition name="image-swap">
                     <img
                       :key="activeImage"
                       :src="activeImage"
@@ -107,16 +108,32 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.slide-up-enter-active,
-.slide-up-leave-active {
-  transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+/* Ключевой момент этой анимации в том, что она происходит одновременно
+  (без mode="out-in"), а изображения позиционированы абсолютно,
+  что позволяет им накладываться друг на друга во время перехода.
+*/
+
+/* --- 1. Анимация для СТАРОГО изображения (которое уходит) --- */
+.image-swap-leave-active {
+  /* Указываем, какие свойства анимируются и с какой скоростью */
+  transition: opacity 1s ease-in-out, filter 1s ease-in-out;
+}
+/* Начальное состояние: по умолчанию (непрозрачное и цветное) */
+/* Конечное состояние: изображение становится прозрачным и серым */
+.image-swap-leave-to {
+  opacity: 0;
+  filter: grayscale(100%);
 }
 
-.slide-up-enter-from {
-  transform: translateY(100%);
-}
 
-.slide-up-leave-to {
-  transform: translateY(-100%);
+/* --- 2. Анимация для НОВОГО изображения (которое приходит) --- */
+.image-swap-enter-active {
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
+/* Начальное состояние: изображение находится за левой границей */
+.image-swap-enter-from {
+  transform: translateX(-100%);
+}
+/* Конечное состояние: по умолчанию (transform: translateX(0)) */
+
 </style>
