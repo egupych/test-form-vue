@@ -225,14 +225,14 @@ const handleSubscription = async () => {
                           v-model="subscription.email"
                           type="email"
                           placeholder="Ваш email-адрес"
-                          class="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
+                          class="w-full px-4 py-2 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
                           required
                       >
                       <input
                           v-model="subscription.sphere"
                           type="text"
                           placeholder="Сфера вашего бизнеса"
-                          class="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
+                          class="w-full px-4 py-2 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
                       >
                       <div class="flex items-start">
                           <input 
@@ -248,7 +248,7 @@ const handleSubscription = async () => {
                       <button
                           type="submit"
                           :disabled="subscription.isSubmitting"
-                          class="w-full bg-light-gray text-panda-black font-bold py-3 px-4 rounded-full hover:bg-gray-200 transition-colors disabled:opacity-50"
+                          class="w-full bg-light-gray text-panda-black font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition-colors disabled:opacity-50"
                       >
                           {{ subscription.isSubmitting ? 'Отправка...' : 'Подписаться' }}
                       </button>
