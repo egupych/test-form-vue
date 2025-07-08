@@ -2,8 +2,22 @@
 import { ref } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
+// --- ДОБАВЛЕНО: Импортируем компонент формы ---
+import CalculationForm from '@/components/ui/CalculationForm.vue';
 
 const activeTab = ref('packages');
+
+// --- ДОБАВЛЕНО: Логика для управления всплывающим окном ---
+const isPopupVisible = ref(false);
+
+const openPopup = () => {
+  isPopupVisible.value = true;
+};
+
+const closePopup = () => {
+  isPopupVisible.value = false;
+};
+// --- КОНЕЦ ДОБАВЛЕННОГО ---
 
 const templatesData = [
   { 
@@ -96,6 +110,7 @@ const templatesData = [
           </div>
         </div>
       </section>
+
       <section class="gap-page">
         <SectionHeader class="gap-container">Требования к макетам</SectionHeader>
         <div class="space-y-10">
@@ -143,7 +158,7 @@ const templatesData = [
         </div>
       </section>
 
-      <div class="bg-light-gray rounded-2xl p-8 flex flex-col items-center justify-center text-center h-full">
+      <div class="bg-light-gray rounded-2xl p-8 flex flex-col items-center justify-center text-center h-full mt-10 gap-page">
         <img src="/src/assets/images/pages/PreparationPage/call.svg" alt="Иконка документа" class="w-20 h-20 mb-6">
         
         <p class="text-h5-panda font-semibold text-panda-black mb-6 max-w-sm leading-tight">
@@ -151,14 +166,187 @@ const templatesData = [
         </p>
   
         <BaseButton 
-          href="https://wa.me/77007257799" 
-          target="_blank" 
+          @click="openPopup" 
           variant="fill-black"
         >
           Написать менеджеру
         </BaseButton>
       </div>
-
-    </div>
+      </div>
   </main>
-</template>
+
+  <Teleport to="body">
+    <transition name="popup">
+      <div v-if="isPopupVisible" class="popup-overlay" @click.self="closePopup">
+        <div class="popup-container">
+          <button @click="closePopup" class="popup-close-button">&times;</button>
+          <CalculationForm />
+        </div>
+      </div>
+    </transition>
+  </Teleport>
+  </template>
+
+<style scoped>
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(19, 28, 38, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.popup-container {
+  position: relative;
+  background: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 1140px;
+  transform: scale(1);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+  max-height: 95vh;
+}
+
+.popup-container > :deep(.form-wrapper) {
+  padding: 4rem !important;
+}
+
+@media (min-width: 768px) {
+  .popup-container > :deep(.form-wrapper) {
+    padding: 7rem !important;
+  }
+}
+
+.popup-close-button {
+  position: absolute;
+  top: 15px;
+  right: 22px;
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  line-height: 1;
+  color: #8F8F8F;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 1001;
+}
+
+.popup-close-button:hover {
+  color: #131C26;
+}
+
+.popup-enter-active,
+.popup-leave-active {
+  transition: opacity 0.3s ease;
+}
+.popup-enter-from,
+.popup-leave-to {
+  opacity: 0;
+}
+.popup-enter-active .popup-container,
+.popup-leave-active .popup-container {
+  transition: all 0.3s ease;
+}
+.popup-enter-from .popup-container,
+.popup-leave-to .popup-container {
+  transform: scale(0.95);
+}
+
+.button {
+  --width: 100px;
+  --height: 35px;
+  --tooltip-height: 35px;
+  --tooltip-width: 90px;
+  --gap-between-tooltip-to-button: 12px;
+  --button-color: #131C26;
+  --tooltip-color: #E3E3E3;
+  width: var(--width);
+  height: var(--height);
+  background: var(--button-color);
+  position: relative;
+  text-align: center;
+  border-radius: 2rem;
+  cursor: pointer;
+}
+
+.button::before {
+  position: absolute;
+  content: attr(data-tooltip);
+  width: var(--tooltip-width);
+  height: var(--tooltip-height);
+  background-color: var(--tooltip-color);
+  font-size: 0.9rem;
+  color: #111;
+  border-radius: .25em;
+  line-height: var(--tooltip-height);
+  top: calc(100% + var(--gap-between-tooltip-to-button));
+  left: calc(50% - var(--tooltip-width) / 2);
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(8px);
+  transition: all 0.25s ease;
+  pointer-events: none;
+}
+
+.text {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-wrapper,.text,.icon {
+  overflow: hidden;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  left: 0;
+  color: #F7F7F7;
+}
+
+.text {
+  top: 0
+}
+
+.text,.icon {
+  transition: top 0.5s;
+}
+
+.icon {
+  color: #F7F7F7;
+  top: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.button:hover {
+  background: #F15F31;
+}
+
+.button:hover .text {
+  top: -100%;
+}
+
+.button:hover .icon {
+  top: 0;
+}
+
+.button:hover:before {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+</style>
