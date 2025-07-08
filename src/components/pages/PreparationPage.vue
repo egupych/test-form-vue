@@ -106,7 +106,7 @@ const templatesData = [
             </ul>
           </div>
           <div class="bg-light-gray rounded-2xl">
-            <img src="/src/assets/images/pages/PreparationPage/formats.png" alt="Схема форматов бумаги" class="object-cover">
+            <img src="@/assets/images/pages/PreparationPage/formats.png" alt="Схема форматов бумаги" class="object-cover">
           </div>
         </div>
       </section>
@@ -159,7 +159,7 @@ const templatesData = [
       </section>
 
       <div class="bg-light-gray rounded-2xl p-8 flex flex-col items-center justify-center text-center h-full mt-10 gap-page">
-        <img src="/src/assets/images/pages/PreparationPage/call.svg" alt="Иконка документа" class="w-20 h-20 mb-6">
+        <img src="@/assets/images/pages/PreparationPage/call.svg" alt="Иконка документа" class="w-20 h-20 mb-6">
         
         <p class="text-h5-panda font-semibold text-panda-black mb-6 max-w-sm leading-tight">
           Нет времени на подготовку файлов? <br>Оперативно сделаем за Вас!
