@@ -113,9 +113,6 @@
     transition: color 0.2s ease-in-out;
   }
   
-  .weather-widget:hover .nav-item {
-    color: #F15F31;
-  }
   
   .temperature {
       padding-left: 8px;
