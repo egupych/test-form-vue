@@ -2,12 +2,14 @@
 import HeroSection from '@/components/ui/HeroSection.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import ServicesGrid from '@/components/ui/ServicesGrid.vue';
-import PageSearch from '@/components/ui/PageSearch.vue'; // <-- [ИЗМЕНЕНИЕ] Импортируем новый компонент
+import PageSearch from '@/components/ui/PageSearch.vue';
 import CalculationForm from '@/components/ui/CalculationForm.vue';
 import TrustedBy from '@/components/ui/TrustedBy.vue';
 import ReviewsSection from '@/components/ui/ReviewsSection.vue';
 import FaqAccordion from '@/components/ui/FaqAccordion.vue';
 import FeedbackBlock from '@/components/ui/FeedbackBlock.vue';
+// [НОВОЕ] 1. Импортируем наш новый компонент
+import OrderStages from '@/components/ui/OrderStages.vue';
 </script>
 
 
@@ -65,6 +67,10 @@ import FeedbackBlock from '@/components/ui/FeedbackBlock.vue';
             <p class="text-body-panda text-dark-gray">Мы предлагаем гибкие условия — вы сами выбираете, как вам удобнее работать с нами. Пакеты услуг, прозрачные этапы, чёткие сроки.</p>
           </div>
         </div>
+      </section>
+
+      <section class="gap-page">
+        <OrderStages />
       </section>
 
       <TrustedBy />
