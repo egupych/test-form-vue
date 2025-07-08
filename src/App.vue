@@ -218,22 +218,21 @@ const handleSubscription = async () => {
                       <img src="@/assets/images/layout/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-15">
                     </div>
                     <div class="pt-2">
-                      <h3 class="font-semibold text-white text-h5-panda">Подпишитесь на рассылку</h3>
-                      <p class="text-sm text-dark-gray">о будущих акциях</p>
+                      <h3 class="text-light-gray text-body-panda">Подпишитесь на рассылку о будущих акциях</h3>
                     </div>
                     <form class="space-y-4 max-w-sm" @submit.prevent="handleSubscription">
                       <input
                           v-model="subscription.email"
                           type="email"
                           placeholder="Ваш email-адрес"
-                          class="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
+                          class="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
                           required
                       >
                       <input
                           v-model="subscription.sphere"
                           type="text"
                           placeholder="Сфера вашего бизнеса"
-                          class="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
+                          class="w-full px-4 py-3 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
                       >
                       <div class="flex items-start">
                           <input 
@@ -249,7 +248,7 @@ const handleSubscription = async () => {
                       <button
                           type="submit"
                           :disabled="subscription.isSubmitting"
-                          class="w-full bg-white text-panda-black font-bold py-3 px-4 rounded-full hover:bg-gray-200 transition-colors disabled:opacity-50"
+                          class="w-full bg-light-gray text-panda-black font-bold py-3 px-4 rounded-full hover:bg-gray-200 transition-colors disabled:opacity-50"
                       >
                           {{ subscription.isSubmitting ? 'Отправка...' : 'Подписаться' }}
                       </button>

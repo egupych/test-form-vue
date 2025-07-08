@@ -10,19 +10,19 @@ const specialOffer = {
     {
       id: 1,
       name: 'Сияние',
-      price: '1 800',
+      price: '12 000',
       image: '/src/assets/images/pages/ShopPage/calendar-siyanie.png',
     },
     {
       id: 2,
       name: 'Пустыня',
-      price: '3 000',
+      price: '15 000',
       image: '/src/assets/images/pages/ShopPage/calendar-pustina.png',
     },
     {
       id: 3,
       name: 'Модерн',
-      price: '1 000',
+      price: '10 000',
       image: '/src/assets/images/pages/ShopPage/calendar-modern.png',
     },
   ],
