@@ -67,7 +67,7 @@ const departments = ref([
           >
             <div v-if="!employee.hiring" class="group">
               <div class="bg-light-gray overflow-hidden aspect-square flex items-center justify-center">
-                <img :src="employee.image" :alt="employee.name" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110">
+                <img :src="employee.image" :alt="employee.name" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
               </div>
               <div class="pt-3">
                 <h3 class="font-semibold text-panda-black text-lg">{{ employee.name }}</h3>
