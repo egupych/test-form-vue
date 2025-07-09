@@ -51,7 +51,7 @@ const nextReview = () => {
  <transition name="slide-fade" mode="out-in">
  <div :key="currentReview?.id" class="review-card flex flex-col items-center text-center">
  <img v-if="currentReview?.companyLogo" :src="currentReview.companyLogo" :alt="currentReview.companyName" class="max-h-16 object-contain mb-10">
- <p class="text-body-panda mb-6 px-6 md:px-16">
+ <p class="text-body-panda mb-6 px-6 md:px-16 max-w-3xl">
  «{{ currentReview?.text }}»
  </p>
  <img v-if="currentReview?.photo" :src="currentReview.photo" :alt="currentReview.author" class="w-40 h-40 rounded-full object-cover mb-3">
