@@ -17,7 +17,7 @@ import OrderStages from '@/components/ui/OrderStages.vue';
   <HeroSection />
 
   <main class="py-10 md:py-25">
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-6xl mx-auto">
 
       <section class="">
         <SectionHeader class="gap-container text-center">
