@@ -69,7 +69,7 @@ const noResultsFound = computed(() => {
         <input
           type="text"
           v-model="searchQuery"
-          placeholder="Найти проект в портфолио..."
+          placeholder="Поиск в портфолио..."
           class="search-input"
           autocomplete="off"
         />

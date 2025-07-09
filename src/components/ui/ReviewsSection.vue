@@ -44,7 +44,7 @@ const nextReview = () => {
 
 <template>
  <div class="">
- <div class="max-w-6xl mx-auto px-4">
+ <div class="max-w-6xl mx-auto">
  <SectionHeader class="gap-container">ОТЗЫВЫ</SectionHeader>
 
  <div class="reviews-slider relative overflow-hidden">
