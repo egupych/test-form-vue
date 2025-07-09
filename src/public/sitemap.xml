@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  
+  <url>
+    <loc>https://ваш-домен.kz/</loc>
+    <lastmod>2024-07-09</lastmod>
+    <priority>1.00</priority>
+  </url>
+  <url>
+    <loc>https://ваш-домен.kz/auth</loc>
+    <lastmod>2024-07-09</lastmod>
+    <priority>0.60</priority>
+  </url>
+  <url>
+    <loc>https://ваш-домен.kz/gallery</loc>
+    <lastmod>2024-07-09</lastmod>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://ваш-домен.kz/shop</loc>
+    <lastmod>2024-07-09</lastmod>
+    <priority>0.90</priority>
+  </url>
+  <url>
+    <loc>https://ваш-домен.kz/team</loc>
+    <lastmod>2024-07-09</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://ваш-домен.kz/news</loc>
+    <lastmod>2024-07-09</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://ваш-домен.kz/vacancies</loc>
+    <lastmod>2024-07-09</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://ваш-домен.kz/equipment</loc>
+    <lastmod>2024-07-09</lastmod>
+    <priority>0.70</priority>
+  </url>
+  <url>
+    <loc>https://ваш-домен.kz/promotions</loc>
+    <lastmod>2024-07-09</lastmod>
+    <priority>0.80</priority>
+  </url>
+  <url>
+    <loc>https://ваш-домен.kz/preparation</loc>
+    <lastmod>2024-07-09</lastmod>
+    <priority>0.70</priority>
+  </url>
+
+</urlset>

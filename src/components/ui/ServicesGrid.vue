@@ -10,7 +10,6 @@ const allServices = [
   { id: 'signboards', name: 'Вывески', link: '/services/signboards', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/вывеска.webp' },
   { id: 'envelopes', name: 'Конверты', link: '/services/envelopes', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
   { id: 'stamps', name: 'Печати', link: '/services/stamps', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
-  { id: 'flyers', name: 'Флаера', link: '/services/flyers', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
   { id: 'tickets', name: 'Билеты', link: '/services/tickets', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
   { id: 'diplomas', name: 'Дипломы', link: '/services/diplomas', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/диплом.webp' },
   { id: 'dorholders', name: 'Дорхолдеры', link: '/services/dorholders', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/дорхолдер.webp' },
