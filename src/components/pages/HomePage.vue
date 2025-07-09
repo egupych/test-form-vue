@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue';
 import HeroSection from '@/components/ui/HeroSection.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import ServicesGrid from '@/components/ui/ServicesGrid.vue';
@@ -8,8 +9,25 @@ import TrustedBy from '@/components/ui/TrustedBy.vue';
 import ReviewsSection from '@/components/ui/ReviewsSection.vue';
 import FaqAccordion from '@/components/ui/FaqAccordion.vue';
 import FeedbackBlock from '@/components/ui/FeedbackBlock.vue';
-// [НОВОЕ] 1. Импортируем наш новый компонент
 import OrderStages from '@/components/ui/OrderStages.vue';
+// --- [НОВОЕ] Импортируем наш хук ---
+import { useIntersectionObserver } from '@/composables/useIntersectionObserver.js';
+
+// --- [НОВОЕ] Выносим данные в массив для удобства ---
+const benefits = ref([
+  { title: '1. Персональный подход', text: 'Мы рассчитываем стоимость индивидуально — с учётом ваших задач и пожеланий. Вы платите только за то, что действительно нужно, без лишних расходов.' },
+  { title: '2. Дизайн, готовый к печати', text: 'Продумываем проект так, чтобы его можно было без проблем напечатать в любой типографии. Это экономит ваше время и делает процесс максимально удобным.' },
+  { title: '3. Современное оборудование', text: 'Используем только проверенную технику европейских, американских и японских производителей — это гарантия стабильного качества и точности.' },
+  { title: '4. Качественные материалы', text: 'Работаем с лучшими поставщиками: Mondi (Австрия), Kurz (Германия), GMP (Южная Корея), Fedrigoni (Италия). Результат — прочная, приятная на ощупь и эстетичная продукция.' },
+  { title: '5. Команда профессионалов', text: 'Ваш проект будет в надёжных руках — над ним работает команда опытных специалистов, которые знают, как довести дело до идеального результата.' },
+  { title: '6. Удобный формат сотрудничества', text: 'Мы предлагаем гибкие условия — вы сами выбираете, как вам удобнее работать с нами. Пакеты услуг, прозрачные этапы, чёткие сроки.' }
+]);
+
+// --- [НОВОЕ] Логика для отслеживания видимости блока ---
+const benefitsSectionRef = ref(null); // Ссылка на DOM-элемент секции
+// Запускаем "наблюдатель", который вернет `true` в benefitsAreVisible, когда секция будет видна на 15%
+const { isIntersecting: benefitsAreVisible } = useIntersectionObserver(benefitsSectionRef, { threshold: 0.15 });
+
 </script>
 
 
@@ -36,35 +54,23 @@ import OrderStages from '@/components/ui/OrderStages.vue';
         <PageSearch />
       </section>
 
-      <section class="gap-page">
+      <section class="gap-page" ref="benefitsSectionRef">
         <SectionHeader class="gap-container">
           ПОЧЕМУ ВАМ ПОНРАВИТСЯ С НАМИ РАБОТАТЬ
         </SectionHeader>
-
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          <div class="space-y-3 bg-white p-6">
-            <h3 class="text-h4-panda font-semibold text-panda-black">1. Персональный подход</h3>
-            <p class="text-body-panda text-dark-gray">Мы рассчитываем стоимость индивидуально — с учётом ваших задач и пожеланий. Вы платите только за то, что действительно нужно, без лишних расходов.</p>
-          </div>
-          <div class="space-y-3 bg-white p-6">
-            <h3 class="text-h4-panda font-semibold text-panda-black">2. Дизайн, готовый к печати</h3>
-            <p class="text-body-panda text-dark-gray">Продумываем проект так, чтобы его можно было без проблем напечатать в любой типографии. Это экономит ваше время и делает процесс максимально удобным.</p>
-          </div>
-          <div class="space-y-3 bg-white p-6">
-            <h3 class="text-h4-panda font-semibold text-panda-black">3. Современное оборудование</h3>
-            <p class="text-body-panda text-dark-gray">Используем только проверенную технику европейских, американских и японских производителей — это гарантия стабильного качества и точности.</p>
-          </div>
-          <div class="space-y-3 bg-white p-6">
-            <h3 class="text-h4-panda font-semibold text-panda-black">4. Качественные материалы</h3>
-            <p class="text-body-panda text-dark-gray">Работаем с лучшими поставщиками: Mondi (Австрия), Kurz (Германия), GMP (Южная Корея), Fedrigoni (Италия). Результат — прочная, приятная на ощупь и эстетичная продукция.</p>
-          </div>
-          <div class="space-y-3 bg-white p-6">
-            <h3 class="text-h4-panda font-semibold text-panda-black">5. Команда профессионалов</h3>
-            <p class="text-body-panda text-dark-gray">Ваш проект будет в надёжных руках — над ним работает команда опытных специалистов, которые знают, как довести дело до идеального результата.</p>
-          </div>
-          <div class="space-y-3 bg-white p-6">
-            <h3 class="text-h4-panda font-semibold text-panda-black">6. Удобный формат сотрудничества</h3>
-            <p class="text-body-panda text-dark-gray">Мы предлагаем гибкие условия — вы сами выбираете, как вам удобнее работать с нами. Пакеты услуг, прозрачные этапы, чёткие сроки.</p>
+        
+        <div 
+          class="benefits-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"
+          :class="{ 'is-visible': benefitsAreVisible }"
+        >
+          <div 
+            v-for="(benefit, index) in benefits" 
+            :key="benefit.title" 
+            class="benefit-card space-y-3 bg-white p-6"
+            :style="{ 'transition-delay': `${index * 100}ms` }"
+          >
+            <h3 class="text-h4-panda font-semibold text-panda-black">{{ benefit.title }}</h3>
+            <p class="text-body-panda text-dark-gray">{{ benefit.text }}</p>
           </div>
         </div>
       </section>
@@ -102,5 +108,22 @@ import OrderStages from '@/components/ui/OrderStages.vue';
 </template>
 
 <style scoped>
-/* Стили не нужны */
+/* ВАРИАНТ 5: Энергичный "Выстрел" */
+/* ВАРИАНТ 6: Размытие и проявление */
+/* ВАРИАНТ 8: Откидывание сверху */
+.benefits-grid {
+  perspective: 1000px; /* Важно для создания 3D-сцены */
+}
+
+.benefit-card {
+  opacity: 0;
+  transform: rotateX(-90deg);
+  transform-origin: top center; /* Точка вращения - верхний край */
+  transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.215, 0.610, 0.355, 1);
+}
+
+.benefits-grid.is-visible .benefit-card {
+  opacity: 1;
+  transform: rotateX(0);
+}
 </style>

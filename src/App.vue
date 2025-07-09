@@ -211,7 +211,7 @@ const handleSubscription = async () => {
     </main>
 
     <footer class="text-light-gray bg-panda-black text-gray-400 font-medium">
-        <div class="max-w-screen-xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+        <div class="max-w-6xl mx-auto px-0 sm:px-0 lg:px-0 py-16">
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-x-8">
                 <div class="flex flex-col space-y-6">
                     <div class="flex items-center space-x-3">
@@ -253,7 +253,7 @@ const handleSubscription = async () => {
                           {{ subscription.isSubmitting ? 'Отправка...' : 'Подписаться' }}
                       </button>
                        <div v-if="subscription.message" 
-                          :class="[subscription.messageType === 'success' ? 'text-panda-green' : 'text-panda-orange']"
+                          :class="[subscription.messageType === 'success' ? 'text-panda-green' : 'text-red-500']"
                           class="text-sm text-center pt-2">
                           {{ subscription.message }}
                       </div>

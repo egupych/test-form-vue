@@ -303,7 +303,6 @@ const handleSubmit = async () => {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   pointer-events: none;
   overflow: hidden;
-  /* border: 1px solid #e3e3e3; - убрали рамку */
 }
 .file-preview-image {
   width: 100%;
