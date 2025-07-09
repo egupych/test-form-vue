@@ -1,60 +1,95 @@
 <script setup>
 import { ref, computed } from 'vue';
 
+// --- ИЗМЕНЕНИЕ: Импортируем все локальные изображения ---
+import bannerImg from '@/assets/images/pages/HomePage/ServicesGrid/баннер.webp';
+import badgesImg from '@/assets/images/pages/HomePage/ServicesGrid/бейджи.jpg';
+import signboardsImg from '@/assets/images/pages/HomePage/ServicesGrid/вывеска.webp';
+import diplomaImg from '@/assets/images/pages/HomePage/ServicesGrid/диплом.webp';
+import dorholderImg from '@/assets/images/pages/HomePage/ServicesGrid/дорхолдер.webp';
+import capsImg from '@/assets/images/pages/HomePage/ServicesGrid/бейсболки.webp';
+import boxesImg from '@/assets/images/pages/HomePage/ServicesGrid/коробки.webp';
+import leafletImg from '@/assets/images/pages/HomePage/ServicesGrid/листовка.webp';
+import medalsImg from '@/assets/images/pages/HomePage/ServicesGrid/медали.webp';
+import photobookImg from '@/assets/images/pages/HomePage/ServicesGrid/фотобук.jpg';
+import menuImg from '@/assets/images/pages/HomePage/ServicesGrid/меню.webp';
+import navigationImg from '@/assets/images/pages/HomePage/ServicesGrid/навигация.webp';
+import numbersImg from '@/assets/images/pages/HomePage/ServicesGrid/номерки.webp';
+import tshirtsImg from '@/assets/images/pages/HomePage/ServicesGrid/футболка.webp';
+import notebookImg from '@/assets/images/pages/HomePage/ServicesGrid/блокнот.jpg';
+import postcardImg from 'https://optim.tildacdn.com/tild3530-3435-4535-b839-613166636163/-/format/webp/4.jpg.webp'; // Это внешняя ссылка, оставляем как есть
+import certificateImg from '@/assets/images/pages/HomePage/ServicesGrid/сертификат.jpg';
+import paintingsImg from '@/assets/images/pages/HomePage/ServicesGrid/картины.png';
+import packagesImg from '@/assets/images/pages/HomePage/ServicesGrid/пакет.webp';
+import foldersImg from '@/assets/images/pages/HomePage/ServicesGrid/папка.webp';
+import rollapImg from '@/assets/images/pages/HomePage/ServicesGrid/ролап.jpg';
+import souvenirsImg from '@/assets/images/pages/HomePage/ServicesGrid/бутылки.webp'; // Исправлено .web на .webp
+import bagsImg from '@/assets/images/pages/HomePage/ServicesGrid/сумки.webp';
+import bookletImg from '@/assets/images/pages/HomePage/ServicesGrid/буклет.webp';
+import cupsImg from '@/assets/images/pages/HomePage/ServicesGrid/стакан.webp'; // Изображение стакана
+import standsImg from '@/assets/images/pages/HomePage/ServicesGrid/стенд.jpg'; // Изображение стенда
+import stickersImg from '@/assets/images/pages/HomePage/ServicesGrid/стикеры.jpg';
+import signsImg from '@/assets/images/pages/HomePage/ServicesGrid/тейбл тент.jpg'; // Это тейбл тент, а не табличка
+import tripletImg from '@/assets/images/pages/HomePage/ServicesGrid/триплет.webp';
+import businessCardsImg from '@/assets/images/pages/HomePage/ServicesGrid/визитки.webp';
+import labelsImg from '@/assets/images/pages/HomePage/ServicesGrid/этикетки.webp';
+import flagsImg from '@/assets/images/pages/HomePage/ServicesGrid/флаг.webp';
+
+
 // Полный список услуг с данными для ссылок и изображений.
-// Просто добавляйте сюда новые объекты, и они автоматически отсортируются и появятся в таблице.
 const allServices = [
-  { id: 'banners', name: 'Баннеры', link: '/services/banners', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/баннер.webp' },
-  { id: 'badges', name: 'Бейджи', link: '/services/badges', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/бейджи.jpg' },
+  // --- ИЗМЕНЕНИЕ: Используем импортированные переменные ---
+  { id: 'banners', name: 'Баннеры', link: '/services/banners', previewImage: bannerImg },
+  { id: 'badges', name: 'Бейджи', link: '/services/badges', previewImage: badgesImg },
   { id: 'wobblers', name: 'Воблеры', link: '/services/wobblers', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
-  { id: 'signboards', name: 'Вывески', link: '/services/signboards', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/вывеска.webp' },
+  { id: 'signboards', name: 'Вывески', link: '/services/signboards', previewImage: signboardsImg },
   { id: 'envelopes', name: 'Конверты', link: '/services/envelopes', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
   { id: 'stamps', name: 'Печати', link: '/services/stamps', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
   { id: 'tickets', name: 'Билеты', link: '/services/tickets', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
-  { id: 'diplomas', name: 'Дипломы', link: '/services/diplomas', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/диплом.webp' },
-  { id: 'dorholders', name: 'Дорхолдеры', link: '/services/dorholders', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/дорхолдер.webp' },
-  { id: 'baseball-caps', name: 'Бейсболки', link: '/services/baseball-caps', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/кепки.webp' },
-  { id: 'boxes', name: 'Коробки', link: '/services/boxes', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/коробки.webp' },
-  { id: 'leaflets', name: 'Листовки', link: '/services/leaflets', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/листовка.webp' },
-  { id: 'medals', name: 'Медали', link: '/services/medals', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/медали.webp' },
+  { id: 'diplomas', name: 'Дипломы', link: '/services/diplomas', previewImage: diplomaImg },
+  { id: 'dorholders', name: 'Дорхолдеры', link: '/services/dorholders', previewImage: dorholderImg },
+  { id: 'baseball-caps', name: 'Бейсболки', link: '/services/baseball-caps', previewImage: capsImg },
+  { id: 'boxes', name: 'Коробки', link: '/services/boxes', previewImage: boxesImg },
+  { id: 'leaflets', name: 'Листовки', link: '/services/leaflets', previewImage: leafletImg },
+  { id: 'medals', name: 'Медали', link: '/services/medals', previewImage: medalsImg },
   { id: 'posters', name: 'Плакаты', link: '/services/posters', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
-  { id: 'photobooks', name: 'Фотобуки', link: '/services/photobooks', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/фотобук.jpg' },
+  { id: 'photobooks', name: 'Фотобуки', link: '/services/photobooks', previewImage: photobookImg },
   { id: 'tags', name: 'Бирки', link: '/services/tags', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
   { id: 'badges_2', name: 'Значки', link: '/services/badges_2', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
-  { id: 'menus', name: 'Меню', link: '/services/menus', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/меню.webp' },
-  { id: 'navigation', name: 'Навигация', link: '/services/navigation', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/навигация.webp' },
-  { id: 'numbers', name: 'Номерки', link: '/services/numbers', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/номерки.webp' },
+  { id: 'menus', name: 'Меню', link: '/services/menus', previewImage: menuImg },
+  { id: 'navigation', name: 'Навигация', link: '/services/navigation', previewImage: navigationImg },
+  { id: 'numbers', name: 'Номерки', link: '/services/numbers', previewImage: numbersImg },
   { id: 'photoposters', name: 'Фотопостеры', link: '/services/photoposters', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
-  { id: 'tshirts', name: 'Футболки', link: '/services/tshirts', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/футболка.webp' },
+  { id: 'tshirts', name: 'Футболки', link: '/services/tshirts', previewImage: tshirtsImg },
   { id: 'forms', name: 'Бланки', link: '/services/forms', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
   { id: 'instructions', name: 'Инструкции', link: '/services/instructions', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
   { id: 'presentations', name: 'Презентации', link: '/services/presentations', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
   { id: 'canvases', name: 'Холсты', link: '/services/canvases', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
   { id: 'hangers', name: 'Хэнгеры', link: '/services/hangers', previewImage: 'https://images.unsplash.com/photo-1562911791-c9a91f42d209?q=80&w=2070&auto=format&fit=crop' },
-  { id: 'notebooks', name: 'Блокноты', link: '/services/notebooks', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/блокнот.jpg' },
+  { id: 'notebooks', name: 'Блокноты', link: '/services/notebooks', previewImage: notebookImg },
   { id: 'calendars', name: 'Календари', link: '/services/calendars', previewImage: 'https://images.unsplash.com/photo-1542867657-162235e19759?q=80&w=1974&auto=format&fit=crop' },
-  { id: 'postcards', name: 'Открытки', link: '/services/postcards', previewImage: 'https://optim.tildacdn.com/tild3530-3435-4535-b839-613166636163/-/format/webp/4.jpg.webp' },
+  { id: 'postcards', name: 'Открытки', link: '/services/postcards', previewImage: postcardImg },
   { id: 'invitations', name: 'Приглашения', link: '/services/invitations', previewImage: 'https://images.unsplash.com/photo-1533038590840-1cde6e668a91?q=80&w=1970&auto=format&fit=crop' },
-  { id: 'certificates', name: 'Сертификаты', link: '/services/certificates', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/сертификат.jpg' },
+  { id: 'certificates', name: 'Сертификаты', link: '/services/certificates', previewImage: certificateImg },
   { id: 'price_tags', name: 'Ценники', link: '/services/price_tags', previewImage: 'https://images.unsplash.com/photo-1596701198433-40a2c3a51052?q=80&w=1974&auto=format&fit=crop' },
   { id: 'brochures', name: 'Брошюры', link: '/services/brochures', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
-  { id: 'paintings', name: 'Картины', link: '/services/paintings', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/картины.png' },
-  { id: 'packages', name: 'Пакеты', link: '/services/packages', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/пакет.webp' },
-  { id: 'folders', name: 'Папки', link: '/services/folders', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/папка.webp' },
-  { id: 'rollaps', name: 'Ролл-апы', link: '/services/rollaps', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/ролап.jpg' },
-  { id: 'souvenirs', name: 'Сувениры', link: '/services/souvenirs', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/бутылки.web' },
-  { id: 'bags', name: 'Сумки', link: '/services/bags', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/сумки.webp' },
-  { id: 'booklets', name: 'Буклеты', link: '/services/booklets', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/буклет.webp' },
+  { id: 'paintings', name: 'Картины', link: '/services/paintings', previewImage: paintingsImg },
+  { id: 'packages', name: 'Пакеты', link: '/services/packages', previewImage: packagesImg },
+  { id: 'folders', name: 'Папки', link: '/services/folders', previewImage: foldersImg },
+  { id: 'rollaps', name: 'Ролл-апы', link: '/services/rollaps', previewImage: rollapImg },
+  { id: 'souvenirs', name: 'Сувениры', link: '/services/souvenirs', previewImage: souvenirsImg },
+  { id: 'bags', name: 'Сумки', link: '/services/bags', previewImage: bagsImg },
+  { id: 'booklets', name: 'Буклеты', link: '/services/booklets', previewImage: bookletImg },
   { id: 'catalogs', name: 'Каталоги', link: '/services/catalogs', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
-  { id: 'cups', name: 'Стаканчики', link: '/services/cups', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/стенд.jpg' },
-  { id: 'stands', name: 'Стенды', link: '/services/stands', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/стакан.webp' },
-  { id: 'stickers', name: 'Стикеры', link: '/services/stickers', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/стикеры.jpg' },
-  { id: 'signs', name: 'Таблички', link: '/services/signs', previewImage: 'src/assets/images/pages/HomePage/ServicesGrid/тейбл тент.jpg' },
-  { id: 'triplets', name: 'Триплет', link: '/services/triplets', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/триплет.webp' },
-  { id: 'business_cards', name: 'Визитки', link: '/services/business_cards', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/визитки.webp' },
+  { id: 'cups', name: 'Стаканчики', link: '/services/cups', previewImage: cupsImg },
+  { id: 'stands', name: 'Стенды', link: '/services/stands', previewImage: standsImg },
+  { id: 'stickers', name: 'Стикеры', link: '/services/stickers', previewImage: stickersImg },
+  { id: 'signs', name: 'Таблички', link: '/services/signs', previewImage: signsImg },
+  { id: 'triplets', name: 'Триплет', link: '/services/triplets', previewImage: tripletImg },
+  { id: 'business_cards', name: 'Визитки', link: '/services/business_cards', previewImage: businessCardsImg },
   { id: 'books', name: 'Книги', link: '/services/books', previewImage: 'https://images.unsplash.com/photo-1517842645767-c6f90415ad90?q=80&w=2070&auto=format&fit=crop' },
-  { id: 'stickers_2', name: 'Этикетки', link: '/services/stickers_2', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/этикетки.webp' },
-  { id: 'flags', name: 'Флаги', link: '/services/flags', previewImage: '/src/assets/images/pages/HomePage/ServicesGrid/флаг.webp' },
+  { id: 'stickers_2', name: 'Этикетки', link: '/services/stickers_2', previewImage: labelsImg },
+  { id: 'flags', name: 'Флаги', link: '/services/flags', previewImage: flagsImg },
 ];
 
 const hoveredService = ref(null);

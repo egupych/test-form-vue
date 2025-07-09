@@ -4,12 +4,17 @@ import BaseButton from '@/components/ui/BaseButton.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import CalculationForm from '@/components/ui/CalculationForm.vue';
 
+// --- ИЗМЕНЕНИЕ: Импортируем изображения как модули ---
+import cuponNewClient from '@/assets/images/pages/PromotionsPage/cupon-new-client.svg';
+import cupomBackToSchool from '@/assets/images/pages/PromotionsPage/cupom-back-to-school.svg';
+
 const promotions = ref([
   {
     id: 1,
     title: 'Скидка 15% на первый заказ',
     description: 'Для всех новых клиентов Red Panda.',
-    image: '/src/assets/images/pages/PromotionsPage/cupon-new-client.svg',
+    // --- ИЗМЕНЕНИЕ: Используем импортированные переменные ---
+    image: cuponNewClient,
     promo: 'NEW15',
     buttonVariant: 'fill-black',
   },
@@ -17,7 +22,8 @@ const promotions = ref([
     id: 2,
     title: 'Скидка 10% до 1 сентября',
     description: 'Подготовьтесь к новому учебному году или сезону с выгодой!',
-    image: '/src/assets/images/pages/PromotionsPage/cupom-back-to-school.svg',
+    // --- ИЗМЕНЕНИЕ: Используем импортированные переменные ---
+    image: cupomBackToSchool,
     promo: 'SCHOOL10',
     buttonVariant: 'fill-black',
   }

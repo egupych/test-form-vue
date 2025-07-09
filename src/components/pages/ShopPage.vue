@@ -3,6 +3,12 @@ import { ref } from 'vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 
+// --- ИЗМЕНЕНИЕ: Импортируем изображения как модули ---
+import calendarSiyanie from '@/assets/images/pages/ShopPage/calendar-siyanie.png';
+import calendarPustina from '@/assets/images/pages/ShopPage/calendar-pustina.png';
+import calendarModern from '@/assets/images/pages/ShopPage/calendar-modern.png';
+
+
 const specialOffer = {
   title: 'Календари 2025',
   description: 'Дизайнерские календари будут делать каждый ваш день особенным!',
@@ -11,19 +17,22 @@ const specialOffer = {
       id: 1,
       name: 'Сияние',
       price: '12 000',
-      image: '/src/assets/images/pages/ShopPage/calendar-siyanie.png',
+      // --- ИЗМЕНЕНИЕ: Используем импортированные переменные ---
+      image: calendarSiyanie,
     },
     {
       id: 2,
       name: 'Пустыня',
       price: '15 000',
-      image: '/src/assets/images/pages/ShopPage/calendar-pustina.png',
+      // --- ИЗМЕНЕНИЕ: Используем импортированные переменные ---
+      image: calendarPustina,
     },
     {
       id: 3,
       name: 'Модерн',
       price: '10 000',
-      image: '/src/assets/images/pages/ShopPage/calendar-modern.png',
+      // --- ИЗМЕНЕНИЕ: Используем импортированные переменные ---
+      image: calendarModern,
     },
   ],
 };

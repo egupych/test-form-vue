@@ -2,25 +2,32 @@
 import { ref, computed } from 'vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 
+// --- ИЗМЕНЕНИЕ: Импортируем изображения ---
+import logoBiGroup from '@/assets/images/pages/HomePage/TrustedBy/BI Group 1.svg';
+import logoJFood from '@/assets/images/pages/HomePage/TrustedBy/JFood.svg';
+import photoAskhat from '@/assets/images/pages/HomePage/Reviews/foto1.png';
+
+
 const reviews = ref([
  {
  id: 1,
- companyLogo: '/src/assets/images/pages/HomePage/TrustedBy/BI Group 1.svg',
+ // --- ИЗМЕНЕНИЕ: Используем импортированные переменные ---
+ companyLogo: logoBiGroup,
  companyName: 'BI GROUP',
  text: 'Давно сотрудничаем с RED PANDA, всегда все выполняется в срок и качеством довольны. Отдельное спасибо Полине, несмотря на позднюю оплату и поздно отправленные макеты, визитки и брошюры готовы заранее. Каждый раз нам отправляли видео готовой продукции на обзор. Участвуем в Digital Bridge 2023, будем рады делиться контактами с клиентами, благодаря напечатанным визиткам. Упаковка напечатанных материалов очень милая, за это отдельное спасибо! Сервис на высоте.',
  author: 'Асхат Амаров',
  position: 'Руководитель департамента',
- photo: '/src/assets/images/pages/HomePage/Reviews/foto1.png' // Замените на реальный путь к фото
+ photo: photoAskhat 
  },
- // Вы можете добавить больше отзывов сюда
  {
  id: 2,
- companyLogo: '/src/assets/images/pages/HomePage/TrustedBy/JFood.svg',
- companyName: 'BI GROUP 2',
+ // --- ИЗМЕНЕНИЕ: Используем импортированные переменные ---
+ companyLogo: logoJFood,
+ companyName: 'JFood',
  text: 'Текст второго отзыва для примера. Все очень понравилось, будем обращаться еще!',
  author: 'Иван Иванов',
  position: 'Менеджер',
- photo: '/src/assets/images/pages/HomePage/Reviews/foto1.png' // Временный заменитель фото
+ photo: photoAskhat // Временно используем то же фото
  }
 ]);
 
@@ -115,6 +122,4 @@ const nextReview = () => {
  opacity: 0;
  transform: translateX(-50px);
 }
-
-
 </style>

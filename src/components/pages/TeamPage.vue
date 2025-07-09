@@ -2,14 +2,23 @@
 import { ref } from 'vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 
+// --- ИЗМЕНЕНИЕ: Импортируем изображения сотрудников ---
+import andreyFedorovich from '@/assets/images/pages/TeamPage/Андрей Фёдорович.png';
+import yana from '@/assets/images/pages/TeamPage/Яна.png';
+import laura from '@/assets/images/pages/TeamPage/Лаура.png';
+import alina from '@/assets/images/pages/TeamPage/Алина.png';
+import dmitry from '@/assets/images/pages/TeamPage/Дмитрий.png';
+import farida from '@/assets/images/pages/TeamPage/Фарида.png';
+
 // Структура данных, сгруппированная по отделам
 const departments = ref([
   {
     name: 'Офис',
     employees: [
-      { name: 'Андрей Фёдорович', role: 'CEO', image: '/src/assets/images/pages/TeamPage/Андрей Фёдорович.png' },
+      // --- ИЗМЕНЕНИЕ: Используем импортированные переменные ---
+      { name: 'Андрей Фёдорович', role: 'CEO', image: andreyFedorovich },
       { name: 'Анжелика', role: 'Менеджер по персоналу', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Анжелика' },
-      { name: 'Яна', role: 'Помощник бухгалтера', image: '/src/assets/images/pages/TeamPage/Яна.png' },
+      { name: 'Яна', role: 'Помощник бухгалтера', image: yana },
       { name: 'В поиске', role: 'Офис менеджер', hiring: true, vacancyUrl: '/vacancies' }
     ]
   },
@@ -17,9 +26,9 @@ const departments = ref([
     name: 'Отдел продаж',
     employees: [
       { name: 'Светлана', role: 'Руководитель отдела', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Светлана' },
-      { name: 'Лаура', role: 'Старший менеджер', image: '/src/assets/images/pages/TeamPage/Лаура.png' },
+      { name: 'Лаура', role: 'Старший менеджер', image: laura },
       { name: 'Инна', role: 'Менеджер', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Инна' },
-      { name: 'Алина', role: 'Менеджер', image: '/src/assets/images/pages/TeamPage/Алина.png' }
+      { name: 'Алина', role: 'Менеджер', image: alina }
     ]
   },
   {
@@ -27,13 +36,13 @@ const departments = ref([
     employees: [
       { name: 'Екатерина', role: 'Дизайнер', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Екатерина' },
       { name: 'Анеля', role: 'Дизайнер', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Анеля' },
-      { name: 'Дмитрий', role: 'Дизайнер', image: '/src/assets/images/pages/TeamPage/Дмитрий.png' }
+      { name: 'Дмитрий', role: 'Дизайнер', image: dmitry }
     ]
   },
   {
     name: 'Производство',
     employees: [
-      { name: 'Фарида', role: 'Заведующая складом', image: '/src/assets/images/pages/TeamPage/Фарида.png' },
+      { name: 'Фарида', role: 'Заведующая складом', image: farida },
       { name: 'Лина', role: 'Технолог', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Лина' },
       { name: 'Владислав', role: 'Печатник', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Владислав' },
       { name: 'Карина', role: 'Печатник', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Карина' },
