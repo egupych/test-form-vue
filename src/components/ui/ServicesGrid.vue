@@ -7,7 +7,7 @@ import badgesImg from '@/assets/images/pages/HomePage/ServicesGrid/бейджи.
 import signboardsImg from '@/assets/images/pages/HomePage/ServicesGrid/вывеска.webp';
 import diplomaImg from '@/assets/images/pages/HomePage/ServicesGrid/диплом.webp';
 import dorholderImg from '@/assets/images/pages/HomePage/ServicesGrid/дорхолдер.webp';
-import capsImg from '@/assets/images/pages/HomePage/ServicesGrid/бейсболки.webp';
+import capsImg from '@/assets/images/pages/HomePage/ServicesGrid/кепки.webp';
 import boxesImg from '@/assets/images/pages/HomePage/ServicesGrid/коробки.webp';
 import leafletImg from '@/assets/images/pages/HomePage/ServicesGrid/листовка.webp';
 import medalsImg from '@/assets/images/pages/HomePage/ServicesGrid/медали.webp';
@@ -17,23 +17,25 @@ import navigationImg from '@/assets/images/pages/HomePage/ServicesGrid/нави�
 import numbersImg from '@/assets/images/pages/HomePage/ServicesGrid/номерки.webp';
 import tshirtsImg from '@/assets/images/pages/HomePage/ServicesGrid/футболка.webp';
 import notebookImg from '@/assets/images/pages/HomePage/ServicesGrid/блокнот.jpg';
-import postcardImg from 'https://optim.tildacdn.com/tild3530-3435-4535-b839-613166636163/-/format/webp/4.jpg.webp'; // Это внешняя ссылка, оставляем как есть
 import certificateImg from '@/assets/images/pages/HomePage/ServicesGrid/сертификат.jpg';
 import paintingsImg from '@/assets/images/pages/HomePage/ServicesGrid/картины.png';
 import packagesImg from '@/assets/images/pages/HomePage/ServicesGrid/пакет.webp';
 import foldersImg from '@/assets/images/pages/HomePage/ServicesGrid/папка.webp';
 import rollapImg from '@/assets/images/pages/HomePage/ServicesGrid/ролап.jpg';
-import souvenirsImg from '@/assets/images/pages/HomePage/ServicesGrid/бутылки.webp'; // Исправлено .web на .webp
+import souvenirsImg from '@/assets/images/pages/HomePage/ServicesGrid/бутылки.webp';
 import bagsImg from '@/assets/images/pages/HomePage/ServicesGrid/сумки.webp';
 import bookletImg from '@/assets/images/pages/HomePage/ServicesGrid/буклет.webp';
-import cupsImg from '@/assets/images/pages/HomePage/ServicesGrid/стакан.webp'; // Изображение стакана
-import standsImg from '@/assets/images/pages/HomePage/ServicesGrid/стенд.jpg'; // Изображение стенда
+import cupsImg from '@/assets/images/pages/HomePage/ServicesGrid/стакан.webp';
+import standsImg from '@/assets/images/pages/HomePage/ServicesGrid/стенд.jpg';
 import stickersImg from '@/assets/images/pages/HomePage/ServicesGrid/стикеры.jpg';
-import signsImg from '@/assets/images/pages/HomePage/ServicesGrid/тейбл тент.jpg'; // Это тейбл тент, а не табличка
+import signsImg from '@/assets/images/pages/HomePage/ServicesGrid/тейбл тент.jpg'; 
 import tripletImg from '@/assets/images/pages/HomePage/ServicesGrid/триплет.webp';
 import businessCardsImg from '@/assets/images/pages/HomePage/ServicesGrid/визитки.webp';
 import labelsImg from '@/assets/images/pages/HomePage/ServicesGrid/этикетки.webp';
 import flagsImg from '@/assets/images/pages/HomePage/ServicesGrid/флаг.webp';
+
+// --- ИСПРАВЛЕНИЕ: Объявляем константу для внешней ссылки ---
+const postcardImg = 'https://optim.tildacdn.com/tild3530-3435-4535-b839-613166636163/-/format/webp/4.jpg.webp';
 
 
 // Полный список услуг с данными для ссылок и изображений.
@@ -68,6 +70,7 @@ const allServices = [
   { id: 'hangers', name: 'Хэнгеры', link: '/services/hangers', previewImage: 'https://images.unsplash.com/photo-1562911791-c9a91f42d209?q=80&w=2070&auto=format&fit=crop' },
   { id: 'notebooks', name: 'Блокноты', link: '/services/notebooks', previewImage: notebookImg },
   { id: 'calendars', name: 'Календари', link: '/services/calendars', previewImage: 'https://images.unsplash.com/photo-1542867657-162235e19759?q=80&w=1974&auto=format&fit=crop' },
+  // --- ИСПРАВЛЕНИЕ: Теперь переменная postcardImg существует ---
   { id: 'postcards', name: 'Открытки', link: '/services/postcards', previewImage: postcardImg },
   { id: 'invitations', name: 'Приглашения', link: '/services/invitations', previewImage: 'https://images.unsplash.com/photo-1533038590840-1cde6e668a91?q=80&w=1970&auto=format&fit=crop' },
   { id: 'certificates', name: 'Сертификаты', link: '/services/certificates', previewImage: certificateImg },
@@ -150,7 +153,9 @@ const handleMouseEnter = (service, event) => {
             }"
             @mouseenter="handleMouseEnter(service, $event)"
           >
-            <span v-if="!service.isPlaceholder" class="font-semibold text-header-panda">{{ service.name }}</span>
+            <a v-if="!service.isPlaceholder" :href="getServiceByName(service.name)?.link" class="block w-full h-full">
+              <span class="font-semibold text-header-panda">{{ service.name }}</span>
+            </a>
           </td>
         </tr>
       </tbody>
