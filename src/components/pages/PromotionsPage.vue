@@ -11,11 +11,11 @@ import cupomBackToSchool from '@/assets/images/pages/PromotionsPage/cupom-back-t
 const promotions = ref([
   {
     id: 1,
-    title: 'Скидка 15% на первый заказ',
+    title: 'Скидка 10% на первый заказ',
     description: 'Для всех новых клиентов Red Panda.',
     // --- ИЗМЕНЕНИЕ: Используем импортированные переменные ---
     image: cuponNewClient,
-    promo: 'NEW15',
+    promo: 'NEW10',
     buttonVariant: 'fill-black',
   },
   {
@@ -49,8 +49,8 @@ const closePopup = () => {
         <SectionHeader class="gap-container">Акции</SectionHeader>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div v-for="promo in promotions" :key="promo.id" class="bg-light-gray rounded-lg overflow-hidden p-6 text-center">
-                <img :src="promo.image" :alt="promo.title" class="w-full h-auto object-cover rounded-md mb-4">
+            <div v-for="promo in promotions" :key="promo.id" class="bg-light-gray overflow-hidden p-6 text-center">
+                <img :src="promo.image" :alt="promo.title" class="w-full h-auto object-cover mb-4">
                 <h2 class="font-semibold text-panda-black text-h4-panda mb-2">{{ promo.title }}</h2>
                 <p class="text-body-panda text-dark-gray mb-4">{{ promo.description }}</p>
                 <BaseButton @click="openPopup(promo.promo)" :variant="promo.buttonVariant">
