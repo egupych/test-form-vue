@@ -10,10 +10,8 @@ import ReviewsSection from '@/components/ui/ReviewsSection.vue';
 import FaqAccordion from '@/components/ui/FaqAccordion.vue';
 import FeedbackBlock from '@/components/ui/FeedbackBlock.vue';
 import OrderStages from '@/components/ui/OrderStages.vue';
-// --- [НОВОЕ] Импортируем наш хук ---
 import { useIntersectionObserver } from '@/composables/useIntersectionObserver.js';
 
-// --- [НОВОЕ] Выносим данные в массив для удобства ---
 const benefits = ref([
   { title: '1. Персональный подход', text: 'Мы рассчитываем стоимость индивидуально — с учётом ваших задач и пожеланий. Вы платите только за то, что действительно нужно, без лишних расходов.' },
   { title: '2. Дизайн, готовый к печати', text: 'Продумываем проект так, чтобы его можно было без проблем напечатать в любой типографии. Это экономит ваше время и делает процесс максимально удобным.' },
@@ -23,21 +21,18 @@ const benefits = ref([
   { title: '6. Удобный формат сотрудничества', text: 'Мы предлагаем гибкие условия — вы сами выбираете, как вам удобнее работать с нами. Пакеты услуг, прозрачные этапы, чёткие сроки.' }
 ]);
 
-// --- [НОВОЕ] Логика для отслеживания видимости блока ---
-const benefitsSectionRef = ref(null); // Ссылка на DOM-элемент секции
-// Запускаем "наблюдатель", который вернет `true` в benefitsAreVisible, когда секция будет видна на 15%
+const benefitsSectionRef = ref(null);
 const { isIntersecting: benefitsAreVisible } = useIntersectionObserver(benefitsSectionRef, { threshold: 0.15 });
 
 </script>
 
-
 <template>
   <HeroSection />
 
-  <main class="py-10 md:py-25">
-    <div class="max-w-6xl mx-auto">
+  <main>
+    <div class="max-w-6xl mx-auto py-10 md:py-25">
 
-      <section class="">
+      <section>
         <SectionHeader class="gap-container text-center">
             Все виды продукции от А до Я
         </SectionHeader>
@@ -47,11 +42,10 @@ const { isIntersecting: benefitsAreVisible } = useIntersectionObserver(benefitsS
         </p>
 
         <ServicesGrid />
-
-      </section>
-
-      <section class="gap-page">
-        <PageSearch />
+        
+        <div class="mt-15">
+          <PageSearch />
+        </div>
       </section>
 
       <section class="gap-page" ref="benefitsSectionRef">
@@ -79,7 +73,9 @@ const { isIntersecting: benefitsAreVisible } = useIntersectionObserver(benefitsS
         <OrderStages />
       </section>
 
-      <TrustedBy />
+      <section class="gap-page">
+        <TrustedBy />
+      </section>
 
       <section class="gap-page">
         <ReviewsSection />
@@ -108,17 +104,14 @@ const { isIntersecting: benefitsAreVisible } = useIntersectionObserver(benefitsS
 </template>
 
 <style scoped>
-/* ВАРИАНТ 5: Энергичный "Выстрел" */
-/* ВАРИАНТ 6: Размытие и проявление */
-/* ВАРИАНТ 8: Откидывание сверху */
 .benefits-grid {
-  perspective: 1000px; /* Важно для создания 3D-сцены */
+  perspective: 1000px;
 }
 
 .benefit-card {
   opacity: 0;
   transform: rotateX(-90deg);
-  transform-origin: top center; /* Точка вращения - верхний край */
+  transform-origin: top center;
   transition: opacity 0.6s ease-out, transform 0.6s cubic-bezier(0.215, 0.610, 0.355, 1);
 }
 

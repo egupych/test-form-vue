@@ -48,7 +48,7 @@ const sliderStyle = computed(() => ({
 </script>
 
 <template>
-  <div class="py-10 md:py-25">
+  <div>
     <div class="max-w-6xl mx-auto">
       <SectionHeader class="gap-container">
         НАМ ДОВЕРЯЮТ

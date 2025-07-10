@@ -1,7 +1,7 @@
 <template>
     <div class="grid grid-cols-1 gap-6">
   
-      <div class="bg-light-gray rounded-2xl p-8 flex flex-col items-center justify-center text-center h-full">
+      <div class="bg-light-gray rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full">
         <img src="/src/assets/images/pages/HomePage/Отдел качества.svg" alt="Иконка документа" class="w-20 h-20 mb-6">
         
         <p class="text-h5-panda font-semibold text-panda-black mb-6 max-w-sm leading-tight">
@@ -17,7 +17,7 @@
         </BaseButton>
       </div>
   
-      <div class="bg-light-gray rounded-2xl p-8 flex flex-col items-center justify-center text-center h-full">
+      <div class="bg-light-gray rounded-2xl p-6 flex flex-col items-center justify-center text-center h-full">
         <img src="/src/assets/images/pages/HomePage/Отзыв.svg" alt="Иконка сертификата" class="w-20 h-20 mb-6">
         
         <p class="text-h5-panda font-semibold text-panda-black mb-6 max-w-sm leading-tight">
