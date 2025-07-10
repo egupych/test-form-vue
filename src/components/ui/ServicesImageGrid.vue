@@ -65,8 +65,8 @@ const services = ref([
       :style="service.style"
     >
       <div class="text-content">
-        <h3 class="title text-h5-panda font-semibold text-panda-black group-hover:text-white transition-colors duration-300">{{ service.title }}</h3>
-        <p class="description text-body-panda text-dark-gray group-hover:text-white transition-colors duration-300 mt-1">{{ service.description }}</p>
+        <h3 class="title text-h5-panda font-semibold text-panda-black transition-colors duration-300">{{ service.title }}</h3>
+        <p class="description text-body-panda text-dark-gray transition-colors duration-300 mt-1">{{ service.description }}</p>
       </div>
       <div class="image-wrapper">
         <img :src="service.imageUrl" :alt="service.title" class="service-image" />
@@ -100,7 +100,7 @@ const services = ref([
 }
 
 .grid-item:hover {
-  background-color: #F97316; /* panda-orange */
+  background-color: #E3E3E3; /* panda-orange */
 }
 
 /* ИЗМЕНЕНИЕ: Удаляем стили, которые теперь задаются классами Tailwind */
