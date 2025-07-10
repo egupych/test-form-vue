@@ -11,6 +11,7 @@ import FaqAccordion from '@/components/ui/FaqAccordion.vue';
 import FeedbackBlock from '@/components/ui/FeedbackBlock.vue';
 import OrderStages from '@/components/ui/OrderStages.vue';
 import { useIntersectionObserver } from '@/composables/useIntersectionObserver.js';
+import ServicesImageGrid from '@/components/ui/ServicesImageGrid.vue';
 
 const benefits = ref([
   { title: '1. Персональный подход', text: 'Мы рассчитываем стоимость индивидуально — с учётом ваших задач и пожеланий. Вы платите только за то, что действительно нужно, без лишних расходов.' },
@@ -71,6 +72,10 @@ const { isIntersecting: benefitsAreVisible } = useIntersectionObserver(benefitsS
 
       <section class="gap-page">
         <OrderStages />
+      </section>
+
+      <section class="gap-page">
+        <ServicesImageGrid />
       </section>
 
       <section class="gap-page">
