@@ -111,7 +111,7 @@ const noResultsFound = computed(() => {
   border: 1px solid #E3E3E3;
   transition: box-shadow 0.2s ease-in-out;
   position: relative; /* Для z-index */
-  z-index: 10;
+  z-index: 1;
 }
 
 .search-container:focus-within {

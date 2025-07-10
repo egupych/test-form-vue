@@ -28,7 +28,7 @@ import bookletImg from '@/assets/images/pages/HomePage/ServicesGrid/буклет
 import cupsImg from '@/assets/images/pages/HomePage/ServicesGrid/стакан.webp';
 import standsImg from '@/assets/images/pages/HomePage/ServicesGrid/стенд.jpg';
 import stickersImg from '@/assets/images/pages/HomePage/ServicesGrid/стикеры.jpg';
-import signsImg from '@/assets/images/pages/HomePage/ServicesGrid/тейбл тент.jpg'; 
+import signsImg from '@/assets/images/pages/HomePage/ServicesGrid/тейбл тент.jpg';
 import tripletImg from '@/assets/images/pages/HomePage/ServicesGrid/триплет.webp';
 import businessCardsImg from '@/assets/images/pages/HomePage/ServicesGrid/визитки.webp';
 import labelsImg from '@/assets/images/pages/HomePage/ServicesGrid/этикетки.webp';
@@ -92,7 +92,6 @@ const allServices = [
 const hoveredService = ref(null);
 const hoveredCell = ref(null);
 const hoveredLetter = ref(null);
-// --- [ИЗМЕНЕНИЕ 1] ---
 const tableRef = ref(null);
 
 const alphabet = computed(() => {
@@ -126,7 +125,7 @@ const getServiceByName = (name) => {
 };
 
 const handleMouseEnter = (service, event) => {
-    hoveredLetter.value = null; 
+    hoveredLetter.value = null;
     if (service && !service.isPlaceholder) {
         hoveredService.value = service;
         hoveredCell.value = event.target.closest('td');
@@ -135,16 +134,16 @@ const handleMouseEnter = (service, event) => {
 
 const handleLetterEnter = (letter) => {
     hoveredLetter.value = letter;
-    hoveredService.value = null; 
+    hoveredService.value = null;
     hoveredCell.value = null;
 }
 </script>
 
 <template>
   <div class="relative" @mouseleave="hoveredService = null; hoveredCell = null; hoveredLetter = null">
-    
-    <div 
-      class="alphabet-bar flex justify-center gap-1 mb-4"
+
+    <div
+      class="alphabet-bar flex justify-center items-end gap-1 mb-4"
       @mouseleave="hoveredLetter = null"
     >
       <span
@@ -164,8 +163,8 @@ const handleLetterEnter = (letter) => {
             v-for="(service, colIndex) in row"
             :key="colIndex"
             class="border p-3 h-12 text-left cursor-pointer transition-all duration-300 ease-in-out"
-            :class="{ 
-              'bg-panda-black text-light-gray': hoveredService && hoveredService.name === service.name, 
+            :class="{
+              'bg-panda-black text-light-gray': hoveredService && hoveredService.name === service.name,
               'text-panda-black': !hoveredService || hoveredService.name !== service.name,
               'border-gray': rowIndex < servicesGrid.length -1 || colIndex < row.length -1,
               'hover:bg-panda-black hover:text-panda-white': service.name,
@@ -192,13 +191,13 @@ const handleLetterEnter = (letter) => {
       <div
         v-if="hoveredService && hoveredCell && tableRef"
         class="absolute w-64 h-48 shadow-2xl pointer-events-none overflow-hidden z-10"
-        :style="{ 
+        :style="{
           top: (tableRef.offsetTop + hoveredCell.offsetTop) + 'px',
           left: (hoveredCell.offsetLeft + hoveredCell.offsetWidth) + 'px'
         }"
       >
-        <img 
-          :src="hoveredService.previewImage" 
+        <img
+          :src="hoveredService.previewImage"
           :alt="hoveredService.name"
           class="w-full h-full object-cover"
         />
@@ -212,16 +211,27 @@ td {
   border-color: #E3E3E3;
 }
 
+.alphabet-bar {
+  height: 60px; /* Фиксированная высота для контейнера */
+}
+
 .alphabet-letter {
-  @apply font-semibold text-sm text-dark-gray px-3 py-1 cursor-pointer transition-colors duration-200;
+  font-family: 'Gilroy-SemiBold', sans-serif;
+  font-size: 14px;
+  color: #8F8F8F;
+  padding: 4px 12px;
+  cursor: pointer;
+  transition: font-size 0.2s ease-out, color 0.2s ease-out;
 }
 
 .alphabet-letter:hover {
-  @apply bg-panda-green text-white;
+  font-size: 42px;
+  color: #F15F31;
 }
 
 .is-highlighted {
-  @apply bg-panda-green text-white;
+  background-color: #89C869;
+  color: white;
 }
 
 .is-highlighted.hover\:bg-panda-black:hover {
