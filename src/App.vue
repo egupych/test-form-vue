@@ -1,9 +1,9 @@
 <script setup>
-import { ref, reactive } from 'vue';
+import { ref, reactive, watch } from 'vue';
 import { useRoute } from 'vue-router';
 import InteractiveMap from './components/ui/InteractiveMap.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
-import WeatherWidget from '@/components/ui/WeatherWidget.vue';
+import WeatherWidget from '@/components/ui/WeatherWidget.vue'; 
 import { useAuth } from '@/composables/useAuth.js';
 import { useSmoothScroll } from '@/composables/useSmoothScroll.js';
 import previewHome from '@/assets/images/app/previews/preview-home.jpg';
@@ -13,6 +13,8 @@ import previewShop from '@/assets/images/app/previews/preview-shop.jpg';
 useSmoothScroll();
 
 const { user, signOut } = useAuth();
+
+const isMobileMenuOpen = ref(false);
 
 const navLinks = [
   { name: 'Главная', path: '/', preview: previewHome },
@@ -31,32 +33,33 @@ const navLinks = [
   { name: 'Подготовка', path: '/preparation', preview: null },
   { name: 'Проекты', id: 'project-dev', path: '/gallery', preview: previewGallery, inDevelopment: true },
   { name: 'Магазин', id: 'shop-dev', path: '/shop', preview: previewShop, inDevelopment: true },
-
 ];
 
 const route = useRoute();
 const activeDropdown = ref(null);
 let hideTimer = null;
 
-// --- ФИНАЛЬНАЯ, ИСПРАВЛЕННАЯ ЛОГИКА ТАЙМЕРОВ ---
 const showDropdown = (id) => {
-  // Если есть таймер, который должен был скрыть меню, отменяем его.
   if (hideTimer) {
     clearTimeout(hideTimer);
     hideTimer = null;
   }
-  // Устанавливаем активное меню.
   activeDropdown.value = id;
 };
 
 const hideDropdown = () => {
-  // Запускаем таймер, который скроет меню через 100 мс.
-  // Это дает пользователю время, чтобы переместить курсор с пункта на само меню.
   hideTimer = setTimeout(() => {
     activeDropdown.value = null;
   }, 100);
 };
-// --- КОНЕЦ ИЗМЕНЕНИЙ ---
+
+const handleMobileLinkClick = () => {
+  isMobileMenuOpen.value = false;
+};
+
+watch(isMobileMenuOpen, (isOpen) => {
+  document.body.style.overflow = isOpen ? 'hidden' : '';
+});
 
 const activePreviewLink = ref(null);
 const previewStyle = ref({});
@@ -139,14 +142,14 @@ const handleSubscription = async () => {
 <template>
   <div class="site-container">
     <header class="site-header">
-      <div class="max-w-6xl mx-auto flex items-center w-full">
-        <router-link to="/" class="cursor-pointer flex-none">
+      <div class="max-w-6xl mx-auto flex items-center justify-between w-full">
+        <router-link to="/" class="cursor-pointer flex-none z-50">
           <img src="@/assets/images/layout/red-panda-logo-black.svg" alt="Логотип Red Panda" class="h-12 pr-2">
         </router-link>
 
-        <nav class="mx-auto">
+        <nav class="mx-auto hidden md:block">
           <ul class="flex items-center space-x-8 text-header-panda">
-            <li
+             <li
               v-for="link in navLinks"
               :key="link.name"
               class="relative"
@@ -188,134 +191,187 @@ const handleSubscription = async () => {
                 <svg width="21" height="19" viewBox="0 0 21 19" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path fill-rule="evenodd" clip-rule="evenodd" d="M18.2596 8.55593L17.1396 6.34832L20.2705 5.04088L20.0391 7.547L18.2596 8.55593ZM17.4844 9.63659L11.8288 9.10204L4.2503 17.5414C2.3736 19.7953 -0.981776 16.7847 0.753765 14.7507L7.44601 8.01212L3.79212 4.03889L2.686 3.98104L1.23972 1.41244L2.76237 0.111938L5.05791 1.92847L4.96997 2.96748L8.58453 6.8551L10.1396 5.28848L12.007 0.556237L17.8963 0.137393L18.7455 1.64153L14.9019 3.60153L17.4844 9.63659ZM3.60005 14.9219C2.44303 13.9546 0.922691 15.6601 2.14914 16.6898C3.26683 17.6293 4.7432 15.8845 3.59774 14.9219H3.60005ZM13.9277 10.4905C13.9277 10.4905 16.6652 13.3044 18.255 14.8201C20.2173 16.6945 16.2672 20.0036 14.4414 18.0945C13.053 16.6528 10.2761 13.0035 10.2761 13.0035L12.324 10.5483L13.9277 10.4905Z" fill="#8F8F8F"/>
                 </svg>
-
                   <span>Раздел в разработке</span>
                 </div>
               </transition>
             </li>
           </ul>
         </nav>
-
+        
         <div class="flex items-center flex-none gap-4">
-          <WeatherWidget />
-          <BaseButton v-if="!user" to="/auth" variant="stroke">
-            Войти
-          </BaseButton>
-          <div
-            v-else
-            class="relative dropdown"
-            @mouseenter="showDropdown('user')"
-            @mouseleave="hideDropdown()"
-          >
-            <div class="flex items-center gap-2 cursor-pointer nav-item">
-              <img :src="user.photoURL" alt="User Avatar" class="w-8 h-8 rounded-full border-2 border-gray">
-              <span class="font-semibold text-sm">{{ user.displayName }}</span>
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-            </div>
+          <div class="hidden md:flex items-center gap-4">
+            <WeatherWidget />
+            <BaseButton v-if="!user" to="/auth" variant="stroke">
+              Войти
+            </BaseButton>
+            <div
+              v-else
+              class="relative dropdown"
+              @mouseenter="showDropdown('user')"
+              @mouseleave="hideDropdown()"
+            >
+              <div class="flex items-center gap-2 cursor-pointer nav-item">
+                <img :src="user.photoURL" alt="User Avatar" class="w-8 h-8 rounded-full border-2 border-gray">
+                <span class="font-semibold text-sm">{{ user.displayName }}</span>
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+              </div>
 
-            <transition name="slide-down">
-                <ul
-                  v-if="activeDropdown === 'user'"
-                  class="dropdown-menu user-menu"
-                  @mouseenter="showDropdown('user')"
-                  @mouseleave="hideDropdown()"
-                >
-                  <li>
-                    <button @click="signOut" class="dropdown-item w-full">Выйти</button>
-                  </li>
-                </ul>
-            </transition>
+              <transition name="slide-down">
+                  <ul
+                    v-if="activeDropdown === 'user'"
+                    class="dropdown-menu user-menu"
+                    @mouseenter="showDropdown('user')"
+                    @mouseleave="hideDropdown()"
+                  >
+                    <li>
+                      <button @click="signOut" class="dropdown-item w-full">Выйти</button>
+                    </li>
+                  </ul>
+              </transition>
+            </div>
           </div>
+          
+          <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="flex md:hidden z-50 burger-button" :class="{ 'is-active': isMobileMenuOpen }">
+            <span class="line"></span>
+            <span class="line"></span>
+            <span class="line"></span>
+          </button>
         </div>
       </div>
     </header>
+    
+    <Teleport to="body">
+      <transition name="mobile-menu">
+        <div v-if="isMobileMenuOpen" class="mobile-menu-container" @keydown.esc="isMobileMenuOpen = false">
+          <div class="mobile-menu-backdrop" @click="isMobileMenuOpen = false"></div>
+          <nav class="mobile-menu-panel">
+            <div class="p-6 border-b border-gray">
+                <h2 class="text-h5-panda font-bold">Меню</h2>
+            </div>
+            <ul class="flex-grow p-6 space-y-4 overflow-y-auto">
+              <li v-for="link in navLinks" :key="`mobile-${link.name}`">
+                <router-link 
+                  v-if="!link.isDropdown && !link.inDevelopment" 
+                  :to="link.path" 
+                  @click="handleMobileLinkClick"
+                  class="mobile-menu-link"
+                >
+                  {{ link.name }}
+                </router-link>
+                <div v-else-if="link.inDevelopment" class="mobile-menu-link-inactive">
+                  {{ link.name }}
+                </div>
+                <div v-else>
+                  <span class="mobile-menu-category">{{ link.name }}</span>
+                  <ul class="mt-2 space-y-2 pl-4">
+                    <li v-for="child in link.children" :key="`mobile-child-${child.name}`">
+                      <router-link :to="child.path" @click="handleMobileLinkClick" class="mobile-menu-sublink">
+                        {{ child.name }}
+                      </router-link>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+            <div class="p-6 mt-auto border-t border-gray">
+              <BaseButton v-if="!user" to="/auth" variant="stroke" @click="handleMobileLinkClick" class="w-full">
+                Войти
+              </BaseButton>
+              <div v-else class="text-center">
+                <button @click="signOut(); handleMobileLinkClick()" class="w-full text-sm font-semibold text-dark-gray py-2 px-4 hover:text-panda-orange transition-colors">Выйти</button>
+              </div>
+            </div>
+          </nav>
+        </div>
+      </transition>
+    </Teleport>
 
     <main class="main-content">
       <router-view />
     </main>
 
     <footer class="text-light-gray bg-panda-black text-gray-400 font-medium">
-        <div class="max-w-6xl mx-auto px-0 sm:px-0 lg:px-0 py-16">
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-x-8">
-                <div class="flex flex-col space-y-6">
-                    <div class="flex items-center space-x-3">
-                      <img src="@/assets/images/layout/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-15">
-                    </div>
-                    <div class="pt-2">
-                      <h3 class="text-light-gray text-body-panda">Подпишитесь на рассылку о будущих акциях</h3>
-                    </div>
-                    <form class="space-y-4 max-w-sm" @submit.prevent="handleSubscription">
-                      <input
-                          v-model="subscription.email"
-                          type="email"
-                          placeholder="Ваш email-адрес"
-                          class="w-full px-4 py-2 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
-                          required
-                      >
-                      <input
-                          v-model="subscription.sphere"
-                          type="text"
-                          placeholder="Сфера вашего бизнеса"
-                          class="w-full px-4 py-2 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
-                      >
-                      <div class="flex items-start">
-                          <input
-                            v-model="subscription.consent"
-                            id="consent"
-                            type="checkbox"
-                            class="h-4 w-4 mt-1 bg-transparent rounded border-gray-500 text-panda-orange focus:ring-panda-orange focus:ring-offset-panda-black"
-                          >
-                          <label for="consent" class="ml-3 text-xs">
-                            Вы соглашаетесь на информационную рассылку. Отписаться можно в любое время.
-                          </label>
-                      </div>
-                      <button
-                          type="submit"
-                          :disabled="subscription.isSubmitting"
-                          class="w-full bg-light-gray text-panda-black font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition-colors disabled:opacity-50"
-                      >
-                          {{ subscription.isSubmitting ? 'Отправка...' : 'Подписаться' }}
-                      </button>
-                       <div v-if="subscription.message"
-                          :class="[subscription.messageType === 'success' ? 'text-panda-green' : 'text-red-500']"
-                          class="text-sm text-center pt-2">
-                          {{ subscription.message }}
-                      </div>
-                    </form>
-                </div>
-                <div class="flex flex-col items-start md:items-center text-left md:text-center space-y-4">
-                    <div class="w-full max-w-sm h-80 rounded-2xl overflow-hidden">
-                        <InteractiveMap />
-                    </div>
-                    <div class="text-sm">
-                    <p>Астана, Шоссе Коргалжын, 6</p>
-                    <p>ПН-ПТ 10:00-18:00</p>
-                    </div>
-                </div>
-                <div class="flex flex-col items-start lg:items-end space-y-5 text-left lg:text-right">
-                    <div class="flex space-x-4">
-                      <div class="text-center">
-                          <img src="@/assets/images/layout/QR-site.svg" alt="QR Code redpanda.kz" class="w-24 h-24 rounded-md p-1">
-                          <p class="text-md mt-1">redpanda.kz</p>
-                      </div>
-                      <div class="text-center">
-                          <img src="@/assets/images/layout/QR-instagram.svg" alt="QR Code redpandakz" class="w-24 h-24 rounded-md p-1">
-                          <p class="text-md mt-1">redpandakz</p>
-                      </div>
-                    </div>
-                    <div class="flex flex-wrap justify-start lg:justify-end gap-2">
-                      <a href="https://wa.me/77007257799" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Whatsapp</a>
-                      <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Instagram</a>
-                      <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">2GIS</a>
-                    </div>
-                    <div class="text-sm">
-                      <p>+7 (700) 725-77-99</p>
-                      <p>infoprint@redpanda.kz</p>
-                      <p>TOO «RED PANDA» БИН 221240030264</p>
-                    </div>
-                </div>
+      <div class="max-w-6xl mx-auto px-4 md:px-0 py-16">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-x-8">
+          <div class="flex flex-col space-y-6">
+            <div class="flex items-center space-x-3">
+              <img src="@/assets/images/layout/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-15">
             </div>
+            <div class="pt-2">
+              <h3 class="text-light-gray text-body-panda">Подпишитесь на рассылку о будущих акциях</h3>
+            </div>
+            <form class="space-y-4 max-w-sm" @submit.prevent="handleSubscription">
+              <input
+                  v-model="subscription.email"
+                  type="email"
+                  placeholder="Ваш email-адрес"
+                  class="w-full px-4 py-2 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
+                  required
+              >
+              <input
+                  v-model="subscription.sphere"
+                  type="text"
+                  placeholder="Сфера вашего бизнеса"
+                  class="w-full px-4 py-2 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
+              >
+              <div class="flex items-start">
+                  <input
+                    v-model="subscription.consent"
+                    id="consent"
+                    type="checkbox"
+                    class="h-4 w-4 mt-1 bg-transparent rounded border-gray-500 text-panda-orange focus:ring-panda-orange focus:ring-offset-panda-black"
+                  >
+                  <label for="consent" class="ml-3 text-xs">
+                    Вы соглашаетесь на информационную рассылку. Отписаться можно в любое время.
+                  </label>
+              </div>
+              <button
+                  type="submit"
+                  :disabled="subscription.isSubmitting"
+                  class="w-full bg-light-gray text-panda-black font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition-colors disabled:opacity-50"
+              >
+                  {{ subscription.isSubmitting ? 'Отправка...' : 'Подписаться' }}
+              </button>
+                <div v-if="subscription.message"
+                  :class="[subscription.messageType === 'success' ? 'text-panda-green' : 'text-red-500']"
+                  class="text-sm text-center pt-2">
+                  {{ subscription.message }}
+              </div>
+            </form>
+          </div>
+          <div class="flex flex-col items-start md:items-center text-left md:text-center space-y-4">
+            <div class="w-full max-w-sm h-80 rounded-2xl overflow-hidden">
+                <InteractiveMap />
+            </div>
+            <div class="text-sm">
+            <p>Астана, Шоссе Коргалжын, 6</p>
+            <p>ПН-ПТ 10:00-18:00</p>
+            </div>
+          </div>
+          <div class="flex flex-col items-start lg:items-end space-y-5 text-left lg:text-right">
+            <div class="flex space-x-4">
+              <div class="text-center">
+                  <img src="@/assets/images/layout/QR-site.svg" alt="QR Code redpanda.kz" class="w-24 h-24 rounded-md p-1">
+                  <p class="text-md mt-1">redpanda.kz</p>
+              </div>
+              <div class="text-center">
+                  <img src="@/assets/images/layout/QR-instagram.svg" alt="QR Code redpandakz" class="w-24 h-24 rounded-md p-1">
+                  <p class="text-md mt-1">redpandakz</p>
+              </div>
+            </div>
+            <div class="flex flex-wrap justify-start lg:justify-end gap-2">
+              <a href="https://wa.me/77007257799" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Whatsapp</a>
+              <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Instagram</a>
+              <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">2GIS</a>
+            </div>
+            <div class="text-sm">
+              <p>+7 (700) 725-77-99</p>
+              <p>infoprint@redpanda.kz</p>
+              <p>TOO «RED PANDA» БИН 221240030264</p>
+            </div>
+          </div>
         </div>
+      </div>
     </footer>
     
     <transition name="preview">
@@ -334,6 +390,102 @@ const handleSubscription = async () => {
 </template>
 
 <style scoped>
+.burger-button {
+  /* ИЗМЕНЕНИЕ: display: flex удален отсюда и перенесен в классы Tailwind */
+  width: 24px;
+  height: 24px;
+  flex-direction: column;
+  justify-content: space-around;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  z-index: 1050;
+}
+.burger-button .line {
+  display: block;
+  width: 100%;
+  height: 3px;
+  background-color: #131C26;
+  border-radius: 3px;
+  transition: all 0.3s ease-in-out;
+}
+.burger-button.is-active .line {
+  background-color: #131C26;
+}
+.burger-button.is-active .line:nth-child(1) {
+  transform: translateY(8.5px) rotate(45deg);
+}
+.burger-button.is-active .line:nth-child(2) {
+  opacity: 0;
+}
+.burger-button.is-active .line:nth-child(3) {
+  transform: translateY(-8.5px) rotate(-45deg);
+}
+
+.mobile-menu-container {
+  position: fixed;
+  inset: 0;
+  z-index: 1040;
+}
+
+.mobile-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.mobile-menu-panel {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100%;
+  width: 100%;
+  max-width: 20rem; /* 320px */
+  background-color: white;
+  box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+}
+
+/* Анимации */
+.mobile-menu-enter-active .mobile-menu-backdrop,
+.mobile-menu-leave-active .mobile-menu-backdrop {
+    transition: opacity 0.3s ease;
+}
+.mobile-menu-enter-from .mobile-menu-backdrop,
+.mobile-menu-leave-to .mobile-menu-backdrop {
+    opacity: 0;
+}
+
+.mobile-menu-enter-active .mobile-menu-panel,
+.mobile-menu-leave-active .mobile-menu-panel {
+    transition: transform 0.3s ease-in-out;
+}
+.mobile-menu-enter-from .mobile-menu-panel,
+.mobile-menu-leave-to .mobile-menu-panel {
+    transform: translateX(100%);
+}
+
+.mobile-menu-link {
+    @apply block text-body-panda font-semibold text-panda-black hover:text-panda-orange transition-colors py-2;
+}
+.router-link-exact-active.mobile-menu-link {
+    @apply text-panda-orange;
+}
+.mobile-menu-link-inactive {
+    @apply block text-body-panda font-semibold text-gray py-2 cursor-not-allowed;
+}
+.mobile-menu-category {
+    @apply block text-body-panda font-bold text-panda-black py-2;
+}
+.mobile-menu-sublink {
+    @apply block text-body-panda text-dark-gray hover:text-panda-orange transition-colors py-1;
+}
+.router-link-exact-active.mobile-menu-sublink {
+    @apply text-panda-orange font-semibold;
+}
+
 .site-container {
   display: flex;
   flex-direction: column;
@@ -343,10 +495,7 @@ const handleSubscription = async () => {
 .site-header {
   display: flex;
   align-items: center;
-  padding-top: 1rem;
-  padding-bottom: 1.2rem;
-  padding-left: 2rem;
-  padding-right: 2rem;
+  padding: 1rem;
   background-color: #f7f7f7cc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   position: sticky;
@@ -393,7 +542,6 @@ nav a.router-link-exact-active {
 nav a.router-link-exact-active::after {
   transform: scaleX(1);
 }
-
 .dropdown::after {
   content: '';
   position: absolute;
@@ -404,7 +552,6 @@ nav a.router-link-exact-active::after {
   height: 22px;
   background-color: transparent;
 }
-
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -431,7 +578,6 @@ nav a.router-link-exact-active::after {
   border-color: transparent transparent #F7F7F7 transparent;
   filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.03));
 }
-
 .dropdown-item {
   color: black;
   padding: 12px 16px;
@@ -511,7 +657,6 @@ nav a.router-link-exact-active::after {
   right: 1rem;
   transform: translateX(0);
 }
-
 .nav-item-inactive {
   position: relative;
   font-family: 'Gilroy-SemiBold', sans-serif;
@@ -522,7 +667,6 @@ nav a.router-link-exact-active::after {
   align-items: center;
   font-size: 16px;
 }
-
 .nav-item-inactive::after {
   content: '';
   position: absolute;
@@ -535,11 +679,9 @@ nav a.router-link-exact-active::after {
   transform-origin: center;
   transition: transform 0.3s ease-out;
 }
-
 .nav-item-inactive:hover::after {
   transform: scaleX(1);
 }
-
 .dev-dropdown {
   padding: 12px 16px;
   color: #8F8F8F;

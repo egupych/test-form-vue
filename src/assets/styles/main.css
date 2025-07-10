@@ -25,10 +25,10 @@ html.lenis {
 
 @layer components {
   .gap-page {
-    @apply mt-25; /* 100px */
+    @apply mt-16 md:mt-25; /* 100px */
   }
   .gap-container {
-    @apply mb-15; /* 60px */
+    @apply mb-10 md:mb-15; /* 60px */
   }
 }
 
@@ -170,4 +170,3 @@ html.lenis {
   background-color: #89C869; /* Цвет фона выделения */
   color: #F7F7F7; /* Цвет текста внутри выделения */
 }
-

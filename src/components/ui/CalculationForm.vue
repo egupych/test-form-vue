@@ -194,7 +194,7 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="form-wrapper bg-panda-white p-25">
+  <div class="form-wrapper bg-panda-white p-6 md:p-25">
     <div class="form-info">
       <h2 class="text-h2-panda font-bold">Расчёт<br>стоимости</h2>
       <p class="text-h5-panda font-semibold">С вами свяжется наш менеджер<br>в ближайшее время. Спасибо, что<br>обратились в наше печатное агентство!</p>
@@ -402,7 +402,6 @@ const handleSubmit = async () => {
 
 @media (min-width: 768px) {
   .form-wrapper {
-    /* Меняем пропорции колонок */
     grid-template-columns: 1fr 1fr;
     gap: 60px;
   }
@@ -412,7 +411,6 @@ const handleSubmit = async () => {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  /* Задаем максимальную ширину для левой колонки */
   max-width: 450px; 
 }
 .form-body {

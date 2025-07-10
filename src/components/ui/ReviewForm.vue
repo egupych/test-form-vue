@@ -108,7 +108,7 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="form-wrapper bg-panda-white p-16 md:p-25">
+  <div class="form-wrapper bg-panda-white p-6 md:p-16 lg:p-25">
     <div class="form-info">
       <h2 class="text-h2-panda font-bold">Оставить<br>отзыв</h2>
       <p class="text-h5-panda font-semibold">Нам очень важно ваше мнение.<br>Поделитесь впечатлениями о работе с нами, это поможет нам стать лучше.</p>

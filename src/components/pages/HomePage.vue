@@ -1,6 +1,6 @@
 <script setup>
 import { ref } from 'vue';
-import { useServicesStore } from '@/stores/services';
+import { useServicesStore } from '@/stores/services.js';
 import { storeToRefs } from 'pinia';
 import HeroSection from '@/components/ui/HeroSection.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
