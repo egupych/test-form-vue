@@ -320,8 +320,8 @@ const handleSubscription = async () => {
 .site-header {
   display: flex;
   align-items: center;
-  padding-top: 1rem;
-  padding-bottom: 1.2rem;
+  padding-top: 0.8rem;
+  padding-bottom: 1rem;
   padding-left: 2rem;
   padding-right: 2rem;
   background-color: #f7f7f7cc;
