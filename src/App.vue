@@ -1,18 +1,18 @@
 <script setup>
-import { ref, reactive } from 'vue'; // --- ИЗМЕНЕНИЕ: Добавили reactive ---
+import { ref, reactive } from 'vue';
 import { useRoute } from 'vue-router';
 import InteractiveMap from './components/ui/InteractiveMap.vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import WeatherWidget from '@/components/ui/WeatherWidget.vue';
 import { useAuth } from '@/composables/useAuth.js';
-import { useSmoothScroll } from '@/composables/useSmoothScroll.js'; 
+import { useSmoothScroll } from '@/composables/useSmoothScroll.js';
 import previewHome from '@/assets/images/app/previews/preview-home.jpg';
 import previewGallery from '@/assets/images/app/previews/preview-gallery.jpg';
 import previewShop from '@/assets/images/app/previews/preview-shop.jpg';
 
 useSmoothScroll();
 
-const { user, signOut } = useAuth(); // --- ИЗМЕНЕНИЕ: Убрали signInWithGoogle, он не нужен здесь ---
+const { user, signOut } = useAuth();
 
 const navLinks = [
   { name: 'Главная', path: '/', preview: previewHome },
@@ -27,26 +27,36 @@ const navLinks = [
       { name: 'Оборудование', path: '/equipment' },
     ]
   },
-  { name: 'Портфолио', path: '/gallery', preview: previewGallery },
   { name: 'Акции', path: '/promotions', preview: null },
-  { name: 'Магазин', path: '/shop', preview: previewShop },
   { name: 'Подготовка', path: '/preparation', preview: null },
+  { name: 'Проекты', id: 'project-dev', path: '/gallery', preview: previewGallery, inDevelopment: true },
+  { name: 'Магазин', id: 'shop-dev', path: '/shop', preview: previewShop, inDevelopment: true },
+
 ];
 
 const route = useRoute();
 const activeDropdown = ref(null);
 let hideTimer = null;
 
+// --- ФИНАЛЬНАЯ, ИСПРАВЛЕННАЯ ЛОГИКА ТАЙМЕРОВ ---
 const showDropdown = (id) => {
-  if (hideTimer) clearTimeout(hideTimer);
+  // Если есть таймер, который должен был скрыть меню, отменяем его.
+  if (hideTimer) {
+    clearTimeout(hideTimer);
+    hideTimer = null;
+  }
+  // Устанавливаем активное меню.
   activeDropdown.value = id;
 };
 
 const hideDropdown = () => {
+  // Запускаем таймер, который скроет меню через 100 мс.
+  // Это дает пользователю время, чтобы переместить курсор с пункта на само меню.
   hideTimer = setTimeout(() => {
     activeDropdown.value = null;
   }, 100);
 };
+// --- КОНЕЦ ИЗМЕНЕНИЙ ---
 
 const activePreviewLink = ref(null);
 const previewStyle = ref({});
@@ -55,7 +65,7 @@ let hidePreviewTimer = null;
 
 const handleMouseEnterPreview = (event, link) => {
   if (hidePreviewTimer) clearTimeout(hidePreviewTimer);
-  if (link.preview && route.path !== link.path) {
+  if (link.preview && route.path !== link.path && !link.inDevelopment) {
     const linkRect = event.currentTarget.getBoundingClientRect();
     const PREVIEW_WIDTH = 320;
     const left = linkRect.left + (linkRect.width / 2) - (PREVIEW_WIDTH / 2);
@@ -80,14 +90,13 @@ const cancelHidePreviewTimer = () => {
   if (hidePreviewTimer) clearTimeout(hidePreviewTimer);
 };
 
-// --- ИЗМЕНЕНИЕ: ЛОГИКА ДЛЯ ФОРМЫ ПОДПИСКИ ---
 const subscription = reactive({
   email: '',
-  sphere: '', // <-- ДОБАВЛЕНО НОВОЕ ПОЛЕ
+  sphere: '',
   consent: false,
   isSubmitting: false,
   message: '',
-  messageType: 'success' // 'success' или 'error'
+  messageType: 'success'
 });
 
 const handleSubscription = async () => {
@@ -103,8 +112,7 @@ const handleSubscription = async () => {
     const response = await fetch('/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      // --- ИЗМЕНЕНИЕ: Отправляем новое поле на сервер ---
-      body: JSON.stringify({ email: subscription.email, sphere: subscription.sphere }) 
+      body: JSON.stringify({ email: subscription.email, sphere: subscription.sphere })
     });
     const result = await response.json();
 
@@ -113,7 +121,6 @@ const handleSubscription = async () => {
       subscription.messageType = 'error';
     } else {
       subscription.messageType = 'success';
-      // --- ИЗМЕНЕНИЕ: Очищаем все поля формы ---
       subscription.email = '';
       subscription.sphere = '';
       subscription.consent = false;
@@ -127,7 +134,6 @@ const handleSubscription = async () => {
     subscription.isSubmitting = false;
   }
 };
-
 </script>
 
 <template>
@@ -144,11 +150,14 @@ const handleSubscription = async () => {
               v-for="link in navLinks"
               :key="link.name"
               class="relative"
-              :class="{ 'dropdown': link.isDropdown }"
-              @mouseenter="handleMouseEnterPreview($event, link); if (link.isDropdown) showDropdown(link.id);"
-              @mouseleave="handleMouseLeavePreview(); if (link.isDropdown) hideDropdown();"
+              :class="{ 'dropdown': link.isDropdown || link.inDevelopment }"
+              @mouseenter="showDropdown(link.id); handleMouseEnterPreview($event, link)"
+              @mouseleave="hideDropdown(); handleMouseLeavePreview()"
             >
-              <router-link v-if="!link.isDropdown" :to="link.path">
+              <div v-if="link.inDevelopment" class="nav-item-inactive">
+                {{ link.name }}
+              </div>
+              <router-link v-else-if="!link.isDropdown" :to="link.path">
                 {{ link.name }}
               </router-link>
               <div v-else class="nav-item">
@@ -168,6 +177,20 @@ const handleSubscription = async () => {
                   </li>
                 </ul>
               </transition>
+              
+              <transition name="slide-down">
+                <div
+                  v-if="link.inDevelopment && activeDropdown === link.id"
+                  class="dropdown-menu dev-dropdown"
+                  @mouseenter="showDropdown(link.id)"
+                  @mouseleave="hideDropdown()"
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/>
+                  </svg>
+                  <span>Раздел в разработке</span>
+                </div>
+              </transition>
             </li>
           </ul>
         </nav>
@@ -177,8 +200,8 @@ const handleSubscription = async () => {
           <BaseButton v-if="!user" to="/auth" variant="stroke">
             Войти
           </BaseButton>
-          <div 
-            v-else 
+          <div
+            v-else
             class="relative dropdown"
             @mouseenter="showDropdown('user')"
             @mouseleave="hideDropdown()"
@@ -190,9 +213,9 @@ const handleSubscription = async () => {
             </div>
 
             <transition name="slide-down">
-                <ul 
+                <ul
                   v-if="activeDropdown === 'user'"
-                  class="dropdown-menu user-menu" 
+                  class="dropdown-menu user-menu"
                   @mouseenter="showDropdown('user')"
                   @mouseleave="hideDropdown()"
                 >
@@ -235,10 +258,10 @@ const handleSubscription = async () => {
                           class="w-full px-4 py-2 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
                       >
                       <div class="flex items-start">
-                          <input 
+                          <input
                             v-model="subscription.consent"
-                            id="consent" 
-                            type="checkbox" 
+                            id="consent"
+                            type="checkbox"
                             class="h-4 w-4 mt-1 bg-transparent rounded border-gray-500 text-panda-orange focus:ring-panda-orange focus:ring-offset-panda-black"
                           >
                           <label for="consent" class="ml-3 text-xs">
@@ -252,7 +275,7 @@ const handleSubscription = async () => {
                       >
                           {{ subscription.isSubmitting ? 'Отправка...' : 'Подписаться' }}
                       </button>
-                       <div v-if="subscription.message" 
+                       <div v-if="subscription.message"
                           :class="[subscription.messageType === 'success' ? 'text-panda-green' : 'text-red-500']"
                           class="text-sm text-center pt-2">
                           {{ subscription.message }}
@@ -310,7 +333,6 @@ const handleSubscription = async () => {
 </template>
 
 <style scoped>
-/* Все стили остаются прежними, здесь нет изменений */
 .site-container {
   display: flex;
   flex-direction: column;
@@ -320,8 +342,8 @@ const handleSubscription = async () => {
 .site-header {
   display: flex;
   align-items: center;
-  padding-top: 0.8rem;
-  padding-bottom: 1rem;
+  padding-top: 1rem;
+  padding-bottom: 1.2rem;
   padding-left: 2rem;
   padding-right: 2rem;
   background-color: #f7f7f7cc;
@@ -379,7 +401,9 @@ nav a.router-link-exact-active::after {
   left: 0;
   right: 0;
   height: 22px;
+  background-color: transparent;
 }
+
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -485,5 +509,45 @@ nav a.router-link-exact-active::after {
   left: auto;
   right: 1rem;
   transform: translateX(0);
+}
+
+.nav-item-inactive {
+  position: relative;
+  font-family: 'Gilroy-SemiBold', sans-serif;
+  color: #8F8F8F;
+  cursor: pointer;
+  padding: 6px 0;
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+}
+
+.nav-item-inactive::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background-color: #8F8F8F;
+  transform: scaleX(0);
+  transform-origin: center;
+  transition: transform 0.3s ease-out;
+}
+
+.nav-item-inactive:hover::after {
+  transform: scaleX(1);
+}
+
+.dev-dropdown {
+  padding: 12px 16px;
+  color: #8F8F8F;
+  font-family: 'Gilroy-SemiBold', sans-serif;
+  font-size: 16px;
+  text-align: center;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 </style>
