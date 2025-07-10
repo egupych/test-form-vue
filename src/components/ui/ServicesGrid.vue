@@ -92,6 +92,8 @@ const allServices = [
 const hoveredService = ref(null);
 const hoveredCell = ref(null);
 const hoveredLetter = ref(null);
+// --- [ИЗМЕНЕНИЕ 1] ---
+const tableRef = ref(null);
 
 const alphabet = computed(() => {
   const firstLetters = allServices.map(s => s.name.charAt(0).toUpperCase());
@@ -123,21 +125,17 @@ const getServiceByName = (name) => {
     return allServices.find(s => s.name === name);
 };
 
-// --- [ИЗМЕНЕНИЕ 1] ---
-// При наведении на ячейку сбрасываем подсветку от алфавита
 const handleMouseEnter = (service, event) => {
-    hoveredLetter.value = null; // Сбрасываем букву
+    hoveredLetter.value = null; 
     if (service && !service.isPlaceholder) {
         hoveredService.value = service;
         hoveredCell.value = event.target.closest('td');
     }
 };
 
-// --- [ИЗМЕНЕНИЕ 2] ---
-// При наведении на букву сбрасываем подсветку ячейки
 const handleLetterEnter = (letter) => {
     hoveredLetter.value = letter;
-    hoveredService.value = null; // Сбрасываем сервис
+    hoveredService.value = null; 
     hoveredCell.value = null;
 }
 </script>
@@ -159,7 +157,7 @@ const handleLetterEnter = (letter) => {
       </span>
     </div>
 
-    <table class="w-full border-collapse overflow-hidden">
+    <table ref="tableRef" class="w-full border-collapse overflow-hidden">
       <tbody>
         <tr v-for="(row, rowIndex) in servicesGrid" :key="rowIndex">
           <td
@@ -192,11 +190,11 @@ const handleLetterEnter = (letter) => {
       leave-to-class="opacity-0"
     >
       <div
-        v-if="hoveredService && hoveredCell"
+        v-if="hoveredService && hoveredCell && tableRef"
         class="absolute w-64 h-48 shadow-2xl pointer-events-none overflow-hidden z-10"
         :style="{ 
-          top: hoveredCell.offsetTop + 'px',
-          left: hoveredCell.offsetLeft + hoveredCell.offsetWidth + 'px'
+          top: (tableRef.offsetTop + hoveredCell.offsetTop) + 'px',
+          left: (hoveredCell.offsetLeft + hoveredCell.offsetWidth) + 'px'
         }"
       >
         <img 
