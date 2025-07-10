@@ -174,7 +174,7 @@ const noResultsFound = computed(() => {
   box-shadow: 0 15px 20px rgba(0, 0, 0, 0.07);
   border-radius: 0 0 24px 24px; /* Скругляем только нижние углы */
   padding: 36px 4px 8px 4px; /* Отступы: сверху больше, чтобы выйти из-под строки поиска */
-  z-index: 9;
+  z-index: 0;
 }
 
 .search-results-list {

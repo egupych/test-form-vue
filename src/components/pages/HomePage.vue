@@ -1,5 +1,7 @@
 <script setup>
 import { ref } from 'vue';
+import { useServicesStore } from '@/stores/services';
+import { storeToRefs } from 'pinia';
 import HeroSection from '@/components/ui/HeroSection.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import ServicesGrid from '@/components/ui/ServicesGrid.vue';
@@ -13,6 +15,7 @@ import OrderStages from '@/components/ui/OrderStages.vue';
 import { useIntersectionObserver } from '@/composables/useIntersectionObserver.js';
 import ServicesImageGrid from '@/components/ui/ServicesImageGrid.vue';
 
+// --- Логика из вашего исходного файла ---
 const benefits = ref([
   { title: '1. Персональный подход', text: 'Мы рассчитываем стоимость индивидуально — с учётом ваших задач и пожеланий. Вы платите только за то, что действительно нужно, без лишних расходов.' },
   { title: '2. Дизайн, готовый к печати', text: 'Продумываем проект так, чтобы его можно было без проблем напечатать в любой типографии. Это экономит ваше время и делает процесс максимально удобным.' },
@@ -25,6 +28,9 @@ const benefits = ref([
 const benefitsSectionRef = ref(null);
 const { isIntersecting: benefitsAreVisible } = useIntersectionObserver(benefitsSectionRef, { threshold: 0.15 });
 
+// --- Новая логика для таблицы услуг ---
+const servicesStore = useServicesStore();
+const { services } = storeToRefs(servicesStore);
 </script>
 
 <template>
@@ -41,7 +47,7 @@ const { isIntersecting: benefitsAreVisible } = useIntersectionObserver(benefitsS
         <p class="text-h5-panda text-dark-gray text-center max-w-3xl mx-auto mb-15">
           Мы — современное печатное агентство, которое предоставляет полный спектр полиграфических услуг. Наведите курсор на услугу в таблице ниже, чтобы увидеть краткий предпросмотр.
         </p>
-
+        
         <ServicesGrid />
         
         <div class="mt-15">
