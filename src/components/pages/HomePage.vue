@@ -75,6 +75,9 @@ const { isIntersecting: benefitsAreVisible } = useIntersectionObserver(benefitsS
       </section>
 
       <section class="gap-page">
+        <SectionHeader class="gap-container">
+          Наши услуги
+        </SectionHeader>
         <ServicesImageGrid />
       </section>
 

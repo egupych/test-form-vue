@@ -4,11 +4,11 @@ import SectionHeader from '@/components/ui/SectionHeader.vue';
 
 // Данные о стадиях заказа. Изображения по-прежнему меняются.
 const stages = ref([
-  { id: 1, title: 'Заявка', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
+  { id: 1, title: 'Заявка', image: '/src/assets/images/pages/HomePage/OrderStages/заявка.webp' },
   { id: 2, title: 'Расчёт стоимости', image: 'https://images.unsplash.com/photo-1554224155-1696413565d3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
   { id: 3, title: 'Оплата', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
   { id: 4, title: 'Проверка макета', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
-  { id: 5, title: 'Допечатная подготовка', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
+  { id: 5, title: 'Допечатная подготовка', image: '/src/assets/images/pages/HomePage/OrderStages/подготовка к печати.webp' },
   { id: 6, title: 'Согласование', image: 'https://images.unsplash.com/photo-1552664730-d307ca884978?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
   { id: 7, title: 'Печать', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
   { id: 8, title: 'Постпечатная обработка', image: 'https://images.unsplash.com/photo-1556740758-90de374c12ad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080' },
