@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue';
 
-// --- ИЗМЕНЕНИЕ: Импортируем все локальные изображения ---
+// --- Импорт изображений и список услуг остаются без изменений ---
 import bannerImg from '@/assets/images/pages/HomePage/ServicesGrid/баннер.webp';
 import badgesImg from '@/assets/images/pages/HomePage/ServicesGrid/бейджи.jpg';
 import signboardsImg from '@/assets/images/pages/HomePage/ServicesGrid/вывеска.webp';
@@ -33,14 +33,9 @@ import tripletImg from '@/assets/images/pages/HomePage/ServicesGrid/трипле
 import businessCardsImg from '@/assets/images/pages/HomePage/ServicesGrid/визитки.webp';
 import labelsImg from '@/assets/images/pages/HomePage/ServicesGrid/этикетки.webp';
 import flagsImg from '@/assets/images/pages/HomePage/ServicesGrid/флаг.webp';
-
-// --- ИСПРАВЛЕНИЕ: Объявляем константу для внешней ссылки ---
 const postcardImg = 'https://optim.tildacdn.com/tild3530-3435-4535-b839-613166636163/-/format/webp/4.jpg.webp';
 
-
-// Полный список услуг с данными для ссылок и изображений.
 const allServices = [
-  // --- ИЗМЕНЕНИЕ: Используем импортированные переменные ---
   { id: 'banners', name: 'Баннеры', link: '/services/banners', previewImage: bannerImg },
   { id: 'badges', name: 'Бейджи', link: '/services/badges', previewImage: badgesImg },
   { id: 'wobblers', name: 'Воблеры', link: '/services/wobblers', previewImage: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=1974&auto=format&fit=crop' },
@@ -70,7 +65,6 @@ const allServices = [
   { id: 'hangers', name: 'Хэнгеры', link: '/services/hangers', previewImage: 'https://images.unsplash.com/photo-1562911791-c9a91f42d209?q=80&w=2070&auto=format&fit=crop' },
   { id: 'notebooks', name: 'Блокноты', link: '/services/notebooks', previewImage: notebookImg },
   { id: 'calendars', name: 'Календари', link: '/services/calendars', previewImage: 'https://images.unsplash.com/photo-1542867657-162235e19759?q=80&w=1974&auto=format&fit=crop' },
-  // --- ИСПРАВЛЕНИЕ: Теперь переменная postcardImg существует ---
   { id: 'postcards', name: 'Открытки', link: '/services/postcards', previewImage: postcardImg },
   { id: 'invitations', name: 'Приглашения', link: '/services/invitations', previewImage: 'https://images.unsplash.com/photo-1533038590840-1cde6e668a91?q=80&w=1970&auto=format&fit=crop' },
   { id: 'certificates', name: 'Сертификаты', link: '/services/certificates', previewImage: certificateImg },
@@ -97,59 +91,87 @@ const allServices = [
 
 const hoveredService = ref(null);
 const hoveredCell = ref(null);
+const hoveredLetter = ref(null);
 
-// Динамически создаем сетку услуг
+const alphabet = computed(() => {
+  const firstLetters = allServices.map(s => s.name.charAt(0).toUpperCase());
+  return [...new Set(firstLetters)].sort((a, b) => a.localeCompare(b, 'ru'));
+});
+
 const servicesGrid = computed(() => {
-    // Сортируем услуги по названию в алфавитном порядке
     const sortedServices = [...allServices].sort((a, b) => a.name.localeCompare(b.name, 'ru'));
-    
+    const numCols = 6;
+    const numRows = Math.ceil(sortedServices.length / numCols);
     const grid = [];
-    const cols = 6; // Задаем количество колонок
-    
-    // Распределяем услуги по ячейкам
-    for (let i = 0; i < sortedServices.length; i += cols) {
-        grid.push(sortedServices.slice(i, i + cols));
-    }
-    
-    // Если последняя строка неполная, добиваем ее пустыми ячейками
-    const lastRow = grid[grid.length - 1];
-    if (lastRow && lastRow.length < cols) {
-        while (lastRow.length < cols) {
-            lastRow.push({ name: '', isPlaceholder: true }); // Используем объект-заглушку
+    for (let i = 0; i < numRows; i++) {
+        const newRow = [];
+        for (let j = 0; j < numCols; j++) {
+            const index = j * numRows + i;
+            if (index < sortedServices.length) {
+                newRow.push(sortedServices[index]);
+            } else {
+                newRow.push({ name: '', isPlaceholder: true });
+            }
         }
+        grid.push(newRow);
     }
-    
     return grid;
 });
 
-// Функция для поиска полной информации об услуге по её названию
 const getServiceByName = (name) => {
     if (!name) return null;
     return allServices.find(s => s.name === name);
 };
 
+// --- [ИЗМЕНЕНИЕ 1] ---
+// При наведении на ячейку сбрасываем подсветку от алфавита
 const handleMouseEnter = (service, event) => {
+    hoveredLetter.value = null; // Сбрасываем букву
     if (service && !service.isPlaceholder) {
         hoveredService.value = service;
         hoveredCell.value = event.target.closest('td');
     }
 };
+
+// --- [ИЗМЕНЕНИЕ 2] ---
+// При наведении на букву сбрасываем подсветку ячейки
+const handleLetterEnter = (letter) => {
+    hoveredLetter.value = letter;
+    hoveredService.value = null; // Сбрасываем сервис
+    hoveredCell.value = null;
+}
 </script>
 
 <template>
-  <div class="relative" @mouseleave="hoveredService = null; hoveredCell = null">
+  <div class="relative" @mouseleave="hoveredService = null; hoveredCell = null; hoveredLetter = null">
+    
+    <div 
+      class="alphabet-bar flex justify-center gap-1 mb-4"
+      @mouseleave="hoveredLetter = null"
+    >
+      <span
+        v-for="letter in alphabet"
+        :key="letter"
+        class="alphabet-letter"
+        @mouseenter="handleLetterEnter(letter)"
+      >
+        {{ letter }}
+      </span>
+    </div>
+
     <table class="w-full border-collapse overflow-hidden">
       <tbody>
         <tr v-for="(row, rowIndex) in servicesGrid" :key="rowIndex">
           <td
             v-for="(service, colIndex) in row"
             :key="colIndex"
-            class="border p-3 h-12 text-left cursor-pointer transition-colors duration-200 ease-in-out"
+            class="border p-3 h-12 text-left cursor-pointer transition-all duration-300 ease-in-out"
             :class="{ 
               'bg-panda-black text-light-gray': hoveredService && hoveredService.name === service.name, 
               'text-panda-black': !hoveredService || hoveredService.name !== service.name,
               'border-gray': rowIndex < servicesGrid.length -1 || colIndex < row.length -1,
-              'hover:bg-panda-black hover:text-panda-white': service.name
+              'hover:bg-panda-black hover:text-panda-white': service.name,
+              'is-highlighted': hoveredLetter && service.name && service.name.toUpperCase().startsWith(hoveredLetter)
             }"
             @mouseenter="handleMouseEnter(service, $event)"
           >
@@ -189,6 +211,27 @@ const handleMouseEnter = (service, event) => {
 
 <style scoped>
 td {
-  border-color: #E3E3E3; /* 'gray' from tailwind config */
+  border-color: #E3E3E3;
+}
+
+.alphabet-letter {
+  @apply font-semibold text-sm text-dark-gray px-3 py-1 cursor-pointer transition-colors duration-200;
+}
+
+.alphabet-letter:hover {
+  @apply bg-panda-green text-white;
+}
+
+.is-highlighted {
+  @apply bg-panda-green text-white;
+}
+
+.is-highlighted.hover\:bg-panda-black:hover {
+    --tw-bg-opacity: 1;
+    background-color: rgb(19 28 38 / var(--tw-bg-opacity));
+}
+.is-highlighted.hover\:text-panda-white:hover {
+    --tw-text-opacity: 1;
+    color: rgb(255 255 255 / var(--tw-text-opacity));
 }
 </style>
