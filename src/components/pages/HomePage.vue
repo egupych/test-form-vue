@@ -44,7 +44,7 @@ const { services } = storeToRefs(servicesStore);
             Все виды продукции от А до Я
         </SectionHeader>
 
-        <p class="text-h5-panda text-dark-gray text-center max-w-3xl mx-auto mb-15">
+        <p class="text-h5-panda text-dark-gray text-center max-w-3xl mx-auto mb-5">
           Мы — современное печатное агентство, которое предоставляет полный спектр полиграфических услуг. Наведите курсор на услугу в таблице ниже, чтобы увидеть краткий предпросмотр.
         </p>
         

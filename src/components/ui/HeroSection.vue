@@ -38,9 +38,8 @@ const closeVideoPopup = () => {
 
 <template>
   <section class="relative w-full bg-light-gray overflow-hidden">
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-6xl mx-auto">
       <div class="relative w-full h-[50vh] md:h-[70vh]">
-        
         <div class="absolute top-1/4 right-0 transform -translate-y-1/2 text-right z-20">
           <h2 class="text-h4-panda font-semibold text-panda-black">Современная полиграфия<br>для вашего бизнеса</h2>
           <p class="text-body-panda text-dark-gray mt-2 mb-6 ml-auto max-w-md">
