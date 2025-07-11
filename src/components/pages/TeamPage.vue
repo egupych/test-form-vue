@@ -1,8 +1,12 @@
 <script setup>
 import { ref } from 'vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
+// 1. Импортируем компонент формы для отклика
+import VacancyApplicationForm from '@/components/ui/VacancyApplicationForm.vue';
+// 2. Импортируем наше хранилище вакансий
+import { useVacanciesStore } from '@/stores/vacancies.js';
 
-// --- ИЗМЕНЕНИЕ: Импортируем изображения сотрудников ---
+// --- Изображения сотрудников ---
 import andreyFedorovich from '@/assets/images/pages/TeamPage/Андрей Фёдорович.png';
 import yana from '@/assets/images/pages/TeamPage/Яна.png';
 import laura from '@/assets/images/pages/TeamPage/Лаура.png';
@@ -10,16 +14,14 @@ import alina from '@/assets/images/pages/TeamPage/Алина.png';
 import dmitry from '@/assets/images/pages/TeamPage/Дмитрий.png';
 import farida from '@/assets/images/pages/TeamPage/Фарида.png';
 
-// Структура данных, сгруппированная по отделам
+// --- Структура отделов и сотрудники ---
 const departments = ref([
   {
     name: 'Офис',
     employees: [
-      // --- ИЗМЕНЕНИЕ: Используем импортированные переменные ---
       { name: 'Андрей Фёдорович', role: 'CEO', image: andreyFedorovich },
       { name: 'Анжелика', role: 'Менеджер по персоналу', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Анжелика' },
       { name: 'Яна', role: 'Помощник бухгалтера', image: yana },
-      { name: 'В поиске', role: 'Офис менеджер', hiring: true, vacancyUrl: '/vacancies' }
     ]
   },
   {
@@ -46,10 +48,35 @@ const departments = ref([
       { name: 'Лина', role: 'Технолог', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Лина' },
       { name: 'Владислав', role: 'Печатник', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Владислав' },
       { name: 'Карина', role: 'Печатник', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Карина' },
-      { name: 'В поиске', role: 'Начальник производства', hiring: true, vacancyUrl: '/vacancies' }
     ]
   }
 ]);
+
+// --- Логика для вакансий и попапа ---
+const vacanciesStore = useVacanciesStore();
+const allVacancies = vacanciesStore.list;
+
+const vacancyDepartmentMap = {
+  'Печатник': 'Производство',
+  'Офис-менеджер': 'Офис',
+};
+
+const getVacanciesForDepartment = (departmentName) => {
+  return allVacancies.filter(vacancy => vacancyDepartmentMap[vacancy.title] === departmentName);
+};
+
+// 3. Добавляем переменные для управления состоянием попапа
+const isPopupOpen = ref(false);
+const selectedVacancyTitle = ref('');
+
+// 4. Функции для открытия и закрытия попапа
+const openPopup = (vacancyTitle) => {
+  selectedVacancyTitle.value = vacancyTitle;
+  isPopupOpen.value = true;
+};
+const closePopup = () => {
+  isPopupOpen.value = false;
+};
 </script>
 
 <template>
@@ -73,37 +100,37 @@ const departments = ref([
           <div 
             v-for="employee in department.employees" 
             :key="employee.name"
+            class="group"
           >
-            <div v-if="!employee.hiring" class="group">
-              <div class="bg-light-gray overflow-hidden aspect-square flex items-center justify-center">
-                <img :src="employee.image" :alt="employee.name" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
-              </div>
-              <div class="pt-3">
-                <h3 class="font-semibold text-panda-black text-lg">{{ employee.name }}</h3>
-                <p class="text-sm text-dark-gray">{{ employee.role }}</p>
-              </div>
+            <div class="bg-light-gray overflow-hidden aspect-square flex items-center justify-center">
+              <img :src="employee.image" :alt="employee.name" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
             </div>
-
-            <a
-              v-else
-              :href="employee.vacancyUrl"
-              class="group block"
-            >
-              <div class="vacancy-card">
-                 <div class="vacancy-card-icon-wrapper">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="vacancy-card-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                 </div>
-                 <p class="vacancy-card-text">Присоединяйтесь к нам</p>
-              </div>
-              <div class="pt-3">
-                <h3 class="font-semibold text-panda-black text-lg">{{ employee.name }}</h3>
-                <p class="text-sm text-dark-gray">{{ employee.role }}</p>
-              </div>
-            </a>
-
+            <div class="pt-3">
+              <h3 class="font-semibold text-panda-black text-lg">{{ employee.name }}</h3>
+              <p class="text-sm text-dark-gray">{{ employee.role }}</p>
+            </div>
           </div>
+
+          <div
+            v-for="vacancy in getVacanciesForDepartment(department.name)"
+            :key="vacancy.id"
+            @click="openPopup(vacancy.title)"
+            class="group block cursor-pointer"
+          >
+            <div class="vacancy-card">
+               <div class="vacancy-card-icon-wrapper">
+                  <svg xmlns="http://www.w3.org/2000/svg" class="vacancy-card-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                  </svg>
+               </div>
+               <p class="vacancy-card-text">Присоединяйтесь к нам</p>
+            </div>
+            <div class="pt-3">
+              <h3 class="font-semibold text-panda-black text-lg">В поиске</h3>
+              <p class="text-sm text-dark-gray">{{ vacancy.title }}</p>
+            </div>
+          </div>
+
         </div>
       </section>
 
@@ -119,6 +146,17 @@ const departments = ref([
       </section>
 
     </div>
+
+    <Teleport to="body">
+      <transition name="popup">
+        <div v-if="isPopupOpen" class="popup-overlay" @click.self="closePopup">
+          <div class="popup-container">
+            <button @click="closePopup" class="popup-close-button">&times;</button>
+            <VacancyApplicationForm :position-title="selectedVacancyTitle" />
+          </div>
+        </div>
+      </transition>
+    </Teleport>
   </main>
 </template>
 
@@ -131,42 +169,105 @@ const departments = ref([
   aspect-ratio: 1 / 1;
   width: 100%;
   padding: 16px;
-  
-  /* Стили как у кнопки в форме */
   border: 2px dashed #E3E3E3;
   background-color: #F7F7F7;
-  
-  cursor: pointer;
   transition: all 0.3s ease;
 }
 
 .group:hover .vacancy-card {
-  border-color: #F15F31; /* Оранжевый цвет */
-  background-color: #F7F7F7; /* Белый фон при наведении */
+  border-color: #F15F31;
 }
 
 .vacancy-card-icon {
   width: 40px;
   height: 40px;
   margin-bottom: 8px;
-  
-  color: #8F8F8F; /* Серый цвет иконки */
+  color: #8F8F8F;
   transition: color 0.3s ease;
 }
 
 .group:hover .vacancy-card-icon {
-  color: #F15F31; /* Оранжевый цвет иконки при наведении */
+  color: #F15F31;
 }
 
 .vacancy-card-text {
   font-family: 'Gilroy-Semibold', sans-serif;
   font-size: 16px;
-
-  color: #8F8F8F; /* Серый цвет текста */
+  color: #8F8F8F;
   transition: color 0.3s ease;
 }
 
 .group:hover .vacancy-card-text {
-  color: #F15F31; /* Оранжевый цвет текста при наведении */
+  color: #F15F31;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(19, 28, 38, 0.8);
+  backdrop-filter: blur(5px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.popup-container {
+  position: relative;
+  background: white;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  max-width: 1140px;
+  transform: scale(1);
+  transition: transform 0.3s ease;
+  overflow-y: auto;
+  max-height: 95vh;
+}
+.popup-container > :deep(.form-wrapper) {
+  padding: 4rem !important;
+}
+@media (min-width: 1024px) {
+  .popup-container > :deep(.form-wrapper) {
+    padding: 6rem !important;
+  }
+}
+
+.popup-close-button {
+  position: absolute;
+  top: 15px;
+  right: 22px;
+  background: none;
+  border: none;
+  font-size: 2.5rem;
+  line-height: 1;
+  color: #8F8F8F;
+  cursor: pointer;
+  transition: color 0.2s;
+  z-index: 1001;
+}
+
+.popup-close-button:hover {
+  color: #131C26;
+}
+
+.popup-enter-active,
+.popup-leave-active {
+  transition: opacity 0.3s ease;
+}
+.popup-enter-from,
+.popup-leave-to {
+  opacity: 0;
+}
+.popup-enter-active .popup-container,
+.popup-leave-active .popup-container {
+  transition: all 0.3s ease;
+}
+.popup-enter-from .popup-container,
+.popup-leave-to .popup-container {
+  transform: scale(0.95);
 }
 </style>

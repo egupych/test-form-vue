@@ -3,50 +3,23 @@ import { ref } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import TalentReserveForm from '@/components/ui/TalentReserveForm.vue';
-// 1. Импортируем новый компонент формы для отклика
 import VacancyApplicationForm from '@/components/ui/VacancyApplicationForm.vue';
+// 1. Импортируем наше новое хранилище
+import { useVacanciesStore } from '@/stores/vacancies.js';
 
-// Данные вакансий остаются без изменений
-const vacancies = ref([
-  {
-    id: 1,
-    title: 'Офис-менеджер',
-    salary: 'от 250 000 тенге до вычета налогов',
-    tags: ['Девушка', '20-35 лет'],
-    conditions: 'Официальное трудоустройство. Рабочий день 09:00-18:00 (5/2).',
-    responsibilities: [
-      'Ответы на телефонные звонки;',
-      'Ведение деловой корреспонденции;',
-      'Логистика;',
-      'Административно-хозяйственная часть;',
-      'Выполнение поручений руководителя.'
-    ]
-  },
-  {
-    id: 2,
-    title: 'Печатник',
-    salary: 'от 250 000 тенге до вычета налогов',
-    tags: ['Мужчина', '20-40 лет'],
-    conditions: 'Официальное трудоустройство. Рабочий день 09:00-18:00 (5/2).',
-    responsibilities: [
-      'Знание CorelDRAW, Acrobat, Illustrator',
-      'Работа на машинах (или похожих):<br>– Mimaki UJV100-160<br>– принтер сублимационный Epson L1800<br>– принтер Roland VersanCAMM VS-640i<br>– принтер планшетный УФ Roland VersanUV LEF-200<br>– гравировальная машина Roland Desktop EGX-350;',
-      'Постпечатная обработка продукции.'
-    ]
-  }
-]);
+// 2. Получаем доступ к данным из хранилища
+const vacanciesStore = useVacanciesStore();
+const vacancies = vacanciesStore.list; // Используем список вакансий из Pinia
 
-// 2. Логика для управления всплывающим окном
+// Логика для управления всплывающим окном остается без изменений
 const isPopupOpen = ref(false);
 const selectedVacancyTitle = ref('');
 
-// Функция для открытия попапа
 const openPopup = (vacancyTitle) => {
   selectedVacancyTitle.value = vacancyTitle;
   isPopupOpen.value = true;
 };
 
-// Функция для закрытия попапа
 const closePopup = () => {
   isPopupOpen.value = false;
 };
@@ -105,6 +78,7 @@ const closePopup = () => {
 </template>
 
 <style scoped>
+/* Стили остаются без изменений */
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -119,7 +93,6 @@ const closePopup = () => {
   z-index: 1000;
   padding: 1rem;
 }
-
 .popup-container {
   position: relative;
   background: white;
@@ -131,8 +104,6 @@ const closePopup = () => {
   overflow-y: auto;
   max-height: 95vh;
 }
-
-/* Переопределяем внутренние отступы формы внутри попапа */
 .popup-container > :deep(.form-wrapper) {
   padding: 4rem !important;
 }
@@ -141,7 +112,6 @@ const closePopup = () => {
     padding: 6rem !important;
   }
 }
-
 .popup-close-button {
   position: absolute;
   top: 15px;
@@ -155,25 +125,11 @@ const closePopup = () => {
   transition: color 0.2s;
   z-index: 1001;
 }
-
 .popup-close-button:hover {
   color: #131C26;
 }
-
-.popup-enter-active,
-.popup-leave-active {
-  transition: opacity 0.3s ease;
-}
-.popup-enter-from,
-.popup-leave-to {
-  opacity: 0;
-}
-.popup-enter-active .popup-container,
-.popup-leave-active .popup-container {
-  transition: all 0.3s ease;
-}
-.popup-enter-from .popup-container,
-.popup-leave-to .popup-container {
-  transform: scale(0.95);
-}
+.popup-enter-active, .popup-leave-active { transition: opacity 0.3s ease; }
+.popup-enter-from, .popup-leave-to { opacity: 0; }
+.popup-enter-active .popup-container, .popup-leave-active .popup-container { transition: all 0.3s ease; }
+.popup-enter-from .popup-container, .popup-leave-to .popup-container { transform: scale(0.95); }
 </style>
