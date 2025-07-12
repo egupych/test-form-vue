@@ -59,6 +59,8 @@ const allVacancies = vacanciesStore.list;
 const vacancyDepartmentMap = {
   'Печатник': 'Производство',
   'Офис-менеджер': 'Офис',
+  'Дизайнер': 'Отдел дизайна',
+  'Менеджер': 'Отдел продаж'
 };
 
 const getVacanciesForDepartment = (departmentName) => {
