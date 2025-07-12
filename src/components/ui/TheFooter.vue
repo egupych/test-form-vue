@@ -126,12 +126,17 @@ const handleSubscription = async () => {
             <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border border-gray-600 rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">Instagram</a>
             <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border border-gray-600 rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">2GIS</a>
           </div>
-          <div class="text-sm w-full">
-            <p>+7 (700) 725-77-99</p>
-            <p>infoprint@redpanda.kz</p>
+          
+          <div class="flex flex-col gap-1 text-sm w-full lg:text-right">
+            <a href="tel:+77007257799" class="hover:text-panda-orange transition-colors duration-200">
+              +7 (700) 725-77-99
+            </a>
+            <a href="mailto:infoprint@redpanda.kz" class="hover:text-panda-orange transition-colors duration-200">
+              infoprint@redpanda.kz
+            </a>
             <p>TOO «RED PANDA» БИН 221240030264</p>
           </div>
-        </div>
+          </div>
       </div>
     </div>
   </footer>
