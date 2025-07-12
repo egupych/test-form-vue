@@ -13,6 +13,10 @@ import laura from '@/assets/images/pages/TeamPage/Лаура.png';
 import alina from '@/assets/images/pages/TeamPage/Алина.png';
 import dmitry from '@/assets/images/pages/TeamPage/Дмитрий.png';
 import farida from '@/assets/images/pages/TeamPage/Фарида.png';
+import kata from '@/assets/images/pages/TeamPage/катя.png';
+import vlad from '@/assets/images/pages/TeamPage/влад.png';
+import lina from '@/assets/images/pages/TeamPage/лина.png';
+import ula from '@/assets/images/pages/TeamPage/юля.png';
 
 // --- Структура отделов и сотрудники ---
 const departments = ref([
@@ -36,7 +40,7 @@ const departments = ref([
   {
     name: 'Отдел дизайна',
     employees: [
-      { name: 'Екатерина', role: 'Дизайнер', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Екатерина' },
+      { name: 'Екатерина', role: 'Дизайнер', image: kata },
       { name: 'Анеля', role: 'Дизайнер', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Анеля' },
       { name: 'Дмитрий', role: 'Дизайнер', image: dmitry }
     ]
@@ -45,8 +49,9 @@ const departments = ref([
     name: 'Производство',
     employees: [
       { name: 'Фарида', role: 'Заведующая складом', image: farida },
-      { name: 'Лина', role: 'Технолог', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Лина' },
-      { name: 'Владислав', role: 'Печатник', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Владислав' },
+      { name: 'Лина', role: 'Технолог', image: lina },
+      { name: 'Владислав', role: 'Печатник', image: vlad },
+      { name: 'Юля', role: 'Печатник', image: ula },
       { name: 'Карина', role: 'Печатник', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Карина' },
     ]
   }
@@ -103,7 +108,7 @@ const closePopup = () => {
             class="group"
           >
             <div class="bg-light-gray overflow-hidden aspect-square flex items-center justify-center">
-              <img :src="employee.image" :alt="employee.name" class="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105">
+              <img :src="employee.image" :alt="employee.name" class="w-full h-full object-cover">
             </div>
             <div class="pt-3">
               <h3 class="font-semibold text-panda-black text-lg">{{ employee.name }}</h3>
