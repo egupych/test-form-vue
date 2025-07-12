@@ -16,7 +16,7 @@ const historyEvents = ref([
 ]);
 
 // --- [НОВОЕ] Логика для отображения 5 дат из 10 ---
-const DATES_TO_SHOW = 5;
+const DATES_TO_SHOW = 6;
 const currentStartIndex = ref(0); // Индекс первого видимого элемента
 
 // Этот computed всегда будет содержать 5 событий для отображения
@@ -103,6 +103,7 @@ const setActiveEvent = (index) => {
   width: 100%;
 }
 
+/* --- [ВОЗВРАЩЕНЫ] Стили для блока управления и стрелок --- */
 .timeline-controls {
   position: relative;
   display: flex;
@@ -111,31 +112,30 @@ const setActiveEvent = (index) => {
   margin-bottom: 4rem;
 }
 
-/* [НОВОЕ] Стили для кнопок навигации */
 .nav-arrow {
   flex-shrink: 0;
-  color: #8F8F8F; /* dark-gray */
+  color: #8F8F8F;
   padding: 8px;
   border-radius: 50%;
   transition: all 0.2s ease;
 }
 .nav-arrow:hover:not(:disabled) {
-  background-color: #E3E3E3; /* gray */
-  color: #131C26; /* panda-black */
+  background-color: #E3E3E3;
+  color: #131C26;
 }
 .nav-arrow:disabled {
-  color: #E3E3E3; /* gray */
+  color: #E3E3E3;
   cursor: not-allowed;
 }
+/* --- --- */
 
-/* [НОВОЕ] Обертка для самой линии, чтобы она не растягивалась на кнопки */
 .timeline-wrapper {
-    position: relative;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-grow: 1;
-    margin: 0 1rem;
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-grow: 1;
+  margin: 0 1rem;
 }
 
 .timeline-line {
@@ -144,18 +144,12 @@ const setActiveEvent = (index) => {
   left: 0;
   right: 0;
   height: 2px;
-  /* [ИЗМЕНЕНИЕ] Линия стала оранжевой */
-  background-color: #F15F31; /* panda-orange */
+  background-color: #F15F31;
   transform: translateY(-50%);
   z-index: 1;
-}
-
-/* [ИЗМЕНЕНИЕ] Линия не должна выходить за пределы первого и последнего круга.
-   Для этого мы ее немного "сократим" с краев. Ширина круга 58px, радиус ~29px.
-*/
-.timeline-line {
-    left: 29px;
-    right: 29px;
+  /* Корректировка, чтобы линия не выходила за пределы крайних кругов */
+  left: 29px;
+  right: 29px;
 }
 
 .timeline-dot-wrapper {
@@ -163,8 +157,9 @@ const setActiveEvent = (index) => {
   z-index: 2;
 }
 
+/* --- [СОХРАНЕНЫ] Исправленные стили для кнопки и круга --- */
 .timeline-dot {
-  /* [ИЗМЕНЕНИЕ] Круги стали на 20% меньше */
+  position: relative;
   width: 58px;
   height: 58px;
   border-radius: 50%;
@@ -174,26 +169,45 @@ const setActiveEvent = (index) => {
   font-family: 'Gilroy-Bold', sans-serif;
   font-size: 16px;
   cursor: pointer;
-  transition: all 0.3s ease-in-out;
-  /* [ИЗМЕНЕНИЕ] Стили для неактивного состояния */
-  border: 2px solid #F15F31;
-  background-color: #F7F7F7; 
+  background: none;
+  border: none;
   color: #F15F31;
+  transition: color 0.3s ease;
+  z-index: 3;
+}
+
+.timeline-dot::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  border: 2px solid #F15F31;
+  background-color: #f7f7f7;
+  z-index: -1;
+  transform: scale(1);
+  transition: transform 0.3s ease, background-color 0.3s ease;
+}
+
+.timeline-dot:hover::before {
+  transform: scale(1.08);
 }
 
 .timeline-dot.is-active {
-  /* [ИЗМЕНЕНИЕ] Стили для активного состояния */
-  background-color: #F15F31;
-  color: #F7F7F7;
-  border-color: #F15F31;
-  transform: scale(1.1);
-  box-shadow: none; /* Убираем тень */
+  color: #f7f7f7;
 }
 
-/* [ИЗМЕНЕНИЕ] Эффект наведения только на неактивные круги */
-.timeline-dot:not(.is-active):hover {
-    transform: scale(1.1);
+.timeline-dot.is-active::before {
+  background-color: #F15F31;
+  transform: scale(1);
 }
+
+.timeline-dot.is-active:hover::before {
+  transform: scale(1.1);
+}
+/* --- --- */
 
 .event-content {
   display: grid;
@@ -232,6 +246,7 @@ const setActiveEvent = (index) => {
   opacity: 0;
   transform: translateX(30px);
 }
+
 .slide-fade-leave-to {
   opacity: 0;
   transform: translateX(-30px);
