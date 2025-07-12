@@ -51,15 +51,16 @@ const handleSubscription = async () => {
 <template>
   <footer class="text-light-gray bg-panda-black text-gray-400 font-medium">
     <div class="max-w-6xl mx-auto px-4 md:px-0 py-16">
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-y-10 md:gap-x-8">
-        <div class="flex flex-col space-y-6">
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-10 md:gap-x-8 items-end">
+        
+        <div class="flex flex-col">
           <div class="flex items-center space-x-3">
             <img src="@/assets/images/layout/red-panda-logo-white.svg" alt="Логотип Red Panda" class="h-15">
           </div>
-          <div class="pt-2">
-            <h3 class="text-light-gray text-body-panda">Подпишитесь на рассылку о будущих акциях</h3>
+          <div class="pt-6">
+            <h3 class="text-light-gray text-body-panda">Подпишитесь на рассылку <br>о будущих акциях</h3>
           </div>
-          <form class="space-y-4 max-w-sm" @submit.prevent="handleSubscription">
+          <form class="space-y-4 max-w-sm mt-6" @submit.prevent="handleSubscription">
             <input
                 v-model="subscription.email"
                 type="email"
@@ -81,13 +82,13 @@ const handleSubscription = async () => {
                   class="h-4 w-4 mt-1 bg-transparent rounded border-gray-500 text-panda-orange focus:ring-panda-orange focus:ring-offset-panda-black"
                 >
                 <label for="consent" class="ml-3 text-xs">
-                  Вы соглашаетесь на информационную рассылку. Отписаться можно в любое время.
+                  Согласие на информационную рассылку. Отписаться можно в любое время.
                 </label>
             </div>
             <button
                 type="submit"
                 :disabled="subscription.isSubmitting"
-                class="w-full bg-light-gray text-panda-black font-bold py-2 px-4 rounded-full hover:bg-gray-200 transition-colors disabled:opacity-50"
+                class="w-full bg-light-gray text-panda-black font-bold py-2 px-4 rounded-full transition-colors disabled:opacity-50 hover:bg-panda-orange hover:text-light-gray"
             >
                 {{ subscription.isSubmitting ? 'Отправка...' : 'Подписаться' }}
             </button>
@@ -98,8 +99,9 @@ const handleSubscription = async () => {
             </div>
           </form>
         </div>
-        <div class="flex flex-col items-start md:items-center text-left md:text-center space-y-4">
-          <div class="w-full max-w-sm h-80 rounded-2xl overflow-hidden">
+
+        <div class="flex flex-col items-center text-center space-y-4 lg:col-span-2">
+          <div class="w-full h-80 rounded-2xl overflow-hidden">
               <InteractiveMap />
           </div>
           <div class="text-sm">
@@ -107,8 +109,9 @@ const handleSubscription = async () => {
           <p>ПН-ПТ 10:00-18:00</p>
           </div>
         </div>
-        <div class="flex flex-col items-start lg:items-end space-y-5 text-left lg:text-right">
-          <div class="flex space-x-4">
+        
+        <div class="flex flex-col items-start lg:items-end space-y-8 text-left lg:text-right">
+          <div class="flex justify-end w-full space-x-8">
             <div class="text-center">
                 <img src="@/assets/images/layout/QR-site.svg" alt="QR Code redpanda.kz" class="w-24 h-24 rounded-md p-1">
                 <p class="text-md mt-1">redpanda.kz</p>
@@ -118,12 +121,12 @@ const handleSubscription = async () => {
                 <p class="text-md mt-1">redpandakz</p>
             </div>
           </div>
-          <div class="flex flex-wrap justify-start lg:justify-end gap-2">
-            <a href="https://wa.me/77007257799" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Whatsapp</a>
-            <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">Instagram</a>
-            <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border rounded-full hover:bg-gray-600 transition-colors">2GIS</a>
+          <div class="flex flex-col items-end gap-2">
+            <a href="https://wa.me/77007257799" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border border-gray-600 rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">Whatsapp</a>
+            <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border border-gray-600 rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">Instagram</a>
+            <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border border-gray-600 rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">2GIS</a>
           </div>
-          <div class="text-sm">
+          <div class="text-sm w-full">
             <p>+7 (700) 725-77-99</p>
             <p>infoprint@redpanda.kz</p>
             <p>TOO «RED PANDA» БИН 221240030264</p>
