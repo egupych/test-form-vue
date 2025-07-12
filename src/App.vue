@@ -9,6 +9,8 @@ import { useSmoothScroll } from '@/composables/useSmoothScroll.js';
 import previewHome from '@/assets/images/app/previews/preview-home.jpg';
 import previewGallery from '@/assets/images/app/previews/preview-gallery.jpg';
 import previewShop from '@/assets/images/app/previews/preview-shop.jpg';
+// --- [НОВОЕ] Импортируем наш новый компонент ---
+import FloatingActionButton from '@/components/ui/FloatingActionButton.vue';
 
 useSmoothScroll();
 
@@ -386,6 +388,9 @@ const handleSubscription = async () => {
         <img :src="activePreviewLink.preview" alt="Page preview" class="preview-image">
       </router-link>
     </transition>
+    
+    <FloatingActionButton />
+
   </div>
 </template>
 
