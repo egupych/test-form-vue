@@ -1,10 +1,10 @@
 <script setup>
 import { ref } from 'vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
-// 1. Импортируем компонент формы для отклика
 import VacancyApplicationForm from '@/components/ui/VacancyApplicationForm.vue';
-// 2. Импортируем наше хранилище вакансий
 import { useVacanciesStore } from '@/stores/vacancies.js';
+// --- [НОВОЕ] Импортируем наш новый компонент слайдера ---
+import HistorySlider from '@/components/ui/HistorySlider.vue';
 
 // --- Изображения сотрудников ---
 import andreyFedorovich from '@/assets/images/pages/TeamPage/Андрей Фёдорович.png';
@@ -67,11 +67,9 @@ const getVacanciesForDepartment = (departmentName) => {
   return allVacancies.filter(vacancy => vacancyDepartmentMap[vacancy.title] === departmentName);
 };
 
-// 3. Добавляем переменные для управления состоянием попапа
 const isPopupOpen = ref(false);
 const selectedVacancyTitle = ref('');
 
-// 4. Функции для открытия и закрытия попапа
 const openPopup = (vacancyTitle) => {
   selectedVacancyTitle.value = vacancyTitle;
   isPopupOpen.value = true;
@@ -140,14 +138,9 @@ const closePopup = () => {
         <SectionHeader class="gap-container">
           Наша история
         </SectionHeader>
-        <div class="relative border-l-2 border-panda-orange pl-8 py-4">
-            <div class="mb-8"><h3 class="font-semibold text-panda-black text-2xl">2024 Декабрь</h3><p class="text-lg text-dark-gray">Провели незабываемый корпоратив, завершивший успешный год.</p></div>
-            <div class="mb-8"><h3 class="font-semibold text-panda-black text-2xl">2023 Июнь</h3><p class="text-lg text-dark-gray">Расширение производства, закупка нового оборудования.</p></div>
-            <div class="mb-8"><h3 class="font-semibold text-panda-black text-2xl">2022 Февраль</h3><p class="text-lg text-dark-gray">Открытие первого филиала в другом городе.</p></div>
-        </div>
+        <HistorySlider />
       </section>
-
-    </div>
+      </div>
 
     <Teleport to="body">
       <transition name="popup">
@@ -163,6 +156,7 @@ const closePopup = () => {
 </template>
 
 <style scoped>
+/* Стили в этом файле остаются без изменений */
 .vacancy-card {
   display: flex;
   flex-direction: column;
