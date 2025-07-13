@@ -2,33 +2,28 @@
 import { ref } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
-// --- ДОБАВЛЕНО: Импортируем компонент формы ---
 import CalculationForm from '@/components/ui/CalculationForm.vue';
 
 const activeTab = ref('packages');
-
-// --- ДОБАВЛЕНО: Логика для управления всплывающим окном ---
 const isPopupVisible = ref(false);
 
 const openPopup = () => {
   isPopupVisible.value = true;
 };
-
 const closePopup = () => {
   isPopupVisible.value = false;
 };
-// --- КОНЕЦ ДОБАВЛЕННОГО ---
 
 const templatesData = [
   { 
     id: 'packages', 
     name: 'Пакеты',
     items: [
-      { name: '230 × 350 × 80 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=400', href: '#' },
-      { name: '170 × 190 × 105 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=400', href: '#' },
-      { name: '340 × 110 × 70 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=400&h=500', href: '#' },
-      { name: '200 × 200 × 90 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=400', href: '#' },
-      { name: '350 × 250 × 80 мм', img: 'https://images.unsplash.com/photo-1594495894542-a46cc73e081a?w=500&h=400', href: '#' },
+      { name: '230 × 350 × 80 мм', href: '/templates/package-1.cdr' },
+      { name: '170 × 190 × 105 мм', href: '/templates/package-2.cdr' },
+      { name: '340 × 110 × 70 мм', href: '/templates/package-3.cdr' },
+      { name: '200 × 200 × 90 мм', href: '/templates/package-4.cdr' },
+      { name: '350 × 250 × 80 мм', href: '/templates/package-5.cdr' },
     ]
   },
   { id: 'booklets', name: 'Буклеты', items: [] },
@@ -63,22 +58,35 @@ const templatesData = [
         <div v-for="tab in templatesData" :key="tab.id + '-content'">
           <div v-if="activeTab === tab.id">
             <div v-if="tab.items.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
-              <div v-for="item in tab.items" :key="item.name" class="flex flex-col items-center group">
-                <div class="bg-light-gray w-full rounded-lg flex items-center justify-center mb-3 aspect-[3/4]">
-                  <img :src="item.img" :alt="item.name" class="max-h-full max-w-full object-contain">
+              
+              <a 
+                v-for="item in tab.items" 
+                :key="item.name" 
+                :href="item.href" 
+                download
+                class="flex flex-col items-center group text-center no-underline"
+              >
+                <div class="bg-light-gray w-full rounded-lg flex items-center justify-center p-4 mb-3 aspect-[3/4]">
+                  <svg class="w-full h-full text-gray" viewBox="0 0 100 133" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 1H80L99 20V113L80 132H20L1 113V20L20 1Z" stroke="currentColor" stroke-width="2"/>
+                    <path d="M1 20H20H99" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
+                    <path d="M20 1V20V132" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
+                    <path d="M80 1V20V132" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
+                  </svg>
                 </div>
-                <div class="text-center">
-                  <div class="text-body-panda text-panda-black h-10 flex items-center justify-center">{{ item.name }}</div>    
-                </div>
-                <div class="button" data-tooltip="Corel .CDR">
+                
+                <div class="text-body-panda text-panda-black mb-4">{{ item.name }}</div>    
+                
+                <div class="button mt-auto" data-tooltip="Corel .CDR">
                   <div class="button-wrapper">
-                  <div class="text">Скачать</div>
-                      <span class="icon">
+                    <div class="text">Скачать</div>
+                    <span class="icon">
                       <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17"></path></svg>
-                      </span>
+                    </span>
                   </div>
                 </div>
-              </div>
+              </a>
+
             </div>
             <div v-else class="text-center py-10 text-dark-gray text-xl">
               Шаблоны для категории «{{ tab.name }}» скоро появятся.
@@ -172,7 +180,7 @@ const templatesData = [
           Написать менеджеру
         </BaseButton>
       </div>
-      </div>
+    </div>
   </main>
 
   <Teleport to="body">
@@ -185,9 +193,12 @@ const templatesData = [
       </div>
     </transition>
   </Teleport>
-  </template>
+</template>
 
 <style scoped>
+.no-underline {
+  text-decoration: none;
+}
 .popup-overlay {
   position: fixed;
   top: 0;
@@ -274,7 +285,13 @@ const templatesData = [
   position: relative;
   text-align: center;
   border-radius: 2rem;
+  font-family: 'Gilroy-SemiBold', sans-serif;
   cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.group:hover .button {
+  background: #F15F31;
 }
 
 .button::before {
@@ -332,19 +349,15 @@ const templatesData = [
   height: 24px;
 }
 
-.button:hover {
-  background: #F15F31;
-}
-
-.button:hover .text {
+.group:hover .button .text {
   top: -100%;
 }
 
-.button:hover .icon {
+.group:hover .button .icon {
   top: 0;
 }
 
-.button:hover:before {
+.group:hover .button:before {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
