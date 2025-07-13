@@ -11,7 +11,7 @@ import packaging from '@/assets/images/pages/HomePage/ServicesImageGrid/packagin
 import outdoorAdv from '@/assets/images/pages/HomePage/ServicesImageGrid/outdoor-adv.webp';
 import laserCutting from '@/assets/images/pages/HomePage/ServicesImageGrid/laser-cutting.jpg';
 import design from '@/assets/images/pages/HomePage/ServicesImageGrid/design.jpg';
-import dtfPrint from '@/assets/images/pages/HomePage/ServicesImageGrid/dtf-print.jpg';
+import dtfPrint from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
 import souvenirs from '@/assets/images/pages/HomePage/ServicesImageGrid/souvenirs.webp';
 import goldFoil from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
 import silverFoil from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
@@ -19,19 +19,19 @@ import whitePrint from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-fo
 import uvPrint from '@/assets/images/pages/HomePage/ServicesImageGrid/uv-print.jpg';
 import embroidery from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
 import laserEngraving from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import interiorPrinting from '@/assets/images/pages/HomePage/ServicesImageGrid/interior-printing.jpg';
-import varnishing from '@/assets/images/pages/HomePage/ServicesImageGrid/varnishing.webp';
-import foilStamping from '@/assets/images/pages/HomePage/ServicesImageGrid/foil-stamping.webp';
-import lamination from '@/assets/images/pages/HomePage/ServicesImageGrid/lamination.jpg';
-import hardcover from '@/assets/images/pages/HomePage/ServicesImageGrid/hardcover.jpg';
-import softcover from '@/assets/images/pages/HomePage/ServicesImageGrid/softcover.jpg';
-import contourCutting from '@/assets/images/pages/HomePage/ServicesImageGrid/contour-cutting.jpg';
-import cutting1 from '@/assets/images/pages/HomePage/ServicesImageGrid/cutting1.jpg';
-import cutting2 from '@/assets/images/pages/HomePage/ServicesImageGrid/cutting2.jpg';
-import brochuring from '@/assets/images/pages/HomePage/ServicesImageGrid/brochuring.jpg';
-import accessories from '@/assets/images/pages/HomePage/ServicesImageGrid/accessories.jpg';
-import creasing from '@/assets/images/pages/HomePage/ServicesImageGrid/creasing.jpg';
-import perforation from '@/assets/images/pages/HomePage/ServicesImageGrid/perforation.jpg';
+import interiorPrinting from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import varnishing from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import foilStamping from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import lamination from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import hardcover from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import softcover from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import contourCutting from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import cutting1 from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import cutting2 from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import brochuring from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import accessories from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import creasing from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import perforation from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
 
 
 const services = ref([
