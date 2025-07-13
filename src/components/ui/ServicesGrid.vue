@@ -1,3 +1,5 @@
+src/components/ui/ServicesGrid.vue -->
+
 <script setup>
 import { ref, computed } from 'vue';
 import { useServicesStore } from '@/stores/services.js';
@@ -91,7 +93,7 @@ const previewStyle = computed(() => {
     if (!hoveredCell.value || !tableRef.value || !previewImageDimensions.value.width) return {};
 
     const PREVIEW_BASE_WIDTH = 256;
-    const BORDER_WIDTH = 1; // Толщина границы ячейки в пикселях
+    const BORDER_WIDTH = 1;
     const previewHeight = PREVIEW_BASE_WIDTH * previewImageDimensions.value.height / previewImageDimensions.value.width;
     
     const container = tableRef.value.parentElement;
@@ -100,7 +102,6 @@ const previewStyle = computed(() => {
     const containerRect = container.getBoundingClientRect();
     const cellRect = hoveredCell.value.getBoundingClientRect();
 
-    // ИЗМЕНЕНО: Добавлена поправка на толщину границы
     const top = cellRect.top - containerRect.top;
     let left = cellRect.right - containerRect.left - BORDER_WIDTH;
 
@@ -149,14 +150,14 @@ const previewStyle = computed(() => {
           >
             <router-link
               v-if="!service.isPlaceholder"
-              :to="{ name: 'ServiceDetail', params: { slug: service.id } }"
+              :to="{ path: '/gallery', hash: '#' + service.id }"
               class="block w-full h-full p-3 hover:bg-panda-orange group"
             >
               <span class="font-semibold text-header-panda text-panda-black group-hover:text-white">
                 {{ service.name }}
               </span>
             </router-link>
-          </td>
+            </td>
         </tr>
       </tbody>
     </table>

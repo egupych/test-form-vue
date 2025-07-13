@@ -1,13 +1,21 @@
-import { createApp } from 'vue';
-import { createPinia } from 'pinia'; // [НОВОЕ] 1. Импортируем Pinia
-import App from './App.vue';
-import router from './router'; 
-import './assets/styles/main.css';
+// ---> src/main.js
 
-const app = createApp(App);
-const pinia = createPinia(); // [НОВОЕ] 2. Создаем экземпляр Pinia
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
+import App from './App.vue'
+import router from './router'
+import './assets/styles/main.css'
 
-app.use(router);
-app.use(pinia); // [НОВОЕ] 3. Подключаем его к приложению
+// 1. Импортируем наш store
+import { useGalleryStore } from './stores/gallery';
 
-app.mount('#app');
+const app = createApp(App)
+const pinia = createPinia()
+
+app.use(pinia)
+app.use(router)
+
+app.mount('#app')
+
+// 2. Запускаем загрузку изображений
+useGalleryStore(pinia).loadGalleryItems();
