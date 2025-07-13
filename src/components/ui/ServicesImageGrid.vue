@@ -11,13 +11,13 @@ import packaging from '@/assets/images/pages/HomePage/ServicesImageGrid/packagin
 import outdoorAdv from '@/assets/images/pages/HomePage/ServicesImageGrid/outdoor-adv.webp';
 import laserCutting from '@/assets/images/pages/HomePage/ServicesImageGrid/laser-cutting.jpg';
 import design from '@/assets/images/pages/HomePage/ServicesImageGrid/design.jpg';
-import dtfPrint from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import dtfPrint from '@/assets/images/services/merch/dtfPrint.jpg';
 import souvenirs from '@/assets/images/pages/HomePage/ServicesImageGrid/souvenirs.webp';
 import goldFoil from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
 import silverFoil from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
 import whitePrint from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
 import uvPrint from '@/assets/images/pages/HomePage/ServicesImageGrid/uv-print.jpg';
-import embroidery from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import embroidery from '@/assets/images/services/merch/embroidery.jpg';
 import laserEngraving from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
 import interiorPrinting from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
 import varnishing from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
@@ -48,22 +48,23 @@ const services = ref([
     title: 'Упаковка',
     description: 'Изготовление коробок и бумажных стаканчиков с фирменным стилем',
     imageUrl: packaging, // <-- 2. Используем импортированную переменную
-    style: 'grid-row: span 2;'
-  },
-  {
-    id: 'outdoor-adv',
-    title: 'Наружная реклама',
-    description: 'Баннеры, вывески, билборды, лайтбоксы',
-    imageUrl: outdoorAdv, // <-- 2. Используем импортированную переменную
-    style: 'grid-row: span 2;'
   },
 
   // --- Маленькие блоки (1x1) ---
   { id: 'laser-cutting', title: 'Лазерная резка', description: 'Акриловые таблички, награды', imageUrl: laserCutting },
-  { id: 'design', title: 'Дизайнерские услуги', description: 'Создадим продающий баннер, презентацию или полный брендбук — под любую задачу, быстро и со вкусом', imageUrl: design },
+  { id: 'outdoor-adv', title: 'Наружная реклама', description: 'Баннеры, вывески, билборды, лайтбоксы', imageUrl: outdoorAdv },
+
   { id: 'dtf-print', title: 'Мерч с DTF-печатью', description: 'Качественная печать на футболках, худи, кепках и фартуках', imageUrl: dtfPrint },
   { id: 'souvenirs', title: 'Сувениры', description: 'Презентабельные и полезные сувениры: ручки, блокноты, флешки, ', imageUrl: souvenirs },
   { id: 'gold-foil', title: 'Печать золотой краской', description: 'Для премиальной продукции', imageUrl: goldFoil },
+
+  {
+    id: 'design',
+    title: 'Дизайнерские услуги',
+    description: 'Создадим продающий баннер, презентацию или полный брендбук — под любую задачу, быстро и со вкусом',
+    imageUrl: design, // <-- 2. Используем импортированную переменную
+    style: 'grid-column: span 2; grid-row: span 2;'
+  },
   { id: 'silver-foil', title: 'Печать серебром', description: 'Для премиальной продукции', imageUrl: silverFoil },
   { id: 'white-print', title: 'Печать белым цветом', description: 'На темных материалах', imageUrl: whitePrint },
   { id: 'uv-print', title: 'УФ-печать', description: 'На любых поверхностях', imageUrl: uvPrint },
