@@ -1,5 +1,15 @@
 {
   "projects": {
     "default": "redpanda-cca8e"
-  }
+  },
+  "targets": {
+    "redpanda-cca8e": {
+      "hosting": {
+        "redpanda-main": [
+          "redpanda"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
