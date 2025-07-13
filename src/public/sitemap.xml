@@ -2,52 +2,52 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   
   <url>
-    <loc>https://ваш-домен.kz/</loc>
+    <loc>https://redpanda.web.app/</loc>
     <lastmod>2024-07-09</lastmod>
     <priority>1.00</priority>
   </url>
   <url>
-    <loc>https://ваш-домен.kz/auth</loc>
+    <loc>https://redpanda.web.app/auth</loc>
     <lastmod>2024-07-09</lastmod>
     <priority>0.60</priority>
   </url>
   <url>
-    <loc>https://ваш-домен.kz/gallery</loc>
+    <loc>https://redpanda.web.app/gallery</loc>
     <lastmod>2024-07-09</lastmod>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://ваш-домен.kz/shop</loc>
+    <loc>https://redpanda.web.app/shop</loc>
     <lastmod>2024-07-09</lastmod>
     <priority>0.90</priority>
   </url>
   <url>
-    <loc>https://ваш-домен.kz/team</loc>
+    <loc>https://redpanda.web.app/team</loc>
     <lastmod>2024-07-09</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://ваш-домен.kz/news</loc>
+    <loc>https://redpanda.web.app/news</loc>
     <lastmod>2024-07-09</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://ваш-домен.kz/vacancies</loc>
+    <loc>https://redpanda.web.app/vacancies</loc>
     <lastmod>2024-07-09</lastmod>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://ваш-домен.kz/equipment</loc>
+    <loc>https://redpanda.web.app/equipment</loc>
     <lastmod>2024-07-09</lastmod>
     <priority>0.70</priority>
   </url>
   <url>
-    <loc>https://ваш-домен.kz/promotions</loc>
+    <loc>https://redpanda.web.app/promotions</loc>
     <lastmod>2024-07-09</lastmod>
     <priority>0.80</priority>
   </url>
   <url>
-    <loc>https://ваш-домен.kz/preparation</loc>
+    <loc>https://redpanda.web.app/preparation</loc>
     <lastmod>2024-07-09</lastmod>
     <priority>0.70</priority>
   </url>
