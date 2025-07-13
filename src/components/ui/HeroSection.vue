@@ -58,7 +58,7 @@ const closeVideoPopup = () => {
               autoplay loop muted playsinline>
             </video>
             <div class="absolute inset-0 z-30 flex items-center justify-center rounded-full bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center backdrop-blur-sm scale-90 group-hover:scale-100 transition-all duration-300 ease-in-out">
+                <div class="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center scale-90 group-hover:scale-100 transition-all duration-300 ease-in-out">
                     <svg class="w-8 h-8 text-white ml-1" viewBox="0 0 24 24" fill="currentColor">
                       <path d="M8 5.14v14l11-7-11-7z"></path>
                     </svg>

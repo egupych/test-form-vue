@@ -135,7 +135,7 @@ onUnmounted(() => {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  border-radius: 8px;
+  border-radius: 16px;
   box-shadow: 0 10px 40px rgba(0,0,0,0.3);
 }
 

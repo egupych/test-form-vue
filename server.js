@@ -91,7 +91,7 @@ app.use(express.json());
 app.use(helmet());
 
 // --- ИЗМЕНЕНИЕ: Более строгая политика CORS для продакшена ---
-const whitelist = ['http://localhost:5173', 'https://your-production-domain.com']; // Замените на ваш домен
+const whitelist = ['http://localhost:5173', 'https://redpanda.web.app/']; // Замените на ваш домен
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || whitelist.indexOf(origin) !== -1) {

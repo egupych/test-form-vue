@@ -147,6 +147,7 @@ const previewStyle = computed(() => {
               'is-highlighted': hoveredLetter && service.name && service.name.toUpperCase().startsWith(hoveredLetter)
             }"
             @mouseenter="handleMouseEnter(service, $event)"
+            @mouseleave="resetPreview"
           >
             <router-link
               v-if="!service.isPlaceholder"
