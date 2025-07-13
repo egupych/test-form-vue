@@ -27,6 +27,10 @@ useSmoothScroll();
   flex-direction: column;
   min-height: 100vh;
   background-color: #F7F7F7;
+
+  /* === ГЛАВНОЕ ИЗМЕНЕНИЕ ЗДЕСЬ === */
+  /* Добавляем отступ сверху, равный высоте хедера */
+  padding-top: 6rem;
 }
 .main-content {
   flex-grow: 1;

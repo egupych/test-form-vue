@@ -253,6 +253,7 @@ const cancelHidePreviewTimer = () => {
 </template>
 
 <style scoped>
+/* Стили для мобильного меню и прочего остаются без изменений */
 .burger-button {
   width: 24px;
   height: 24px;
@@ -347,17 +348,24 @@ const cancelHidePreviewTimer = () => {
     @apply text-panda-orange font-semibold;
 }
 
+/* === ГЛАВНОЕ ИЗМЕНЕНИЕ ЗДЕСЬ === */
 .site-header {
   display: flex;
   align-items: center;
   padding: 1rem;
   background-color: #f7f7f7cc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  position: sticky;
-  top: 0;
-  z-index: 1000;
   backdrop-filter: blur(10px);
+  
+  /* Меняем sticky на fixed и добавляем свойства для растягивания */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
 }
+/* === КОНЕЦ ГЛАВНОГО ИЗМЕНЕНИЯ === */
+
 nav a, .nav-item {
   position: relative;
   font-family: 'Gilroy-SemiBold', sans-serif;
