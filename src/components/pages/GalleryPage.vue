@@ -3,16 +3,16 @@ import { ref, computed, onMounted, nextTick } from 'vue';
 import { useRoute } from 'vue-router';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import LazyImageGrid from '@/components/ui/LazyImageGrid.vue';
-import GallerySidebar from '@/components/ui/GallerySidebar.vue';
+// import GallerySidebar from '@/components/ui/GallerySidebar.vue'; // --- УДАЛЕНО
 import { useGalleryStore } from '@/stores/gallery.js';
 import { useServicesStore } from '@/stores/services.js';
-import ImageViewer from '@/components/ui/ImageViewer.vue'; // 1. Импортируем новый компонент
+import ImageViewer from '@/components/ui/ImageViewer.vue';
 
 const galleryStore = useGalleryStore();
 const servicesStore = useServicesStore();
 const route = useRoute();
 
-const activeCategory = ref(null);
+// const activeCategory = ref(null); // --- УДАЛЕНО
 const sectionRefs = ref({});
 
 const categoriesWithItems = computed(() => {
@@ -32,22 +32,9 @@ const handleNavigation = (categoryId) => {
 };
 
 onMounted(() => {
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        activeCategory.value = entry.target.id;
-      }
-    });
-  }, { rootMargin: '-50% 0px -50% 0px', threshold: 0 });
+  // --- УДАЛЕНО: Весь IntersectionObserver для боковой панели ---
 
-  nextTick(() => {
-    for (const id in sectionRefs.value) {
-      if (sectionRefs.value[id]) {
-        observer.observe(sectionRefs.value[id]);
-      }
-    }
-  });
-
+  // Оставляем логику для прокрутки по хешу в URL
   const hash = route.hash.replace('#', '');
   if (hash) {
     setTimeout(() => {
@@ -56,7 +43,6 @@ onMounted(() => {
   }
 });
 
-// 2. Логика для управления новым компонентом просмотра
 const isViewerOpen = ref(false);
 const viewerImages = ref([]);
 const viewerStartIndex = ref(0);
@@ -71,13 +57,6 @@ const closeViewer = () => { isViewerOpen.value = false; };
 
 <template>
   <div>
-    <GallerySidebar 
-      v-if="categoriesWithItems.length > 0"
-      :categories="categoriesWithItems"
-      :active-category="activeCategory"
-      @navigate="handleNavigation"
-    />
-    
     <main class="py-10 md:py-25">
       <div class="max-w-6xl mx-auto px-4">
         <div v-if="categoriesWithItems.length > 0" class="space-y-16">

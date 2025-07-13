@@ -1,6 +1,5 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
-import BaseButton from './BaseButton.vue';
 
 const props = defineProps({
   images: {
@@ -60,23 +59,26 @@ onUnmounted(() => {
 <template>
   <Teleport to="body">
     <transition name="viewer-fade">
-      <div class="image-viewer-overlay" @click.self="close">
-        <button class="close-button" @click="close" aria-label="Закрыть">&times;</button>
+      <div class="image-viewer-overlay" @click="close">
         
-        <div class="viewer-content">
-          <transition name="image-swap" mode="out-in">
-            <div :key="currentImage.url || currentImage" class="image-container">
-              <img :src="currentImage.url || currentImage" :alt="currentImage.alt || 'Просмотр изображения'" class="main-image">
-            </div>
-          </transition>
+        <div class="viewer-wrapper" @click.stop>
+          <button class="close-button" @click="close" aria-label="Закрыть">&times;</button>
+          
+          <div class="viewer-content">
+            <transition name="image-swap" mode="out-in">
+              <div :key="currentImage.url || currentImage" class="image-container">
+                <img :src="currentImage.url || currentImage" :alt="currentImage.alt || 'Просмотр изображения'" class="main-image">
+              </div>
+            </transition>
+          </div>
+          
+          <div class="controls-footer">
+            <button @click.stop="prevImage" :disabled="currentIndex === 0" class="footer-nav-button">назад</button>
+            <span class="counter">{{ counterText }}</span>
+            <button @click.stop="nextImage" :disabled="currentIndex === totalImages - 1" class="footer-nav-button">вперёд</button>
+          </div>
+        </div>
 
-        </div>
-        
-        <div class="controls-footer">
-          <button @click.stop="prevImage" :disabled="currentIndex === 0" class="footer-nav-button">назад</button>
-          <span class="counter">{{ counterText }}</span>
-          <button @click.stop="nextImage" :disabled="currentIndex === totalImages - 1" class="footer-nav-button">вперёд</button>
-        </div>
       </div>
     </transition>
   </Teleport>
@@ -91,12 +93,22 @@ onUnmounted(() => {
   background-color: rgba(19, 28, 38, 0.9);
   backdrop-filter: blur(8px);
   display: flex;
-  flex-direction: column;
   justify-content: center;
   align-items: center;
   z-index: 2000;
   padding: 1rem;
   box-sizing: border-box;
+}
+
+/* 3. Стили для новой обёртки */
+.viewer-wrapper {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  position: relative; /* Для позиционирования кнопок и футера */
 }
 
 .viewer-content {
@@ -127,33 +139,6 @@ onUnmounted(() => {
   box-shadow: 0 10px 40px rgba(0,0,0,0.3);
 }
 
-.nav-button {
-  flex-shrink: 0;
-  background-color: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: white;
-  border-radius: 50%;
-  width: 50px;
-  height: 50px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  margin: 0 1rem;
-}
-.nav-button:hover:not(:disabled) {
-  background-color: rgba(255, 255, 255, 0.2);
-  transform: scale(1.1);
-}
-.nav-button:disabled {
-  opacity: 0.3;
-  cursor: not-allowed;
-}
-.nav-button.next svg {
-  transform: rotate(180deg);
-}
-
 .close-button {
   position: absolute;
   top: 1rem;
@@ -166,6 +151,7 @@ onUnmounted(() => {
   line-height: 1;
   cursor: pointer;
   transition: color 0.2s ease, transform 0.2s ease;
+  z-index: 10; /* Чтоб был поверх всего */
 }
 .close-button:hover {
   color: white;
