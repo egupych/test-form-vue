@@ -53,14 +53,12 @@ const toggle = () => {
   border-radius: 100%; /* Скругление, как в примере */
   background-color: rgba(19, 28, 38, 0.164); /* Полупрозрачный темный фон */
   backdrop-filter: blur(4px); /* Эффект размытия фона */
-  border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
   transition: background-color 0.2s ease, transform 0.2s ease;
 }
 
 .like-button:hover {
     background-color: #F15F31;
-    transform: scale(1.05);
 }
 
 .like-icon {
