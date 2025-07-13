@@ -1,5 +1,3 @@
-
-
 <script setup>
 import { ref } from 'vue';
 import { useIntersectionObserver } from '@/composables/useIntersectionObserver.js';
@@ -17,8 +15,9 @@ const target = ref(null);
 
 const { isIntersecting } = useIntersectionObserver(target, { rootMargin: '200px' });
 
-const onImageClick = (image) => {
-  emit('image-click', image);
+// ИЗМЕНЕНИЕ: Просто пробрасываем объект события { image, index } наверх
+const onImageClick = (eventPayload) => {
+  emit('image-click', eventPayload);
 };
 </script>
 
