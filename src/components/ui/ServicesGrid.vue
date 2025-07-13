@@ -2,7 +2,6 @@
 import { ref, computed } from 'vue';
 import { useServicesStore } from '@/stores/services.js';
 import { storeToRefs } from 'pinia';
-// 👇 1. Импортируем наш новый "помощник"
 import { useServiceImages } from '@/composables/useServiceImages.js';
 
 const servicesStore = useServicesStore();
@@ -12,8 +11,10 @@ const hoveredService = ref(null);
 const hoveredCell = ref(null);
 const hoveredLetter = ref(null);
 const tableRef = ref(null);
-// 👇 2. Создаем отдельную переменную для URL превью
+
 const previewImageUrl = ref(null);
+const previewImageDimensions = ref({ width: 0, height: 0 });
+const isPreviewLoading = ref(false);
 
 const alphabet = computed(() => {
   const firstLetters = services.value.map(s => s.name.charAt(0).toUpperCase());
@@ -36,63 +37,112 @@ const servicesGrid = computed(() => {
     return grid;
 });
 
-// 👇 3. Обновляем функцию наведения мыши
 const handleMouseEnter = (service, event) => {
-    hoveredLetter.value = null;
-    if (service && !service.isPlaceholder) {
+    hoveredLetter.value = null; 
+    if (service && !service.isPlaceholder && !isPreviewLoading.value) {
         hoveredService.value = service;
         hoveredCell.value = event.target.closest('td');
 
-        // Вызываем нашего "помощника" для услуги, на которую навели курсор
+        isPreviewLoading.value = true;
         const { lastImage } = useServiceImages(service.id);
-        // Обновляем URL для превью. lastImage - это computed-свойство, поэтому нужно .value
-        previewImageUrl.value = lastImage.value;
+
+        if (lastImage.value) {
+            const img = new Image();
+            img.onload = () => {
+                previewImageDimensions.value = {
+                    width: img.naturalWidth,
+                    height: img.naturalHeight,
+                };
+                previewImageUrl.value = lastImage.value;
+                isPreviewLoading.value = false;
+            };
+            img.onerror = () => {
+                previewImageUrl.value = null;
+                previewImageDimensions.value = { width: 0, height: 0 };
+                isPreviewLoading.value = false;
+            };
+            img.src = lastImage.value;
+        } else {
+            previewImageUrl.value = null;
+            previewImageDimensions.value = { width: 0, height: 0 };
+            isPreviewLoading.value = false;
+        }
     }
 };
 
-const handleMouseLeave = () => {
+const resetPreview = () => {
     hoveredService.value = null;
     hoveredCell.value = null;
-    hoveredLetter.value = null;
-    // Сбрасываем URL превью
     previewImageUrl.value = null;
-};
+    previewImageDimensions.value = { width: 0, height: 0 };
+}
 
 const handleLetterEnter = (letter) => {
     hoveredLetter.value = letter;
-    hoveredService.value = null;
-    hoveredCell.value = null;
-    previewImageUrl.value = null;
-}
+    resetPreview();
+};
+
+const handleMouseLeaveComponent = () => {
+    resetPreview();
+    hoveredLetter.value = null;
+};
+
+const previewStyle = computed(() => {
+    if (!hoveredCell.value || !tableRef.value || !previewImageDimensions.value.width) return {};
+
+    const PREVIEW_BASE_WIDTH = 256;
+    const BORDER_WIDTH = 1; // Толщина границы ячейки в пикселях
+    const previewHeight = PREVIEW_BASE_WIDTH * previewImageDimensions.value.height / previewImageDimensions.value.width;
+    
+    const container = tableRef.value.parentElement;
+    if (!container) return {};
+    
+    const containerRect = container.getBoundingClientRect();
+    const cellRect = hoveredCell.value.getBoundingClientRect();
+
+    // ИЗМЕНЕНО: Добавлена поправка на толщину границы
+    const top = cellRect.top - containerRect.top;
+    let left = cellRect.right - containerRect.left - BORDER_WIDTH;
+
+    if (cellRect.right + PREVIEW_BASE_WIDTH > window.innerWidth) {
+        left = cellRect.left - containerRect.left - PREVIEW_BASE_WIDTH + BORDER_WIDTH;
+    }
+
+    return {
+        transform: `translate(${left}px, ${top}px)`,
+        width: `${PREVIEW_BASE_WIDTH}px`,
+        height: `${previewHeight}px`,
+    };
+});
 </script>
 
 <template>
-  <div class="relative" @mouseleave="handleMouseLeave">
+  <div class="relative" @mouseleave="handleMouseLeaveComponent">
 
     <div
-      class="alphabet-bar flex justify-center items-end gap-1 mb-4"
+      class="alphabet-bar flex justify-center items-center gap-1 mb-4"
       @mouseleave="hoveredLetter = null"
     >
       <span
         v-for="letter in alphabet"
         :key="letter"
-        class="alphabet-letter"
+        class="alphabet-letter-wrapper"
         @mouseenter="handleLetterEnter(letter)"
       >
-        {{ letter }}
+        <span class="alphabet-letter">
+          {{ letter }}
+        </span>
       </span>
     </div>
 
-    <table ref="tableRef" class="w-full border-collapse overflow-hidden">
+    <table ref="tableRef" class="w-full border-collapse">
       <tbody>
         <tr v-for="(row, rowIndex) in servicesGrid" :key="rowIndex">
           <td
             v-for="(service, colIndex) in row"
             :key="colIndex"
-            class="border p-0 h-12 text-left transition-all duration-300 ease-in-out"
+            class="border p-0 h-12 text-left"
             :class="{
-              'bg-panda-black': hoveredService && hoveredService.name === service.name,
-              'border-gray': rowIndex < servicesGrid.length -1 || colIndex < row.length -1,
               'is-highlighted': hoveredLetter && service.name && service.name.toUpperCase().startsWith(hoveredLetter)
             }"
             @mouseenter="handleMouseEnter(service, $event)"
@@ -100,9 +150,9 @@ const handleLetterEnter = (letter) => {
             <router-link
               v-if="!service.isPlaceholder"
               :to="{ name: 'ServiceDetail', params: { slug: service.id } }"
-              class="block w-full h-full p-3 hover:bg-panda-black group"
+              class="block w-full h-full p-3 hover:bg-panda-orange group"
             >
-              <span class="font-semibold text-header-panda text-panda-black group-hover:text-white transition-colors duration-200">
+              <span class="font-semibold text-header-panda text-panda-black group-hover:text-white">
                 {{ service.name }}
               </span>
             </router-link>
@@ -112,24 +162,21 @@ const handleLetterEnter = (letter) => {
     </table>
 
     <transition
-      enter-active-class="transition-opacity duration-300 ease-out"
+      enter-active-class="transition-opacity duration-200 ease-out"
       enter-from-class="opacity-0"
       enter-to-class="opacity-100"
-      leave-active-class="transition-opacity duration-200 ease-in"
-      leave-from-class="opacity-0"
+      leave-active-class="transition-opacity duration-150 ease-in"
+      leave-from-class="opacity-100"
       leave-to-class="opacity-0"
     >
       <div
-        v-if="hoveredService && hoveredCell && previewImageUrl && tableRef"
-        class="absolute w-64 h-48 shadow-2xl pointer-events-none overflow-hidden z-10"
-        :style="{
-          top: (tableRef.offsetTop + hoveredCell.offsetTop) + 'px',
-          left: (hoveredCell.offsetLeft + hoveredCell.offsetWidth) + 'px'
-        }"
+        v-if="previewImageUrl && previewImageDimensions.width"
+        class="absolute top-0 left-0 shadow-2xl pointer-events-none overflow-hidden z-10"
+        :style="previewStyle"
       >
         <img
           :src="previewImageUrl"
-          :alt="hoveredService.name"
+          :alt="hoveredService ? hoveredService.name : ''"
           class="w-full h-full object-cover"
         />
       </div>
@@ -138,38 +185,46 @@ const handleLetterEnter = (letter) => {
 </template>
 
 <style scoped>
-/* Стили остаются без изменений */
 td {
-  border-color: #E3E3E3;
+  border: 1px solid #E3E3E3;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+td .group:hover {
+  background-color: #F15F31;
+}
+
+td.is-highlighted {
+  background-color: #F15F31;
+  border-color: #F15F31;
+}
+td.is-highlighted span {
+  color: white;
 }
 
 .alphabet-bar {
   height: 60px;
 }
-
+.alphabet-letter-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px 12px;
+  height: 100%;
+  cursor: pointer;
+}
 .alphabet-letter {
   font-family: 'Gilroy-SemiBold', sans-serif;
   font-size: 14px;
   color: #8F8F8F;
-  padding: 4px 12px;
-  cursor: pointer;
-  transition: font-size 0.2s ease-out, color 0.2s ease-out;
+  transition: transform 0.2s ease-out, color 0.2s ease-out;
+  display: block;
+  z-index: 1;
 }
-
-.alphabet-letter:hover {
-  font-size: 42px;
+.alphabet-letter-wrapper:hover .alphabet-letter {
   color: #F15F31;
-}
-
-.is-highlighted {
-  background-color: #89C869;
-}
-
-.is-highlighted .group span {
-  color: white !important;
-}
-
-.is-highlighted:hover {
-  background-color: #131C26 !important;
+  transform: scale(2.2);
+  z-index: 2;
 }
 </style>
