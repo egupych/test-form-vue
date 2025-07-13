@@ -2,6 +2,7 @@
 import { reactive, ref, computed, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import { useAuth } from '@/composables/useAuth.js';
+import { useReferencesStore } from '@/stores/references.js'; // 1. ИМПОРТ ХРАНИЛИЩА РЕФЕРЕНСОВ
 
 const MAX_FILES = 10;
 const MAX_TOTAL_SIZE = 100 * 1024 * 1024; // 100 MB
@@ -14,6 +15,7 @@ const props = defineProps({
 });
 
 const { user } = useAuth();
+const referencesStore = useReferencesStore(); // 2. ИНИЦИАЛИЗАЦИЯ ХРАНИЛИЩА
 
 const formData = reactive({ name: '', phone: '', email: '', company: '', task: '', promo: '' });
 const errors = reactive({ name: '', phone: '', email: '', task: '' });
@@ -23,6 +25,7 @@ const messageType = ref('success');
 
 const files = ref([]);
 
+// Логика для превью загружаемых файлов при наведении
 const hoveredFileUrl = ref(null);
 const previewStyle = ref({});
 
@@ -44,7 +47,7 @@ const handleFileMouseLeave = () => {
   }
 };
 
-
+// Вся остальная логика компонента (валидация, загрузка файлов и т.д.) остается без изменений
 const handleFileUpload = (event) => {
   const target = event.target;
   if (target && target.files) {
@@ -168,7 +171,14 @@ const handleSubmit = async () => {
     
     if (files.value.length > 0) {
         files.value.forEach(file => {
-            data.append('files', file);
+            data.append('files[]', file); // Используем files[] для массива
+        });
+    }
+
+    // 3. ДОБАВЛЕНИЕ РЕФЕРЕНСОВ В ОТПРАВЛЯЕМЫЕ ДАННЫЕ
+    if (referencesStore.items.length > 0) {
+        referencesStore.items.forEach((refUrl) => {
+            data.append('references[]', refUrl); // Используем references[] для массива
         });
     }
 
@@ -184,6 +194,7 @@ const handleSubmit = async () => {
         showMessage(result.message, 'success');
         Object.keys(formData).forEach(key => formData[key] = '');
         files.value = [];
+        referencesStore.clearReferences(); // 4. ОЧИСТКА РЕФЕРЕНСОВ ПОСЛЕ ОТПРАВКИ
     } catch (error) {
         console.error('Ошибка отправки формы:', error);
         showMessage(error.message || 'Ошибка соединения с сервером. Проверьте консоль.', 'error');
@@ -200,17 +211,30 @@ const handleSubmit = async () => {
       <p class="text-h5-panda font-semibold">С вами свяжется наш менеджер<br>в ближайшее время. Спасибо, что<br>обратились в наше печатное агентство!</p>
       
       <div class="mt-auto pt-4">
-        <div v-if="files.length > 0" class="file-list">
-          <div 
-            v-for="(file, index) in files" 
-            :key="file.name + index" 
-            class="file-item"
-            @mouseenter="handleFileMouseEnter($event, file)"
-            @mouseleave="handleFileMouseLeave"
-          >
-            <span class="file-name">{{ file.name }}</span>
-            <button @click="removeFile(index)" class="remove-file-button">&times;</button>
-          </div>
+        <div v-if="referencesStore.items.length > 0" class="references-section">
+            <h3 class="section-title">Выбранные референсы</h3>
+            <div class="references-list">
+                <div v-for="refUrl in referencesStore.items" :key="refUrl" class="reference-item">
+                    <img :src="refUrl" alt="Референс" class="reference-image">
+                    <button @click="referencesStore.toggleReference(refUrl)" class="remove-reference-button" title="Убрать референс">&times;</button>
+                </div>
+            </div>
+        </div>
+
+        <div v-if="files.length > 0" class="file-list-section">
+            <h3 class="section-title">Прикрепленные файлы</h3>
+            <div class="file-list">
+              <div 
+                v-for="(file, index) in files" 
+                :key="file.name + index" 
+                class="file-item"
+                @mouseenter="handleFileMouseEnter($event, file)"
+                @mouseleave="handleFileMouseLeave"
+              >
+                <span class="file-name">{{ file.name }}</span>
+                <button @click="removeFile(index)" class="remove-file-button" title="Удалить файл">&times;</button>
+              </div>
+            </div>
         </div>
 
         <label for="file-upload" class="upload-button">
@@ -279,7 +303,7 @@ const handleSubmit = async () => {
           <span v-else>Отправить заявку</span>
         </BaseButton>
       </form>
-       <div v-if="message" class="success-message mt-5" :class="[messageType === 'success' ? 'bg-panda-green' : 'bg-red-500']">{{ message }}</div>
+        <div v-if="message" class="success-message mt-5" :class="[messageType === 'success' ? 'bg-panda-green' : 'bg-red-500']">{{ message }}</div>
     </div>
   </div>
   
@@ -293,6 +317,7 @@ const handleSubmit = async () => {
 </template>
 
 <style scoped>
+/* Стили для превью файлов */
 .file-preview-window {
   position: fixed;
   z-index: 9999;
@@ -303,6 +328,7 @@ const handleSubmit = async () => {
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   pointer-events: none;
   overflow: hidden;
+  transform-origin: top left;
 }
 .file-preview-image {
   width: 100%;
@@ -319,11 +345,71 @@ const handleSubmit = async () => {
   transform: scale(0.95);
 }
 
+/* Общие стили для секций референсов и файлов */
+.references-section, .file-list-section {
+    margin-bottom: 24px;
+}
+.section-title {
+    font-family: 'Gilroy-Semibold', sans-serif;
+    color: #131C26;
+    margin-bottom: 12px;
+    font-size: 16px;
+}
+
+/* Стили для списка референсов */
+.references-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
+    gap: 8px;
+    max-height: 164px; /* 2 ряда по 72px + отступ 8px */
+    overflow-y: auto;
+    padding: 8px;
+    background-color: #f7f7f7;
+    border-radius: 12px;
+}
+.reference-item {
+    position: relative;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #e3e3e3;
+}
+.reference-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+.remove-reference-button {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: rgba(19, 28, 38, 0.7);
+    color: white;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    line-height: 20px;
+    text-align: center;
+    opacity: 0;
+    transition: all 0.2s;
+    backdrop-filter: blur(2px);
+}
+.reference-item:hover .remove-reference-button {
+    opacity: 1;
+}
+.remove-reference-button:hover {
+    background-color: #F15F31;
+    transform: scale(1.1);
+}
+
+/* Стили для списка файлов */
 .file-list {
-  margin-bottom: 12px;
   max-height: 125px;
   overflow-y: auto;
-  padding: 4px;
+  padding-right: 8px; /* Место для скроллбара */
 }
 .file-item {
   display: flex;
@@ -333,6 +419,10 @@ const handleSubmit = async () => {
   background-color: #f7f7f7;
   border-radius: 8px;
   margin-bottom: 8px;
+  transition: background-color 0.2s;
+}
+.file-item:hover {
+    background-color: #e3e3e3;
 }
 .file-item:last-child {
   margin-bottom: 0;
@@ -343,6 +433,7 @@ const handleSubmit = async () => {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  padding-right: 10px;
 }
 .remove-file-button {
   background: none;
@@ -354,10 +445,13 @@ const handleSubmit = async () => {
   padding: 0 4px;
   transition: color 0.2s;
   margin-left: 8px;
+  flex-shrink: 0;
 }
 .remove-file-button:hover {
   color: #F15F31;
 }
+
+/* Стили кнопки загрузки */
 .upload-button {
   display: flex;
   align-items: center;
@@ -394,6 +488,8 @@ const handleSubmit = async () => {
   margin-top: 8px;
   text-align: center;
 }
+
+/* Общие стили формы */
 .form-wrapper {
   display: grid;
   grid-template-columns: 1fr;
@@ -420,6 +516,7 @@ const handleSubmit = async () => {
   color: #F15F31;
   font-size: 12px;
   margin-top: 4px;
+  padding-left: 4px;
 }
 input, textarea {
   font-family: 'Gilroy-Medium', sans-serif;
@@ -430,7 +527,7 @@ input, textarea {
   padding: 10px 4px;
   color: #131C26;
   background-color: transparent;
-  transition: background-color 0.2s ease;
+  transition: background-color 0.2s ease, border-color 0.3s ease;
   position: relative;
   z-index: 1;
 }
@@ -457,14 +554,11 @@ input:hover, textarea:hover {
   z-index: 2;
 }
 .form-control-textarea .input-border {
-  bottom: 8px;
+  bottom: 0;
 }
 input:focus ~ .input-border,
 textarea:focus ~ .input-border {
   width: 100%;
 }
-.form-button { font-family: 'Gilroy-Semibold', sans-serif; padding: 12px 30px; color: #FFFFFF; background-color: #F15F31; border: none; border-radius: 9999px; cursor: pointer; transition: background-color 0.3s ease; min-width: 180px; font-size: 16px; }
-.form-button:hover { background-color: #d9532a; }
-.form-button:disabled { opacity: 0.5; cursor: not-allowed; }
 .success-message { padding: 15px 20px; border-radius: 8px; color: #FFFFFF; text-align: center; }
 </style>

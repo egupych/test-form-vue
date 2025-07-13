@@ -1,9 +1,37 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, computed } from 'vue';
+import { useRouter } from 'vue-router';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
+import ImageGrid from '@/components/ui/ImageGrid.vue'; // <-- ИМПОРТ
 
-// Определяем категории и активную категорию по умолчанию
+// Данные о проектах (пока что только для одной категории)
+const projects = {
+  catalogsAlbums: [
+    {
+      id: 1,
+      title: 'Каталог «Лудэ-Каз»',
+      description: 'Каталог в фирменных цветах с нотками современного искусства.',
+      url: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500',
+      alt: 'Каталог «Лудэ-Каз»'
+    },
+    {
+      id: 2,
+      title: 'Каталог «Мир охоты»',
+      description: 'Музейный фонд охотничьего центра г. Костанай.',
+      url: 'https://images.unsplash.com/photo-1589998059171-988d887df646?w=500&h=700',
+      alt: 'Каталог «Мир охоты»'
+    },
+    {
+      id: 3,
+      title: 'Проект 3',
+      description: 'Описание проекта 3',
+      url: 'https://images.unsplash.com/photo-1532012197267-da84d127e765?w=500&h=600',
+      alt: 'Проект 3'
+    }
+  ]
+};
+
 const categories = ref([
   { id: 'badges', name: 'Бейджи и номерки' },
   { id: 'notebooks', name: 'Блокноты и тетради' },
@@ -21,25 +49,17 @@ const categories = ref([
 ]);
 const activeCategory = ref('catalogsAlbums');
 
-// Данные о проектах (пока что только для одной категории)
-const projects = {
-  catalogsAlbums: [
-    {
-      id: 1,
-      title: 'Каталог «Лудэ-Каз»',
-      description: 'Каталог в фирменных цветах с нотками современного искусства.',
-      image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500',
-      link: '/project-detail'
-    },
-    {
-      id: 2,
-      title: 'Каталог «Мир охоты»',
-      description: 'Музейный фонд охотничьего центра г. Костанай.',
-      image: 'https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=500',
-      link: '/project-detail'
-    }
-  ]
+const currentProjects = computed(() => {
+    return projects[activeCategory.value] || [];
+});
+
+const router = useRouter();
+const handleImageClick = (image) => {
+    // Здесь может быть логика перехода на детальную страницу проекта
+    // router.push(`/project/${image.id}`);
+    console.log('Image clicked:', image);
 };
+
 </script>
 
 <template>
@@ -61,15 +81,8 @@ const projects = {
             </BaseButton>
         </div>
         
-        <div v-if="projects[activeCategory] && projects[activeCategory].length > 0" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-             <div v-for="project in projects[activeCategory]" :key="project.id" class="bg-light-gray rounded-lg overflow-hidden flex flex-col md:flex-row items-center gap-4">
-                <img :src="project.image" :alt="project.title" class="w-full md:w-1/2 h-auto object-cover rounded-md aspect-[5/4]">
-                <div class="flex flex-col justify-center items-center md:items-start p-0 md:p-4 text-center md:text-left">
-                    <h3 class="font-semibold text-panda-black text-h4-panda mb-2">{{ project.title }}</h3>
-                    <p class="text-body-panda text-dark-gray mb-4">{{ project.description }}</p>
-                    <BaseButton :to="project.link" variant="fill-black">Смотреть</BaseButton>
-                </div>
-            </div>
+        <div v-if="currentProjects.length > 0">
+             <ImageGrid :images="currentProjects" @image-click="handleImageClick" />
         </div>
         <div v-else class="text-center py-10 text-dark-gray text-xl">
           Примеров для этой категории пока нет.
