@@ -50,8 +50,8 @@ const toggle = () => {
   width: 36px; /* Размер контейнера */
   height: 36px;
   padding: 8px; /* Внутренний отступ для иконки */
-  border-radius: 8px; /* Скругление, как в примере */
-  background-color: rgba(19, 28, 38, 0.8); /* Полупрозрачный темный фон */
+  border-radius: 100%; /* Скругление, как в примере */
+  background-color: rgba(19, 28, 38, 0.164); /* Полупрозрачный темный фон */
   backdrop-filter: blur(4px); /* Эффект размытия фона */
   border: 1px solid rgba(255, 255, 255, 0.1);
   cursor: pointer;
@@ -59,14 +59,14 @@ const toggle = () => {
 }
 
 .like-button:hover {
-    background-color: rgba(19, 28, 38, 1);
+    background-color: #F15F31;
     transform: scale(1.05);
 }
 
 .like-icon {
   width: 100%;
   height: 100%;
-  stroke: #ffffff; /* Белая обводка */
+  stroke: #f7f7f7; /* Белая обводка */
   stroke-width: 2;
   fill: transparent; /* Прозрачная заливка по умолчанию */
   transition: all 0.2s ease;
@@ -74,7 +74,7 @@ const toggle = () => {
 
 /* Стили для "залайканного" состояния */
 .like-button.is-liked .like-icon {
-  stroke: #F15F31; /* Оранжевая обводка */
-  fill: #F15F31;   /* Оранжевая заливка */
+  stroke: #f7f7f7; /* Оранжевая обводка */
+  fill: #f7f7f7;   /* Оранжевая заливка */
 }
 </style>

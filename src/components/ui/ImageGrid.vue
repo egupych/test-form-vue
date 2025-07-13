@@ -20,19 +20,11 @@ const handleImageClick = (image) => {
     <div
       v-for="(image, index) in images"
       :key="index"
-      class="grid-item-wrapper"
+      class="grid-item"
+      @click="handleImageClick(image)"
     >
-      <div
-        class="grid-item"
-        @click="handleImageClick(image)"
-      >
-        <img :src="image.url || image" :alt="image.alt || ''" class="grid-image" loading="lazy">
-        <LikeButton :image-url="image.url || image" />
-      </div>
-      <div v-if="image.title" class="image-info">
-        <h3 class="font-semibold text-panda-black">{{ image.title }}</h3>
-        <p v-if="image.description" class="text-dark-gray text-sm">{{ image.description }}</p>
-      </div>
+      <img :src="image.url || image" :alt="image.alt || ''" class="grid-image" loading="lazy">
+      <LikeButton :image-url="image.url || image" />
     </div>
   </div>
 </template>
@@ -40,52 +32,44 @@ const handleImageClick = (image) => {
 <style scoped>
 .image-grid {
   display: grid;
+  /* Создаём адаптивную сетку. Количество колонок будет меняться в зависимости от ширины экрана. */
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 8px; /* Минимальный отступ между картинками */
-}
-
-/* Masonry layout для браузеров, которые его поддерживают */
-@supports (grid-template-rows: masonry) {
-  .image-grid {
-    grid-template-rows: masonry;
-    /* Убираем лишний margin, если masonry работает */
-    .grid-item-wrapper {
-        margin-bottom: 0;
-    }
-  }
-}
-
-.grid-item-wrapper {
-  break-inside: avoid;
-  /* Отступ для браузеров без поддержки masonry */
-  margin-bottom: 8px;
+  gap: 8px; /* Отступ между ячейками */
 }
 
 .grid-item {
   position: relative;
-  overflow: hidden;
   cursor: pointer;
-  /* Убрали border-radius для острых углов */
-  background-color: #f0f0f0; /* Цвет фона на время загрузки изображения */
+  overflow: hidden;
+  background-color: #f0f0f0; /* Фон на время загрузки */
+
+  /* КЛЮЧЕВОЕ ИЗМЕНЕНИЕ:
+     Задаём всем ячейкам одинаковое соотношение сторон.
+     Можете изменить на 1 / 1 для квадратных, 16 / 9 для широких и т.д. */
+  aspect-ratio: 1 / 1;
 }
 
 .grid-image {
   width: 100%;
-  height: auto;
+  height: 100%;
   display: block;
-  /* Убрали анимацию transform */
+  /* ВТОРОЕ КЛЮЧЕВОЕ ИЗМЕНЕНИЕ:
+     Изображение заполняет всю ячейку, сохраняя свои пропорции
+     и обрезаясь, если это необходимо. */
+  object-fit: cover;
+  transition: transform 0.3s ease; /* Добавим небольшой эффект при наведении */
 }
 
-/* Кнопка будет появляться при наведении на весь блок .grid-item */
+
 .grid-item .like-button {
-    opacity: 0;
-    transition: opacity 0.2s ease-in-out;
+  /* Стили для кнопки остаются прежними */
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
 }
+
 .grid-item:hover .like-button {
   opacity: 1;
-}
-
-.image-info {
-    padding-top: 12px;
+  pointer-events: auto;
 }
 </style>
