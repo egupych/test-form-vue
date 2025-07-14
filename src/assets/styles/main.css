@@ -171,3 +171,9 @@ html.lenis {
   color: #F7F7F7; /* Цвет текста внутри выделения */
 }
 
+img { /* запрет на выделение картинок на сайте */
+  -webkit-user-select: none; /* Safari */
+  -moz-user-select: none;    /* Firefox */
+  -ms-user-select: none;     /* Internet Explorer/Edge */
+  user-select: none;         /* Standard */
+}

@@ -16,7 +16,6 @@ const emit = defineEmits(['close']);
 
 const currentIndex = ref(props.startIndex);
 
-// --- ИЗМЕНЕНИЯ: Новые computed-свойства для превью ---
 const prevImageObject = computed(() => currentIndex.value > 0 ? props.images[currentIndex.value - 1] : null);
 const currentImage = computed(() => props.images[currentIndex.value]);
 const nextImageObject = computed(() => currentIndex.value < totalImages.value - 1 ? props.images[currentIndex.value + 1] : null);
@@ -24,7 +23,6 @@ const nextImageObject = computed(() => currentIndex.value < totalImages.value - 
 const totalImages = computed(() => props.images.length);
 const counterText = computed(() => `${currentIndex.value + 1} из ${totalImages.value}`);
 
-// --- ИЗМЕНЕНИЯ: Функции навигации переименованы для ясности ---
 const goToNextImage = () => {
   if (currentIndex.value < totalImages.value - 1) {
     currentIndex.value++;
@@ -118,7 +116,6 @@ onUnmounted(() => {
   inset: 0;
   width: 100vw;
   height: 100vh;
-  /* --- ИЗМЕНЕНИЕ: Усилен эффект размытия и прозрачность --- */
   background-color: rgba(19, 28, 38, 0.8);
   backdrop-filter: blur(8px);
   display: flex;
@@ -147,17 +144,16 @@ onUnmounted(() => {
   height: calc(100% - 100px);
   max-width: 95vw;
   max-height: 85vh;
-  position: relative; /* Для позиционирования боковых превью */
+  position: relative;
 }
 
-/* --- ИЗМЕНЕНИЕ: Контейнер для основного изображения теперь имеет отступы --- */
 .image-container {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
-  max-width: calc(100% - 300px); /* Оставляем место по бокам */
+  max-width: calc(100% - 340px); /* Увеличено место по бокам для круглых превью */
 }
 
 .main-image {
@@ -188,7 +184,6 @@ onUnmounted(() => {
   transform: scale(1.1);
 }
 
-/* --- ИЗМЕНЕНИЕ: Новые стили для боковых превью --- */
 .nav-container {
   position: absolute;
   top: 50%;
@@ -196,8 +191,8 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 120px;
-  height: 160px;
+  width: 160px;  /* Увеличенный размер */
+  height: 160px; /* Увеличенный размер, равен ширине для круга */
   z-index: 5;
 }
 .nav-container.left {
@@ -211,13 +206,13 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 8px;
-  filter: grayscale(1) opacity(0.5); /* Серый цвет и полупрозрачность */
+  border-radius: 16px; /* Делаем изображение круглым */
+  filter: grayscale(1) opacity(0.5);
   cursor: pointer;
   transition: all 0.3s ease-out;
 }
 .side-image:hover {
-  filter: grayscale(0) opacity(1); /* При наведении становится цветным */
+  filter: grayscale(0) opacity(1);
   transform: scale(1.05);
 }
 
