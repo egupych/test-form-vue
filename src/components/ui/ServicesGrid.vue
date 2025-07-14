@@ -1,4 +1,4 @@
-src/components/ui/ServicesGrid.vue -->
+
 
 <script setup>
 import { ref, computed } from 'vue';

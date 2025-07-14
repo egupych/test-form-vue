@@ -14,24 +14,22 @@ import design from '@/assets/images/pages/HomePage/ServicesImageGrid/design.jpg'
 import dtfPrint from '@/assets/images/services/merch/dtfPrint.jpg';
 import souvenirs from '@/assets/images/pages/HomePage/ServicesImageGrid/souvenirs.webp';
 import goldFoil from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import silverFoil from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import whitePrint from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import silverFoil from '@/assets/images/pages/HomePage/ServicesImageGrid/silverFoil.jpg';
+import whitePrint from '@/assets/images/pages/HomePage/ServicesImageGrid/whitePrint.jpg';
 import uvPrint from '@/assets/images/pages/HomePage/ServicesImageGrid/uv-print.jpg';
 import embroidery from '@/assets/images/services/merch/embroidery.jpg';
-import laserEngraving from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import interiorPrinting from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import varnishing from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import foilStamping from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import lamination from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import hardcover from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import softcover from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import contourCutting from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import cutting1 from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import cutting2 from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import brochuring from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import accessories from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import creasing from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import perforation from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import laserEngraving from '@/assets/images/pages/HomePage/ServicesImageGrid/laserEngraving.jpg';
+import interiorPrinting from '@/assets/images/pages/HomePage/ServicesImageGrid/interiorPrinting.jpg';
+import varnishing from '@/assets/images/pages/HomePage/ServicesImageGrid/varnishing.jpg';
+import foilStamping from '@/assets/images/pages/HomePage/ServicesImageGrid/foilStamping.jpg';
+import lamination from '@/assets/images/pages/HomePage/ServicesImageGrid/lamination.jpg';
+import hardcover from '@/assets/images/pages/HomePage/ServicesImageGrid/hardcover.jpg';
+import softcover from '@/assets/images/pages/HomePage/ServicesImageGrid/softcover.jpg';
+import contourCutting from '@/assets/images/pages/HomePage/ServicesImageGrid/contourCutting.jpg';
+import brochuring from '@/assets/images/pages/HomePage/ServicesImageGrid/brochuring.jpg';
+import accessories from '@/assets/images/pages/HomePage/ServicesImageGrid/accessories.jpg';
+import creasing from '@/assets/images/pages/HomePage/ServicesImageGrid/creasing.jpg';
+import perforation from '@/assets/images/pages/HomePage/ServicesImageGrid/perforation.jpg';
 
 
 const services = ref([
@@ -77,8 +75,6 @@ const services = ref([
   { id: 'hardcover', title: 'Твердый переплёт', description: 'Твёрдая обложка для книг, дипломов', imageUrl: hardcover },
   { id: 'softcover', title: 'Мягкий переплёт', description: 'Термопереплёт', imageUrl: softcover },
   { id: 'contour-cutting', title: 'Контурная резка', description: 'Вырезка сложных форм на плоттере', imageUrl: contourCutting },
-  { id: 'cutting1', title: 'Высечка', description: 'Вырубание бумаги до подложки', imageUrl: cutting1 },
-  { id: 'cutting2', title: 'Вырубка', description: 'Прорубание бумаги насквозь', imageUrl: cutting2 },
   { id: 'brochuring', title: 'Брошюровка', description: 'На пружину, скрепку, винты, кольца', imageUrl: brochuring },
   { id: 'accessories', title: 'Фурнитура', description: 'Установка защитных и декоратиыных элементов', imageUrl: accessories },
   { id: 'creasing', title: 'Биговка', description: 'Для аккуратных сгибов', imageUrl: creasing },
