@@ -1,6 +1,15 @@
 <script setup>
 import { ref } from 'vue';
 
+// --- [ИЗМЕНЕНО] ---
+// 1. Прямой импорт всех иконок как модулей
+import whatsappIcon from '@/assets/images/layout/whatsapp.svg';
+import mailIcon from '@/assets/images/layout/mail.svg'; // Предполагая, что иконка почты называется mail.svg
+import phoneIcon from '@/assets/images/layout/phone.svg';
+import plusIcon from '@/assets/images/layout/plus.svg';
+import closeIcon from '@/assets/images/layout/close.svg';
+
+
 // Состояние, которое отвечает за видимость кнопок
 const isOpen = ref(false);
 
@@ -9,33 +18,34 @@ const toggleMenu = () => {
   isOpen.value = !isOpen.value;
 };
 
-// --- [ИЗМЕНЕНО] ---
-// Пути ко всем иконкам теперь задаются здесь.
-
-// Иконки для дочерних кнопок
+// 2. Пути к иконкам заменены на импортированные переменные
 const actions = ref([
   {
     label: 'Написать в WhatsApp',
     href: 'https://wa.me/77007257799',
-    iconUrl: '@/assets/images/icons/whatsapp.svg',
-    colorClass: 'bg-panda-green hover:bg-green-600'
+    iconUrl: whatsappIcon, // Используем импорт
+    colorClass: 'bg-panda-black hover:bg-gray-800'
+  },
+  {
+    label: 'Написать на почту',
+    href: 'mailto:infoprint@redpanda.kz', // Исправлено на mailto: для почты
+    iconUrl: mailIcon, // Используем импорт
+    colorClass: 'bg-panda-black hover:bg-gray-800'
   },
   {
     label: 'Позвонить нам',
     href: 'tel:+77007257799',
-    iconUrl: '@/assets/images/icons/phone.svg',
+    iconUrl: phoneIcon, // Используем импорт
     colorClass: 'bg-panda-black hover:bg-gray-800'
   }
 ]);
 
-// Иконки для главной кнопки
-const mainIconOpenUrl = '@/assets/images/icons/plus.svg';
-const mainIconCloseUrl = '@/assets/images/icons/close.svg';
+// Иконки для главной кнопки теперь тоже переменные
+const mainIconOpen = plusIcon;
+const mainIconClose = closeIcon;
 
-// Функция для динамического импорта иконок по пути
-const getImageUrl = (path) => {
-  return new URL(path, import.meta.url).href;
-};
+// 3. Функция getImageUrl больше не нужна и удалена.
+
 </script>
 
 <template>
@@ -65,7 +75,7 @@ const getImageUrl = (path) => {
           :class="action.colorClass"
         >
           <img 
-            :src="getImageUrl(action.iconUrl)" 
+            :src="action.iconUrl" 
             alt="" 
             class="fab-icon" 
           />
@@ -81,17 +91,17 @@ const getImageUrl = (path) => {
         <transition name="icon-fade" mode="out-in">
           <img
             v-if="isOpen"
-            :src="getImageUrl(mainIconCloseUrl)"
+            :src="mainIconClose"
             alt="Закрыть"
             key="close"
-            class="w-7 h-7"
+            class="w-5 h-5"
           />
           <img
             v-else
-            :src="getImageUrl(mainIconOpenUrl)"
+            :src="mainIconOpen"
             alt="Открыть"
             key="open"
-            class="w-7 h-7"
+            class="w-5 h-5"
           />
         </transition>
       </button>
@@ -106,22 +116,22 @@ const getImageUrl = (path) => {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3.25rem;
-  height: 3.25rem;
+  width: 2.5rem;
+  height: 2.5rem;
   border-radius: 9999px;
   transition: background-color 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transform-origin: bottom;
 }
 .fab-icon {
-    width: 1.5rem;
-    height: 1.5rem;
+    width: 1.2rem;
+    height: 1.2rem;
 }
 .fab-main {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 4rem;
-  height: 4rem;
+  width: 3rem;
+  height: 3rem;
   border-radius: 9999px;
   border: none;
   color: white;
