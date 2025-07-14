@@ -99,7 +99,7 @@ const noResultsFound = computed(() => {
 /* [НОВОЕ] Главный контейнер, чтобы результаты поиска были под строкой */
 .search-wrapper {
   position: relative;
-  max-width: 700px;
+  max-width: 620px;
   margin: 0 auto;
 }
 
