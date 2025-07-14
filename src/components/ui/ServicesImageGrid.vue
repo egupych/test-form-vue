@@ -13,7 +13,7 @@ import laserCutting from '@/assets/images/pages/HomePage/ServicesImageGrid/laser
 import design from '@/assets/images/pages/HomePage/ServicesImageGrid/design.jpg';
 import dtfPrint from '@/assets/images/services/merch/dtfPrint.jpg';
 import souvenirs from '@/assets/images/pages/HomePage/ServicesImageGrid/souvenirs.webp';
-import goldFoil from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
+import color from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
 import silverFoil from '@/assets/images/pages/HomePage/ServicesImageGrid/silverFoil.jpg';
 import whitePrint from '@/assets/images/pages/HomePage/ServicesImageGrid/whitePrint.jpg';
 import uvPrint from '@/assets/images/pages/HomePage/ServicesImageGrid/uv-print.jpg';
@@ -28,7 +28,6 @@ import softcover from '@/assets/images/pages/HomePage/ServicesImageGrid/softcove
 import contourCutting from '@/assets/images/pages/HomePage/ServicesImageGrid/contourCutting.jpg';
 import brochuring from '@/assets/images/pages/HomePage/ServicesImageGrid/brochuring.jpg';
 import accessories from '@/assets/images/pages/HomePage/ServicesImageGrid/accessories.jpg';
-import creasing from '@/assets/images/pages/HomePage/ServicesImageGrid/creasing.jpg';
 import perforation from '@/assets/images/pages/HomePage/ServicesImageGrid/perforation.jpg';
 
 
@@ -52,10 +51,12 @@ const services = ref([
   { id: 'laser-cutting', title: 'Лазерная резка', description: 'Акриловые таблички, награды', imageUrl: laserCutting },
   { id: 'outdoor-adv', title: 'Наружная реклама', description: 'Баннеры, вывески, билборды, лайтбоксы', imageUrl: outdoorAdv },
 
-  { id: 'dtf-print', title: 'Мерч с DTF-печатью', description: 'Качественная печать на футболках, худи, кепках и фартуках', imageUrl: dtfPrint },
+  { id: 'dtf-print', title: 'DTF-печать', description: 'Качественная печать на футболках, худи, кепках и фартуках', imageUrl: dtfPrint },
+  
   { id: 'souvenirs', title: 'Сувениры', description: 'Презентабельные и полезные сувениры: ручки, блокноты, флешки, ', imageUrl: souvenirs },
-  { id: 'gold-foil', title: 'Печать золотой краской', description: 'Для премиальной продукции', imageUrl: goldFoil },
 
+
+  { id: 'uv-print', title: 'УФ-печать', description: 'На любых поверхностях', imageUrl: uvPrint },
   {
     id: 'design',
     title: 'Дизайнерские услуги',
@@ -63,21 +64,31 @@ const services = ref([
     imageUrl: design, // <-- 2. Используем импортированную переменную
     style: 'grid-column: span 2; grid-row: span 2;'
   },
-  { id: 'silver-foil', title: 'Печать серебром', description: 'Для премиальной продукции', imageUrl: silverFoil },
-  { id: 'white-print', title: 'Печать белым цветом', description: 'На темных материалах', imageUrl: whitePrint },
-  { id: 'uv-print', title: 'УФ-печать', description: 'На любых поверхностях', imageUrl: uvPrint },
-  { id: 'embroidery', title: 'Вышивка', description: 'Вышивка на бейсболках, одежде, рюкзаках и многом другом', imageUrl: embroidery },
+  
+  { id: 'embroidery', title: 'Вышивка', description: 'На бейсболках, одежде, рюкзаках и многом другом', imageUrl: embroidery },
   { id: 'laser-engraving', title: 'Лазерная гравировка', description: 'На металле, акриле и дереве', imageUrl: laserEngraving },
+  {
+    id: 'color',
+    title: 'Дополнительные цвета',
+    description: 'Печатаем золотой, серебрянной и белой краской',
+    imageUrl: color,
+    style: 'grid-column: span 2; grid-row: span 2;'
+  },
+  
+  
   { id: 'interior-printing', title: 'Интерьерная печать', description: 'Эко-сольвентная печать с возможностью контурной резки', imageUrl: interiorPrinting },
   { id: 'varnishing', title: 'Лакирование', description: 'Для придания выборочного блеска', imageUrl: varnishing },
+  
   { id: 'foil-stamping', title: 'Тиснение фольгой', description: 'Золотые элементы на бумажной поверхности', imageUrl: foilStamping },
   { id: 'lamination', title: 'Ламинация', description: 'Глянцевая или матовая, для защиты и придания особого внешнего вида', imageUrl: lamination },
   { id: 'hardcover', title: 'Твердый переплёт', description: 'Твёрдая обложка для книг, дипломов', imageUrl: hardcover },
   { id: 'softcover', title: 'Мягкий переплёт', description: 'Термопереплёт', imageUrl: softcover },
+
+
+
   { id: 'contour-cutting', title: 'Контурная резка', description: 'Вырезка сложных форм на плоттере', imageUrl: contourCutting },
   { id: 'brochuring', title: 'Брошюровка', description: 'На пружину, скрепку, винты, кольца', imageUrl: brochuring },
   { id: 'accessories', title: 'Фурнитура', description: 'Установка защитных и декоратиыных элементов', imageUrl: accessories },
-  { id: 'creasing', title: 'Биговка', description: 'Для аккуратных сгибов', imageUrl: creasing },
   { id: 'perforation', title: 'Перфорация', description: 'Линии отрыва', imageUrl: perforation },
 ]);
 </script>
