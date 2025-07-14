@@ -16,19 +16,22 @@ const emit = defineEmits(['close']);
 
 const currentIndex = ref(props.startIndex);
 
-// Computed-свойства для удобства
+// --- ИЗМЕНЕНИЯ: Новые computed-свойства для превью ---
+const prevImageObject = computed(() => currentIndex.value > 0 ? props.images[currentIndex.value - 1] : null);
 const currentImage = computed(() => props.images[currentIndex.value]);
+const nextImageObject = computed(() => currentIndex.value < totalImages.value - 1 ? props.images[currentIndex.value + 1] : null);
+
 const totalImages = computed(() => props.images.length);
 const counterText = computed(() => `${currentIndex.value + 1} из ${totalImages.value}`);
 
-// Функции навигации
-const nextImage = () => {
+// --- ИЗМЕНЕНИЯ: Функции навигации переименованы для ясности ---
+const goToNextImage = () => {
   if (currentIndex.value < totalImages.value - 1) {
     currentIndex.value++;
   }
 };
 
-const prevImage = () => {
+const goToPrevImage = () => {
   if (currentIndex.value > 0) {
     currentIndex.value--;
   }
@@ -38,21 +41,20 @@ const close = () => {
   emit('close');
 };
 
-// Навигация с помощью клавиатуры
 const handleKeydown = (e) => {
-  if (e.key === 'ArrowRight') nextImage();
-  if (e.key === 'ArrowLeft') prevImage();
+  if (e.key === 'ArrowRight') goToNextImage();
+  if (e.key === 'ArrowLeft') goToPrevImage();
   if (e.key === 'Escape') close();
 };
 
 onMounted(() => {
   window.addEventListener('keydown', handleKeydown);
-  document.body.style.overflow = 'hidden'; // Блокируем прокрутку фона
+  document.body.style.overflow = 'hidden';
 });
 
 onUnmounted(() => {
   window.removeEventListener('keydown', handleKeydown);
-  document.body.style.overflow = ''; // Возвращаем прокрутку
+  document.body.style.overflow = '';
 });
 </script>
 
@@ -65,17 +67,43 @@ onUnmounted(() => {
           <button class="close-button" @click="close" aria-label="Закрыть">&times;</button>
           
           <div class="viewer-content">
-            <transition name="image-swap" mode="out-in">
-              <div :key="currentImage.url || currentImage" class="image-container">
-                <img :src="currentImage.url || currentImage" :alt="currentImage.alt || 'Просмотр изображения'" class="main-image">
-              </div>
-            </transition>
+            
+            <div class="nav-container left">
+              <transition name="side-image-fade">
+                <img 
+                  v-if="prevImageObject" 
+                  :src="prevImageObject.url || prevImageObject" 
+                  alt="Предыдущее изображение"
+                  class="side-image"
+                  @click.stop="goToPrevImage"
+                >
+              </transition>
+            </div>
+            
+            <div class="image-container">
+              <transition name="image-swap" mode="out-in">
+                <img :key="currentImage.url || currentImage" :src="currentImage.url || currentImage" :alt="currentImage.alt || 'Просмотр изображения'" class="main-image">
+              </transition>
+            </div>
+
+            <div class="nav-container right">
+              <transition name="side-image-fade">
+                <img 
+                  v-if="nextImageObject" 
+                  :src="nextImageObject.url || nextImageObject" 
+                  alt="Следующее изображение"
+                  class="side-image"
+                  @click.stop="goToNextImage"
+                >
+              </transition>
+            </div>
+
           </div>
           
           <div class="controls-footer">
-            <button @click.stop="prevImage" :disabled="currentIndex === 0" class="footer-nav-button">назад</button>
+            <button @click.stop="goToPrevImage" :disabled="currentIndex === 0" class="footer-nav-button">назад</button>
             <span class="counter">{{ counterText }}</span>
-            <button @click.stop="nextImage" :disabled="currentIndex === totalImages - 1" class="footer-nav-button">вперёд</button>
+            <button @click.stop="goToNextImage" :disabled="currentIndex === totalImages - 1" class="footer-nav-button">вперёд</button>
           </div>
         </div>
 
@@ -90,7 +118,8 @@ onUnmounted(() => {
   inset: 0;
   width: 100vw;
   height: 100vh;
-  background-color: rgba(19, 28, 38, 0.9);
+  /* --- ИЗМЕНЕНИЕ: Усилен эффект размытия и прозрачность --- */
+  background-color: rgba(19, 28, 38, 0.8);
   backdrop-filter: blur(8px);
   display: flex;
   justify-content: center;
@@ -100,7 +129,6 @@ onUnmounted(() => {
   box-sizing: border-box;
 }
 
-/* 3. Стили для новой обёртки */
 .viewer-wrapper {
   display: flex;
   flex-direction: column;
@@ -108,26 +136,28 @@ onUnmounted(() => {
   align-items: center;
   width: 100%;
   height: 100%;
-  position: relative; /* Для позиционирования кнопок и футера */
+  position: relative;
 }
 
 .viewer-content {
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   width: 100%;
-  height: calc(100% - 100px); /* Оставляем место для футера */
+  height: calc(100% - 100px);
   max-width: 95vw;
   max-height: 85vh;
+  position: relative; /* Для позиционирования боковых превью */
 }
 
+/* --- ИЗМЕНЕНИЕ: Контейнер для основного изображения теперь имеет отступы --- */
 .image-container {
-  flex-grow: 1;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
+  max-width: calc(100% - 300px); /* Оставляем место по бокам */
 }
 
 .main-image {
@@ -151,11 +181,53 @@ onUnmounted(() => {
   line-height: 1;
   cursor: pointer;
   transition: color 0.2s ease, transform 0.2s ease;
-  z-index: 10; /* Чтоб был поверх всего */
+  z-index: 10;
 }
 .close-button:hover {
   color: white;
   transform: scale(1.1);
+}
+
+/* --- ИЗМЕНЕНИЕ: Новые стили для боковых превью --- */
+.nav-container {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 120px;
+  height: 160px;
+  z-index: 5;
+}
+.nav-container.left {
+  left: 2rem;
+}
+.nav-container.right {
+  right: 2rem;
+}
+
+.side-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+  filter: grayscale(1) opacity(0.5); /* Серый цвет и полупрозрачность */
+  cursor: pointer;
+  transition: all 0.3s ease-out;
+}
+.side-image:hover {
+  filter: grayscale(0) opacity(1); /* При наведении становится цветным */
+  transform: scale(1.05);
+}
+
+.side-image-fade-enter-active,
+.side-image-fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.side-image-fade-enter-from,
+.side-image-fade-leave-to {
+  opacity: 0;
 }
 
 .controls-footer {
@@ -170,6 +242,7 @@ onUnmounted(() => {
   padding: 0.5rem 1rem;
   border-radius: 9999px;
   border: 1px solid rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px);
 }
 .counter {
   font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
@@ -178,7 +251,6 @@ onUnmounted(() => {
   min-width: 60px;
   text-align: center;
 }
-
 .footer-nav-button {
     padding: 0.25rem 1.25rem;
     border-radius: 9999px;
@@ -200,7 +272,6 @@ onUnmounted(() => {
     cursor: not-allowed;
 }
 
-/* Animations */
 .viewer-fade-enter-active,
 .viewer-fade-leave-active {
   transition: opacity 0.3s ease;

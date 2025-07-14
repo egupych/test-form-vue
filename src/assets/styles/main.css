@@ -167,7 +167,7 @@ html.lenis {
 }
 
 ::selection {
-  background-color: #89C869; /* Цвет фона выделения */
+  background-color: #F15F31; /* Цвет фона выделения */
   color: #F7F7F7; /* Цвет текста внутри выделения */
 }
 
