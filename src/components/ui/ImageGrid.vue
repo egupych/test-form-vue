@@ -10,18 +10,18 @@ defineProps({
 
 const emit = defineEmits(['image-click']);
 
-// ИЗМЕНЕНИЕ: Передаем не только изображение, но и его индекс
+// Передаем не только изображение, но и его индекс
 const handleImageClick = (image, index) => {
   emit('image-click', { image, index });
 };
 </script>
 
 <template>
-  <div class="image-grid">
+  <div class="grid grid-cols-2 md:grid-cols-3 gap-2">
     <div
       v-for="(image, index) in images"
       :key="index"
-      class="grid-item"
+      class="grid-item group"
       @click="handleImageClick(image, index)"
     >
       <img :src="image.url || image" :alt="image.alt || ''" class="grid-image" loading="lazy">
@@ -31,11 +31,6 @@ const handleImageClick = (image, index) => {
 </template>
 
 <style scoped>
-.image-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 8px;
-}
 .grid-item {
   position: relative;
   cursor: pointer;
@@ -50,7 +45,13 @@ const handleImageClick = (image, index) => {
   object-fit: cover;
   transition: transform 0.3s ease;
 }
-.grid-item .like-button {
+.grid-item:hover .grid-image {
+  transform: scale(1.05);
+}
+.like-button {
+  position: absolute;
+  top: 12px;
+  right: 12px;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
   pointer-events: none;

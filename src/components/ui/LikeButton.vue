@@ -76,7 +76,7 @@ const toggle = () => {
   stroke: #f7f7f7;
   stroke-width: 2;
   fill: transparent;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
   flex-shrink: 0; /* Запрещаем иконке сжиматься */
 }
 
