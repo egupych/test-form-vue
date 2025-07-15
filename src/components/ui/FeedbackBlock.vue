@@ -10,9 +10,7 @@
   
         <BaseButton 
           href="https://wa.me/77007257799" 
-          target="_blank" 
-          variant="fill-black"
-        >
+          target="_blank">
           Связаться
         </BaseButton>
       </div>
@@ -24,7 +22,9 @@
           Уже были нашим клиентом? <br>Будем рады, если оставите отзыв <br>о нашей работе
         </p>
         
-        <BaseButton to="#">
+        <BaseButton 
+          href="https://2gis.kz/astana/firm/70000001067520759/tab/reviews" 
+          target="_blank">
           Оставить отзыв
         </BaseButton>
       </div>
