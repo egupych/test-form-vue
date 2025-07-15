@@ -10,7 +10,7 @@ const { services } = storeToRefs(servicesStore);
 const hoveredService = ref(null);
 const hoveredCell = ref(null);
 const hoveredLetter = ref(null);
-const gridContainerRef = ref(null); // Переименовано для ясности
+const gridContainerRef = ref(null);
 
 const previewImageUrl = ref(null);
 const previewImageDimensions = ref({ width: 0, height: 0 });
@@ -21,7 +21,6 @@ const alphabet = computed(() => {
   return [...new Set(firstLetters)].sort((a, b) => a.localeCompare(b, 'ru'));
 });
 
-// Упрощенный список услуг, отсортированный по алфавиту
 const sortedServices = computed(() => {
     return [...services.value].sort((a, b) => a.name.localeCompare(b.name, 'ru'));
 });
@@ -30,7 +29,6 @@ const handleMouseEnter = (service, event) => {
     hoveredLetter.value = null;
     if (service && !service.isPlaceholder && !isPreviewLoading.value) {
         hoveredService.value = service;
-        // Ищем родительский элемент с классом .service-cell
         hoveredCell.value = event.target.closest('.service-cell');
 
         isPreviewLoading.value = true;
@@ -109,7 +107,7 @@ const previewStyle = computed(() => {
   <div class="relative" @mouseleave="handleMouseLeaveComponent">
 
     <div
-      class="alphabet-bar flex justify-center items-center gap-1 mb-4"
+      class="alphabet-bar flex justify-center items-center flex-wrap gap-1 mb-4"
       @mouseleave="hoveredLetter = null"
     >
       <span
@@ -171,10 +169,8 @@ const previewStyle = computed(() => {
 </template>
 
 <style scoped>
-/* СТИЛИ ДЛЯ СЕТКИ, ЗАМЕНЯЮЩИЕ TABLE */
 .services-grid-container {
   display: grid;
-  /* 6 колонок по умолчанию для десктопа */
   grid-template-columns: repeat(6, 1fr);
   border-left: 1px solid #E3E3E3;
   border-top: 1px solid #E3E3E3;
@@ -201,7 +197,6 @@ const previewStyle = computed(() => {
   color: white;
 }
 
-/* АДАПТИВНОСТЬ ДЛЯ РАЗНЫХ ЭКРАНОВ */
 @media (max-width: 1200px) {
   .services-grid-container {
     grid-template-columns: repeat(4, 1fr);
@@ -225,14 +220,18 @@ const previewStyle = computed(() => {
     grid-template-columns: 1fr;
   }
   .service-cell {
-      height: auto; /* Автоматическая высота для мобильных */
+      height: auto;
   }
 }
 
 
-/* Старые стили для алфавита остаются без изменений */
 .alphabet-bar {
-  height: 60px;
+  /* ИЗМЕНЕНИЕ ЗДЕСЬ: убрали фиксированную высоту, чтобы контейнер мог расти */
+  min-height: 60px; /* Задаем минимальную высоту для сохранения отступа */
+  display: flex; /* Tailwind класс flex уже есть, но для наглядности */
+  align-items: center;
+  flex-wrap: wrap; /* Tailwind класс flex-wrap теперь в шаблоне */
+  justify-content: center;
 }
 .alphabet-letter-wrapper {
   position: relative;
@@ -240,7 +239,6 @@ const previewStyle = computed(() => {
   align-items: center;
   justify-content: center;
   padding: 4px 12px;
-  height: 100%;
   cursor: pointer;
 }
 .alphabet-letter {
