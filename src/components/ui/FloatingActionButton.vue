@@ -28,7 +28,7 @@ const openMenu = () => {
 const scheduleClose = () => {
   closeTimer.value = setTimeout(() => {
     isOpen.value = false;
-  }, 500);
+  }, 300);
 };
 
 // 4. Функция для переключения по клику (основной способ для мобильных)
@@ -162,14 +162,14 @@ const mainIconClose = closeIcon;
   border: none;
   color: white;
   cursor: pointer;
-  transition: all 0.3s ease; /* Изменено на all для плавного изменения размера */
+  transition: all 0.2s ease; /* Изменено на all для плавного изменения размера */
 }
 /* --- [ИЗМЕНЕНО] --- */
 /* 8. Добавлены стили для иконки в главной кнопке */
 .fab-main-icon {
   width: 1.25rem; /* 20px */
   height: 1.25rem; /* 20px */
-  transition: all 0.3s ease;
+  transition: all 0.2s ease;
 }
 
 /* Стили для всплывающей подсказки (tooltip) */
@@ -209,7 +209,7 @@ const mainIconClose = closeIcon;
 /* Анимации появления и скрытия */
 .fab-list-enter-active,
 .fab-list-leave-active {
-  transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .fab-list-enter-from,
 .fab-list-leave-to {
@@ -218,7 +218,7 @@ const mainIconClose = closeIcon;
 }
 .icon-fade-enter-active,
 .icon-fade-leave-active {
-  transition: opacity 0.2s ease, transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: opacity 0.2s ease, transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 .icon-fade-enter-from {
   opacity: 0;
