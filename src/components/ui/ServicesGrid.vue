@@ -1,5 +1,3 @@
-
-
 <script setup>
 import { ref, computed } from 'vue';
 import { useServicesStore } from '@/stores/services.js';
@@ -12,7 +10,7 @@ const { services } = storeToRefs(servicesStore);
 const hoveredService = ref(null);
 const hoveredCell = ref(null);
 const hoveredLetter = ref(null);
-const tableRef = ref(null);
+const gridContainerRef = ref(null); // Переименовано для ясности
 
 const previewImageUrl = ref(null);
 const previewImageDimensions = ref({ width: 0, height: 0 });
@@ -23,27 +21,17 @@ const alphabet = computed(() => {
   return [...new Set(firstLetters)].sort((a, b) => a.localeCompare(b, 'ru'));
 });
 
-const servicesGrid = computed(() => {
-    const sortedServices = [...services.value].sort((a, b) => a.name.localeCompare(b.name, 'ru'));
-    const numCols = 6;
-    const numRows = Math.ceil(sortedServices.length / numCols);
-    const grid = Array.from({ length: numRows }, () => Array(numCols).fill({ name: '', isPlaceholder: true }));
-
-    sortedServices.forEach((service, index) => {
-        const col = Math.floor(index / numRows);
-        const row = index % numRows;
-        if (grid[row]) {
-            grid[row][col] = service;
-        }
-    });
-    return grid;
+// Упрощенный список услуг, отсортированный по алфавиту
+const sortedServices = computed(() => {
+    return [...services.value].sort((a, b) => a.name.localeCompare(b.name, 'ru'));
 });
 
 const handleMouseEnter = (service, event) => {
-    hoveredLetter.value = null; 
+    hoveredLetter.value = null;
     if (service && !service.isPlaceholder && !isPreviewLoading.value) {
         hoveredService.value = service;
-        hoveredCell.value = event.target.closest('td');
+        // Ищем родительский элемент с классом .service-cell
+        hoveredCell.value = event.target.closest('.service-cell');
 
         isPreviewLoading.value = true;
         const { lastImage } = useServiceImages(service.id);
@@ -90,15 +78,15 @@ const handleMouseLeaveComponent = () => {
 };
 
 const previewStyle = computed(() => {
-    if (!hoveredCell.value || !tableRef.value || !previewImageDimensions.value.width) return {};
+    if (!hoveredCell.value || !gridContainerRef.value || !previewImageDimensions.value.width) return {};
 
     const PREVIEW_BASE_WIDTH = 256;
     const BORDER_WIDTH = 1;
     const previewHeight = PREVIEW_BASE_WIDTH * previewImageDimensions.value.height / previewImageDimensions.value.width;
-    
-    const container = tableRef.value.parentElement;
+
+    const container = gridContainerRef.value.parentElement;
     if (!container) return {};
-    
+
     const containerRect = container.getBoundingClientRect();
     const cellRect = hoveredCell.value.getBoundingClientRect();
 
@@ -136,19 +124,17 @@ const previewStyle = computed(() => {
       </span>
     </div>
 
-    <table ref="tableRef" class="w-full border-collapse">
-      <tbody>
-        <tr v-for="(row, rowIndex) in servicesGrid" :key="rowIndex">
-          <td
-            v-for="(service, colIndex) in row"
-            :key="colIndex"
-            class="border p-0 h-12 text-left"
+    <div ref="gridContainerRef" class="services-grid-container">
+        <div
+            v-for="service in sortedServices"
+            :key="service.id"
+            class="service-cell"
             :class="{
               'is-highlighted': hoveredLetter && service.name && service.name.toUpperCase().startsWith(hoveredLetter)
             }"
             @mouseenter="handleMouseEnter(service, $event)"
             @mouseleave="resetPreview"
-          >
+        >
             <router-link
               v-if="!service.isPlaceholder"
               :to="{ path: '/gallery', hash: '#' + service.id }"
@@ -158,10 +144,8 @@ const previewStyle = computed(() => {
                 {{ service.name }}
               </span>
             </router-link>
-            </td>
-        </tr>
-      </tbody>
-    </table>
+        </div>
+    </div>
 
     <transition
       enter-active-class="transition-opacity duration-200 ease-out"
@@ -187,23 +171,66 @@ const previewStyle = computed(() => {
 </template>
 
 <style scoped>
-td {
-  border: 1px solid #E3E3E3;
-  transition: background-color 0.2s, border-color 0.2s;
+/* СТИЛИ ДЛЯ СЕТКИ, ЗАМЕНЯЮЩИЕ TABLE */
+.services-grid-container {
+  display: grid;
+  /* 6 колонок по умолчанию для десктопа */
+  grid-template-columns: repeat(6, 1fr);
+  border-left: 1px solid #E3E3E3;
+  border-top: 1px solid #E3E3E3;
 }
 
-td .group:hover {
+.service-cell {
+  border-right: 1px solid #E3E3E3;
+  border-bottom: 1px solid #E3E3E3;
+  transition: background-color 0.2s, border-color 0.2s;
+  height: 3rem; /* 48px */
+  display: flex;
+  align-items: center;
+}
+
+.service-cell .group:hover {
   background-color: #F15F31;
 }
 
-td.is-highlighted {
+.service-cell.is-highlighted {
   background-color: #F15F31;
   border-color: #F15F31;
 }
-td.is-highlighted span {
+.service-cell.is-highlighted span {
   color: white;
 }
 
+/* АДАПТИВНОСТЬ ДЛЯ РАЗНЫХ ЭКРАНОВ */
+@media (max-width: 1200px) {
+  .services-grid-container {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .services-grid-container {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 540px) {
+  .services-grid-container {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 420px) {
+  .services-grid-container {
+    grid-template-columns: 1fr;
+  }
+  .service-cell {
+      height: auto; /* Автоматическая высота для мобильных */
+  }
+}
+
+
+/* Старые стили для алфавита остаются без изменений */
 .alphabet-bar {
   height: 60px;
 }
