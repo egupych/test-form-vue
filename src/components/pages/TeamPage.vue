@@ -21,20 +21,29 @@ import ula from '@/assets/images/pages/TeamPage/юля.png';
 // --- Структура отделов и сотрудники ---
 const departments = ref([
   {
-    name: 'Офис',
+    name: 'Руководящий состав',
     employees: [
       { name: 'Андрей Фёдорович', role: 'CEO', image: andreyFedorovich },
       { name: 'Анжелика', role: 'Менеджер по персоналу', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Анжелика' },
+      { name: 'Светлана', role: 'Руководитель отдела продаж', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Светлана' },
+      { name: 'Асиля', role: 'Руководитель цеха', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Асиля' }
+    ]
+  },
+  {
+    name: 'Офис',
+    employees: [
+      { name: 'Никита', role: 'Офис-менеджер', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Никита' },
       { name: 'Яна', role: 'Помощник бухгалтера', image: yana },
     ]
   },
   {
     name: 'Отдел продаж',
     employees: [
-      { name: 'Светлана', role: 'Руководитель отдела', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Светлана' },
+
       { name: 'Лаура', role: 'Старший менеджер', image: laura },
+      { name: 'Алина', role: 'Старший менеджер', image: alina },
       { name: 'Инна', role: 'Менеджер', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Инна' },
-      { name: 'Алина', role: 'Менеджер', image: alina }
+      { name: 'Расул', role: 'Менеджер', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Расул' }
     ]
   },
   {
@@ -53,6 +62,7 @@ const departments = ref([
       { name: 'Владислав', role: 'Печатник', image: vlad },
       { name: 'Юля', role: 'Печатник', image: ula },
       { name: 'Карина', role: 'Печатник', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Карина' },
+      { name: 'Артур', role: 'Печатник', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Артур' },
     ]
   }
 ]);
