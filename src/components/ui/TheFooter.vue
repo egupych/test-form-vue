@@ -112,10 +112,10 @@ const handleSubscription = async () => {
         
         <div class="flex flex-col items-start lg:items-end space-y-8 text-left lg:text-right">
           <div class="flex justify-end w-full space-x-8">
-            <div class="text-center">
+            <!-- <div class="text-center">
                 <img src="@/assets/images/layout/QR-site.svg" alt="QR Code redpanda.kz" class="w-24 h-24 rounded-md p-1">
                 <p class="text-md mt-1">redpanda.kz</p>
-            </div>
+            </div> -->
             <div class="text-center">
                 <img src="@/assets/images/layout/QR-instagram.svg" alt="QR Code redpandakz" class="w-24 h-24 rounded-md p-1">
                 <p class="text-md mt-1">redpandakz</p>
