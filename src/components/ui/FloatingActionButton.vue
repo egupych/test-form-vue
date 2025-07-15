@@ -28,7 +28,7 @@ const openMenu = () => {
 const scheduleClose = () => {
   closeTimer.value = setTimeout(() => {
     isOpen.value = false;
-  }, 500); // Задержка в 1000 мс (1 секунда)
+  }, 500);
 };
 
 // 4. Функция для переключения по клику (основной способ для мобильных)
