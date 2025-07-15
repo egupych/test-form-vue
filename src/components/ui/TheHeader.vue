@@ -4,7 +4,6 @@ import { useRoute } from 'vue-router';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import WeatherWidget from '@/components/ui/WeatherWidget.vue';
 import { useAuth } from '@/composables/useAuth.js';
-import PreviewWindow from '@/components/ui/PreviewWindow.vue'; // Импортируем новый компонент
 import previewHome from '@/assets/images/app/previews/preview-home.jpg';
 import previewGallery from '@/assets/images/app/previews/preview-gallery.jpg';
 import previewShop from '@/assets/images/app/previews/preview-shop.jpg';
@@ -238,14 +237,18 @@ const cancelHidePreviewTimer = () => {
       </transition>
     </Teleport>
 
-    <PreviewWindow
-      :isVisible="isPreviewVisible"
-      :link="activePreviewLink"
-      :style="previewStyle"
-      @mouseenter="cancelHidePreviewTimer"
-      @mouseleave="handleMouseLeavePreview"
-    />
-
+    <transition name="preview">
+      <router-link
+        v-if="isPreviewVisible && activePreviewLink"
+        :to="activePreviewLink.path"
+        class="preview-window"
+        :style="previewStyle"
+        @mouseenter="cancelHidePreviewTimer"
+        @mouseleave="handleMouseLeavePreview"
+      >
+        <img :src="activePreviewLink.preview" alt="Page preview" class="preview-image">
+      </router-link>
+    </transition>
   </div>
 </template>
 
@@ -345,7 +348,7 @@ const cancelHidePreviewTimer = () => {
     @apply text-panda-orange font-semibold;
 }
 
-/* === Стили хедера === */
+/* === ГЛАВНОЕ ИЗМЕНЕНИЕ ЗДЕСЬ === */
 .site-header {
   display: flex;
   align-items: center;
@@ -353,14 +356,16 @@ const cancelHidePreviewTimer = () => {
   background-color: #f7f7f7cc;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
   backdrop-filter: blur(10px);
+  
+  /* Меняем sticky на fixed и добавляем свойства для растягивания */
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   z-index: 1000;
 }
+/* === КОНЕЦ ГЛАВНОГО ИЗМЕНЕНИЯ === */
 
-/* Стили навигации и выпадающих меню */
 nav a, .nav-item {
   position: relative;
   font-family: 'Gilroy-SemiBold', sans-serif;
@@ -449,6 +454,39 @@ nav a.router-link-exact-active::after {
   background-color: #f1f1f1;
   color: #F15F31;
 }
+.preview-window {
+  position: fixed;
+  width: 320px;
+  height: 240px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  z-index: 50;
+  cursor: pointer;
+}
+.preview-window::after {
+  content: '';
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-style: solid;
+  border-width: 0 10px 10px 10px;
+  border-color: transparent transparent white transparent;
+  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.03));
+}
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease-out;
+}
+.preview-window:hover .preview-image {
+  transform: scale(1.1) translateY(-10px);
+}
 .slide-down-enter-active,
 .slide-down-leave-active {
   transition: opacity 0.2s ease, transform 0.2s ease;
@@ -461,6 +499,13 @@ nav a.router-link-exact-active::after {
 .user-menu.slide-down-enter-from,
 .user-menu.slide-down-leave-to {
     transform: translateY(-10px);
+}
+.preview-enter-active, .preview-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.preview-enter-from, .preview-leave-to {
+  opacity: 0;
+  transform: translateY(10px) scale(0.98);
 }
 .user-menu {
   left: auto !important;
