@@ -57,7 +57,7 @@ onUnmounted(() => {
 </script>
 
 <template>
-  <Teleport to="body">
+  <Teleport to="body ">
     <transition name="viewer-fade">
       <div class="image-viewer-overlay" @click="close">
         
@@ -98,7 +98,7 @@ onUnmounted(() => {
 
           </div>
           
-          <div class="controls-footer">
+          <div class="controls-footer ">
             <button @click.stop="goToPrevImage" :disabled="currentIndex === 0" class="footer-nav-button">назад</button>
             <span class="counter">{{ counterText }}</span>
             <button @click.stop="goToNextImage" :disabled="currentIndex === totalImages - 1" class="footer-nav-button">вперёд</button>
@@ -226,7 +226,7 @@ onUnmounted(() => {
 }
 .side-image:hover {
   filter: grayscale(0) opacity(1);
-  transform: scale(1.05);
+  transform: scale(1.04);
 }
 
 .side-image-fade-enter-active,
@@ -240,30 +240,26 @@ onUnmounted(() => {
 
 .controls-footer {
   position: absolute;
-  bottom: 2rem;
+  bottom: 0rem;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
   gap: 1rem;
   background-color: rgba(19, 28, 38, 0.5);
-  padding: 0.5rem 1rem;
+  padding: 0.5rem 0.5rem;
   border-radius: 9999px;
-  border: 1px solid rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(4px);
 }
 .counter {
-  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
   color: #e3e3e3;
-  font-size: 1rem;
-  min-width: 60px;
+  font-size: 0.9rem;
   text-align: center;
 }
 .footer-nav-button {
     padding: 0.25rem 1.25rem;
     border-radius: 9999px;
-    background-color: transparent;
-    border: 1px solid #8F8F8F;
+    background-color: #ffffff12;
     color: #8F8F8F;
     font-family: 'Gilroy-SemiBold', sans-serif;
     font-size: 14px;
