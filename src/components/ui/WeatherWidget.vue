@@ -14,15 +14,15 @@
     <transition name="slide-down">
       <div v-if="showForecast && processedForecast" class="dropdown-menu">
         <div 
-          v-for="(day, index) in processedForecast" 
+          v-for="(day, dayIndex) in processedForecast" 
           :key="day.date" 
           class="forecast-item-wrapper"
-          :class="{'expanded': expandedIndex === index}"
+          :class="{'expanded': expandedIndex === dayIndex}"
         >
           <div 
             class="forecast-day"
             :class="{'next-week-text': day.isNextWeek}"
-            @click="toggleDetails(index)"
+            @click="toggleDetails(dayIndex)"
           >
             <div class="day-info">
               <span class="day-of-week">{{ day.dayOfWeek }}</span>
@@ -35,15 +35,36 @@
           </div>
           
           <transition name="expand">
-            <div v-if="expandedIndex === index" class="detailed-forecast">
-              <div v-for="period in day.details" :key="period.name" class="time-period">
-                <span class="period-name">{{ period.name }}</span>
-                <img :src="period.icon" alt="Иконка погоды" class="period-icon">
-                <span class="period-temp">{{ period.temp }}</span>
+            <div v-if="expandedIndex === dayIndex" class="detailed-forecast">
+              <div class="time-periods-grid">
+                <div 
+                  v-for="period in day.details" 
+                  :key="period.name" 
+                  class="time-period"
+                  @click="toggleHourlyDetails(dayIndex, period.name)"
+                >
+                  <span class="period-name">{{ period.name }}</span>
+                  <img :src="period.icon" alt="Иконка погоды" class="period-icon">
+                  <span class="period-temp">{{ period.temp }}</span>
+                </div>
               </div>
+
+              <transition name="expand-hourly">
+                <div v-if="activePeriod.dayIndex === dayIndex && activePeriod.periodName" class="hourly-forecast">
+                  <div 
+                    v-for="hour in getActivePeriodHours(dayIndex)" 
+                    :key="hour.time" 
+                    class="hour-item"
+                    :class="{ 'active-hour': hour.isActive }"
+                  >
+                    <span class="hour-time">{{ hour.time }}</span>
+                    <img :src="hour.icon" :alt="hour.time" class="hour-icon">
+                    <span class="hour-temp">{{ hour.temp }}</span>
+                  </div>
+                </div>
+              </transition>
             </div>
           </transition>
-
         </div>
       </div>
     </transition>
@@ -51,20 +72,57 @@
 </template>
 
 <script setup>
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, onUnmounted, computed } from 'vue';
 
 const weather = ref(null);
 const error = ref(null);
 const showForecast = ref(false);
-const expandedIndex = ref(null);
+const expandedIndex = ref(0);
+const activePeriod = ref({ dayIndex: 0, periodName: 'День' }); // Открываем "День" для "Сегодня" по умолчанию
+let weatherInterval = null;
+
+const fetchWeather = async () => {
+  try {
+    const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=51.18&longitude=71.45&current_weather=true&daily=weathercode,temperature_2m_max&hourly=temperature_2m,weathercode&timezone=Asia/Almaty');
+    if (!response.ok) throw new Error('Ошибка сети');
+    weather.value = await response.json();
+  } catch (e) {
+    error.value = e.message;
+    console.error("Не удалось получить данные о погоде:", e);
+  }
+};
 
 const toggleDetails = (index) => {
   if (expandedIndex.value === index) {
     expandedIndex.value = null;
   } else {
     expandedIndex.value = index;
+    // При открытии нового дня по умолчанию показываем "День" или ничего
+    activePeriod.value = { dayIndex: index, periodName: 'День' }; 
   }
 };
+
+const toggleHourlyDetails = (dayIndex, periodName) => {
+  if (isActivePeriod(dayIndex, periodName)) {
+    activePeriod.value = { dayIndex, periodName: null }; // Закрываем
+  } else {
+    activePeriod.value = { dayIndex, periodName }; // Открываем
+  }
+};
+
+const isActivePeriod = (dayIndex, periodName) => {
+  return activePeriod.value.dayIndex === dayIndex && activePeriod.value.periodName === periodName;
+};
+
+// НОВАЯ ФУНКЦИЯ: Получение почасовых данных для активного периода
+const getActivePeriodHours = (dayIndex) => {
+  const periodName = activePeriod.value.periodName;
+  if (!periodName || !processedForecast.value) return [];
+  const day = processedForecast.value[dayIndex];
+  const period = day.details.find(p => p.name === periodName);
+  return period ? period.hourly : [];
+};
+
 
 const getModeWeatherCode = (codes) => {
   if (!codes || codes.length === 0) return 3;
@@ -80,23 +138,27 @@ const processedForecast = computed(() => {
 
   const daily = weather.value.daily;
   const hourly = weather.value.hourly;
+  const currentTemp = Math.round(weather.value.current_weather.temperature);
+  const currentHour = new Date(weather.value.current_weather.time).getHours();
 
-  return daily.time.slice(0, 7).map((date, index) => {
+  return daily.time.slice(0, 5).map((date, index) => {
     const forecastDate = new Date(date);
     let dayText;
     let dayNum = forecastDate.getDate();
+    let maxTemp;
 
     if (index === 0) {
       dayText = 'Сегодня';
       dayNum = '';
-    } else if (index === 1) {
-      dayText = 'Завтра';
-      dayNum = '';
+      maxTemp = `${currentTemp}°`; 
     } else {
-      dayText = forecastDate.toLocaleDateString('ru-RU', { weekday: 'short' });
+      dayText = (index === 1) ? 'Завтра' : forecastDate.toLocaleDateString('ru-RU', { weekday: 'short' });
+      dayNum = (index === 1) ? '' : forecastDate.getDate();
+      maxTemp = `${Math.round(daily.temperature_2m_max[index])}°`;
     }
     
     const startIndex = index * 24;
+    const hourlyTimes = hourly.time.slice(startIndex, startIndex + 24);
     const hourlyTemps = hourly.temperature_2m.slice(startIndex, startIndex + 24);
     const hourlyCodes = hourly.weathercode.slice(startIndex, startIndex + 24);
 
@@ -106,16 +168,29 @@ const processedForecast = computed(() => {
       { name: 'Вечер', start: 18, end: 24 },
       { name: 'Ночь', start: 0, end: 6 },
     ].map(period => {
+      const timesInPeriod = hourlyTimes.slice(period.start, period.end);
       const tempsInPeriod = hourlyTemps.slice(period.start, period.end);
       const codesInPeriod = hourlyCodes.slice(period.start, period.end);
       
-      const avgTemp = Math.round(tempsInPeriod.reduce((a, b) => a + b, 0) / tempsInPeriod.length);
+      const avgTemp = tempsInPeriod.length > 0 ? Math.round(tempsInPeriod.reduce((a, b) => a + b, 0) / tempsInPeriod.length) : 0;
       const modeCode = getModeWeatherCode(codesInPeriod);
+      
+      const hourlyDetails = timesInPeriod.map((t, i) => {
+        const hour = new Date(t).getHours();
+        return {
+          time: new Date(t).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
+          temp: `${Math.round(tempsInPeriod[i])}°`,
+          icon: getWeatherIcon(codesInPeriod[i]),
+          // Добавляем флаг для активного часа только для "Сегодня"
+          isActive: index === 0 && hour === currentHour,
+        };
+      });
 
-      return {
-        name: period.name,
-        temp: `${avgTemp}°`,
-        icon: getWeatherIcon(modeCode)
+      return { 
+        name: period.name, 
+        temp: `${avgTemp}°`, 
+        icon: getWeatherIcon(modeCode),
+        hourly: hourlyDetails
       };
     });
 
@@ -124,7 +199,7 @@ const processedForecast = computed(() => {
       dayOfWeek: dayText,
       dayNumber: dayNum,
       icon: getWeatherIcon(daily.weathercode[index]),
-      maxTemp: `${Math.round(daily.temperature_2m_max[index])}°`,
+      maxTemp: maxTemp,
       isNextWeek: isNextWeek(date),
       details: details
     };
@@ -165,19 +240,16 @@ const getWeatherIcon = (code) => {
   };
 
 onMounted(async () => {
-    try {
-      const response = await fetch('https://api.open-meteo.com/v1/forecast?latitude=51.18&longitude=71.45&current_weather=true&daily=weathercode,temperature_2m_max,temperature_2m_min&hourly=temperature_2m,weathercode&timezone=Asia/Almaty');
-      if (!response.ok) throw new Error('Ошибка сети');
-      weather.value = await response.json();
-    } catch (e) {
-      error.value = e.message;
-      console.error("Не удалось получить данные о погоде:", e);
-    }
-  });
+  await fetchWeather();
+  weatherInterval = setInterval(fetchWeather, 600000);
+});
+
+onUnmounted(() => {
+  clearInterval(weatherInterval);
+});
 </script>
 
 <style scoped>
-  /* Общие стили виджета без изменений */
   .weather-widget { position: relative; }
   .widget-body { border: 1px solid #E3E3E3; padding: 4px 12px; border-radius: 9999px; background-color: white; }
   .nav-item { font-family: 'Gilroy-SemiBold', sans-serif; color: #131C26; cursor: pointer; display: flex; align-items: center; font-size: 16px; transition: color 0.2s ease-in-out; }
@@ -185,119 +257,86 @@ onMounted(async () => {
   .weather-icon-wrapper { width: 32px; height: 32px; display: flex; align-items: center; justify-content: center; }
   .weather-icon { width: 100%; height: 100%; }
   
-  /* Стили выпадающего меню */
   .dropdown-menu { 
-    display: block; 
-    position: absolute; 
-    top: 100%; 
-    left: 50%; 
-    transform: translateX(-50%) translateY(0); 
-    margin-top: 22px; 
-    background-color:#F7F7F7; 
-    min-width: 260px; 
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); 
-    z-index: 20; 
-    border-radius: 8px; 
-    /* ИЗМЕНЕНИЕ: Убираем горизонтальные отступы, оставляем только вертикальные */
-    padding: 8px 0; 
+    display: block; position: absolute; top: 100%; left: 50%; transform: translateX(-50%) translateY(0); 
+    margin-top: 22px; background-color:#F7F7F7; min-width: 280px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1); z-index: 20; border-radius: 8px; padding: 8px 0; 
   }
   .dropdown-menu::before { content: ''; position: absolute; top: -10px; left: 50%; transform: translateX(-50%); width: 0; height: 0; border-style: solid; border-width: 0 10px 10px 10px; border-color: transparent transparent #F7F7F7 transparent; filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.03)); }
 
-  /* Стили для обертки и линии */
-  .forecast-item-wrapper {
-    position: relative;
-    /* Убрали padding-bottom, теперь линия сама создает отступ */
-  }
-  
-  .forecast-item-wrapper::after {
-    content: '';
-    position: absolute;
-    bottom: -2px; /* Располагаем под элементом */
-    /* ИЗМЕНЕНИЕ: Растягиваем на всю ширину */
-    left: 0;
-    right: 0;
-    height: 2px;
-    background-color: #F15F31;
-    transform: scaleX(0);
-    transition: transform 0.3s ease-out;
-  }
-  
+  .forecast-item-wrapper { position: relative; }
+  .forecast-item-wrapper::after { content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 2px; background-color: #F15F31; transform: scaleX(0); transition: transform 0.3s ease-out; }
   .forecast-item-wrapper:hover::after,
-  .forecast-item-wrapper.expanded::after {
-    transform: scaleX(1);
-  }
+  .forecast-item-wrapper.expanded::after { transform: scaleX(1); }
 
-  .forecast-day {
-    display: grid;
-    grid-template-columns: 1fr auto; 
-    gap: 16px;
-    align-items: center;
-    /* ИЗМЕНЕНИЕ: Добавляем горизонтальные отступы сюда */
-    padding: 10px 16px;
-    cursor: pointer;
-    position: relative;
-    z-index: 2;
-    font-family: 'Gilroy-SemiBold', sans-serif;
-    font-size: 16px;
-    color: #131C26;
-    transition: background-color 0.2s ease;
-  }
-  
-  /* Заливка теперь будет на всю ширину */
-  .forecast-day:hover {
-    background-color: #FFFFFF;
-  }
-  .forecast-item-wrapper.expanded .forecast-day {
-     background-color: #FFFFFF;
-  }
+  .forecast-day { display: grid; grid-template-columns: 1fr auto; gap: 16px; align-items: center; padding: 10px 16px; cursor: pointer; position: relative; z-index: 3; font-family: 'Gilroy-SemiBold', sans-serif; font-size: 16px; color: #131C26; transition: background-color 0.2s ease; }
+  .forecast-day:hover,
+  .forecast-item-wrapper.expanded .forecast-day { background-color: #FFFFFF; }
 
   .day-info { display: flex; align-items: baseline; gap: 8px; }
   .day-of-week { text-transform: capitalize; }
-  
   .temp-and-icon { display: flex; align-items: center; gap: 12px; justify-content: flex-end; }
   .forecast-icon { width: 36px; height: 36px; }
 
-  /* Стили для блока детализации */
-  .detailed-forecast {
+  /* --- ИЗМЕНЕНИЯ В СТИЛЯХ --- */
+  .detailed-forecast { display: flex; flex-direction: column; gap: 8px; padding: 8px 12px 12px; background-color: #FFFFFF; position: relative; z-index: 2; }
+  
+  .time-periods-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 4px; }
+  .time-period { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 4px; border-radius: 4px; cursor: pointer; transition: background-color 0.2s; }
+  .time-period:hover { background-color: rgba(0,0,0,0.05); }
+  .period-name { font-family: 'Gilroy-Medium', sans-serif; font-size: 13px; color: #555; }
+  .period-icon { width: 32px; height: 32px; }
+  .period-temp { font-family: 'Gilroy-SemiBold', sans-serif; font-size: 15px; }
+
+  .hourly-forecast {
+    background-color: rgba(0,0,0,0.02);
+    padding: 8px;
+    border-radius: 6px;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(3, 1fr);
     gap: 8px;
-    /* ИЗМЕНЕНИЕ: Добавляем горизонтальные отступы и сюда */
-    padding: 8px 16px 12px;
-    background-color: #FFFFFF; /* Фон как у ховера */
-    position: relative;
-    z-index: 1;
-    overflow: hidden;
   }
-  .time-period {
+  .hour-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 4px;
+    padding: 4px;
+    border-radius: 4px;
+    transition: background-color 0.2s;
+  }
+  .hour-time {
     font-family: 'Gilroy-Medium', sans-serif;
+    font-size: 13px;
+    color: #666;
   }
-  .period-name { font-size: 13px; color: #555; }
-  .period-icon { width: 32px; height: 32px; }
-  .period-temp { font-family: 'Gilroy-SemiBold', sans-serif; font-size: 15px; }
+  .hour-icon {
+    width: 28px;
+    height: 28px;
+  }
+  .hour-temp {
+    font-family: 'Gilroy-SemiBold', sans-serif;
+    font-size: 14px;
+  }
+  .hour-item.active-hour {
+    background-color: rgba(241, 95, 49, 0.1); /* Легкий оранжевый фон */
+    color: #F15F31;
+  }
+  .hour-item.active-hour .hour-time,
+  .hour-item.active-hour .hour-temp {
+    color: #D94D1A; /* Более темный оранжевый для текста */
+  }
+  
+  /* --- Анимации --- */
+  .expand-enter-active, .expand-leave-active { transition: all 0.3s ease-out; }
+  .expand-enter-from, .expand-leave-to { opacity: 0; transform: translateY(-10px); max-height: 0; padding-top: 0; padding-bottom: 0; }
+  .expand-enter-to, .expand-leave-from { max-height: 500px; }
+  
+  .expand-hourly-enter-active, .expand-hourly-leave-active { transition: all 0.3s ease-out; }
+  .expand-hourly-enter-from, .expand-hourly-leave-to { opacity: 0; max-height: 0; padding: 0 8px; margin-top: 0; }
+  .expand-hourly-enter-to, .expand-hourly-leave-from { max-height: 300px; }
+  .detailed-forecast, .hourly-forecast { overflow: hidden; }
 
-  /* Анимация раскрытия */
-  .expand-enter-active { transition: all 0.3s ease-out; }
-  .expand-leave-active { transition: all 0.25s ease-in; }
-  .expand-enter-from,
-  .expand-leave-to {
-    opacity: 0;
-    transform: translateY(-10px);
-    max-height: 0;
-    padding-top: 0;
-    padding-bottom: 0;
-    margin-top: 0;
-  }
-  .expand-enter-to,
-  .expand-leave-from {
-    max-height: 100px;
-  }
-
-  /* Остальные стили */
   .slide-down-enter-active, .slide-down-leave-active { transition: opacity 0.2s ease-out, transform 0.2s ease-out; }
   .slide-down-enter-from, .slide-down-leave-to { opacity: 0; transform: translateX(-50%) translateY(-10px); }
   .forecast-day.next-week-text { color: #8F8F8F; }
