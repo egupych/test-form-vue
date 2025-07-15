@@ -229,16 +229,4 @@ const mainIconClose = closeIcon;
   transform: rotate(45deg) scale(0.5);
 }
 
-/* --- [ИЗМЕНЕНО] --- */
-/* 9. Медиа-запрос для увеличения кнопки на мобильных устройствах */
-@media (max-width: 768px) {
-  .fab-main {
-    width: 3.75rem; /* 48px * 1.25 = 60px */
-    height: 3.75rem; /* 48px * 1.25 = 60px */
-  }
-  .fab-main-icon {
-    width: 1.5625rem; /* 20px * 1.25 = 25px */
-    height: 1.5625rem; /* 20px * 1.25 = 25px */
-  }
-}
 </style>
