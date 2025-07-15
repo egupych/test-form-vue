@@ -153,7 +153,14 @@ onUnmounted(() => {
   align-items: center;
   width: 100%;
   height: 100%;
-  max-width: calc(100% - 340px); /* Увеличено место по бокам для круглых превью */
+  /* [ИСПРАВЛЕНИЕ] Убрал max-width отсюда, чтобы он применялся только на больших экранах */
+}
+
+/* [ИСПРАВЛЕНИЕ] С помощью медиа-запроса возвращаем ограничение по ширине для больших экранов */
+@media (min-width: 768px) {
+  .image-container {
+    max-width: calc(100% - 340px);
+  }
 }
 
 .main-image {
@@ -188,13 +195,22 @@ onUnmounted(() => {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  display: flex;
   align-items: center;
   justify-content: center;
-  width: 160px;  /* Увеличенный размер */
-  height: 160px; /* Увеличенный размер, равен ширине для круга */
+  width: 160px;
+  height: 160px;
   z-index: 5;
+  /* [ИСПРАВЛЕНИЕ] По умолчанию скрываем контейнеры превью */
+  display: none;
 }
+
+/* [ИСПРАВЛЕНИЕ] Показываем контейнеры превью только на больших экранах */
+@media (min-width: 768px) {
+  .nav-container {
+    display: flex;
+  }
+}
+
 .nav-container.left {
   left: 2rem;
 }
@@ -206,7 +222,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 16px; /* Делаем изображение круглым */
+  border-radius: 16px;
   filter: grayscale(1) opacity(0.5);
   cursor: pointer;
   transition: all 0.3s ease-out;
