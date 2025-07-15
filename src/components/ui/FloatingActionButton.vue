@@ -1,55 +1,81 @@
 <script setup>
 import { ref } from 'vue';
 
-// --- [ИЗМЕНЕНО] ---
-// 1. Прямой импорт всех иконок как модулей
+// --- [Без изменений] ---
 import whatsappIcon from '@/assets/images/layout/whatsapp.svg';
-import mailIcon from '@/assets/images/layout/mail.svg'; // Предполагая, что иконка почты называется mail.svg
+import mailIcon from '@/assets/images/layout/mail.svg';
 import phoneIcon from '@/assets/images/layout/phone.svg';
 import plusIcon from '@/assets/images/layout/plus.svg';
 import closeIcon from '@/assets/images/layout/close.svg';
 
-
-// Состояние, которое отвечает за видимость кнопок
 const isOpen = ref(false);
 
-// Функция для переключения видимости
+// --- [ИЗМЕНЕНО] ---
+// 1. Добавлена переменная для хранения таймера
+const closeTimer = ref(null);
+
+// 2. Функция для открытия меню по наведению (для ПК)
+// Она также отменяет запланированное закрытие
+const openMenu = () => {
+  if (closeTimer.value) {
+    clearTimeout(closeTimer.value);
+    closeTimer.value = null;
+  }
+  isOpen.value = true;
+};
+
+// 3. Функция для планирования закрытия меню с задержкой (для ПК)
+const scheduleClose = () => {
+  closeTimer.value = setTimeout(() => {
+    isOpen.value = false;
+  }, 500); // Задержка в 1000 мс (1 секунда)
+};
+
+// 4. Функция для переключения по клику (основной способ для мобильных)
 const toggleMenu = () => {
+  // Если меню открывается по клику, отменяем любой таймер закрытия
+  if (!isOpen.value) {
+    if (closeTimer.value) {
+      clearTimeout(closeTimer.value);
+      closeTimer.value = null;
+    }
+  }
   isOpen.value = !isOpen.value;
 };
 
-// 2. Пути к иконкам заменены на импортированные переменные
+
+// --- [Без изменений] ---
 const actions = ref([
   {
     label: 'Написать в WhatsApp',
     href: 'https://wa.me/77007257799',
-    iconUrl: whatsappIcon, // Используем импорт
+    iconUrl: whatsappIcon,
     colorClass: 'bg-panda-black hover:bg-gray-800'
   },
   {
     label: 'Написать на почту',
-    href: 'mailto:infoprint@redpanda.kz', // Исправлено на mailto: для почты
-    iconUrl: mailIcon, // Используем импорт
+    href: 'mailto:infoprint@redpanda.kz',
+    iconUrl: mailIcon,
     colorClass: 'bg-panda-black hover:bg-gray-800'
   },
   {
     label: 'Позвонить нам',
     href: 'tel:+77007257799',
-    iconUrl: phoneIcon, // Используем импорт
+    iconUrl: phoneIcon,
     colorClass: 'bg-panda-black hover:bg-gray-800'
   }
 ]);
 
-// Иконки для главной кнопки теперь тоже переменные
 const mainIconOpen = plusIcon;
 const mainIconClose = closeIcon;
-
-// 3. Функция getImageUrl больше не нужна и удалена.
-
 </script>
 
 <template>
-  <div class="fixed bottom-6 right-6 z-[999] flex flex-col items-center gap-3">
+  <div 
+    @mouseenter="openMenu"
+    @mouseleave="scheduleClose"
+    class="fixed bottom-6 right-6 z-[999] flex flex-col items-center gap-3"
+  >
     
     <transition-group
       name="fab-list"
@@ -94,14 +120,14 @@ const mainIconClose = closeIcon;
             :src="mainIconClose"
             alt="Закрыть"
             key="close"
-            class="w-5 h-5"
+            class="fab-main-icon"
           />
           <img
             v-else
             :src="mainIconOpen"
             alt="Открыть"
             key="open"
-            class="w-5 h-5"
+            class="fab-main-icon"
           />
         </transition>
       </button>
@@ -111,7 +137,7 @@ const mainIconClose = closeIcon;
 </template>
 
 <style scoped>
-/* Стили остаются без изменений, они универсальны */
+/* Стили для кнопок и иконок */
 .fab-item {
   display: flex;
   align-items: center;
@@ -130,14 +156,23 @@ const mainIconClose = closeIcon;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
+  width: 3rem; /* 48px */
+  height: 3rem; /* 48px */
   border-radius: 9999px;
   border: none;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease; /* Изменено на all для плавного изменения размера */
 }
+/* --- [ИЗМЕНЕНО] --- */
+/* 8. Добавлены стили для иконки в главной кнопке */
+.fab-main-icon {
+  width: 1.25rem; /* 20px */
+  height: 1.25rem; /* 20px */
+  transition: all 0.3s ease;
+}
+
+/* Стили для всплывающей подсказки (tooltip) */
 .fab-tooltip {
   position: absolute;
   right: 100%;
@@ -170,6 +205,8 @@ const mainIconClose = closeIcon;
   border-color: transparent transparent transparent #F7F7F7;
   filter: drop-shadow(1px 0 0 #E5E7EB);
 }
+
+/* Анимации появления и скрытия */
 .fab-list-enter-active,
 .fab-list-leave-active {
   transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -190,5 +227,18 @@ const mainIconClose = closeIcon;
 .icon-fade-leave-to {
   opacity: 0;
   transform: rotate(45deg) scale(0.5);
+}
+
+/* --- [ИЗМЕНЕНО] --- */
+/* 9. Медиа-запрос для увеличения кнопки на мобильных устройствах */
+@media (max-width: 768px) {
+  .fab-main {
+    width: 3.75rem; /* 48px * 1.25 = 60px */
+    height: 3.75rem; /* 48px * 1.25 = 60px */
+  }
+  .fab-main-icon {
+    width: 1.5625rem; /* 20px * 1.25 = 25px */
+    height: 1.5625rem; /* 20px * 1.25 = 25px */
+  }
 }
 </style>
