@@ -290,19 +290,16 @@ onUnmounted(() => {
 
   .hourly-forecast {
     background-color: rgba(0,0,0,0.02);
-    padding: 0.5rem;
-    border-radius: 0.375rem;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: 0.5rem;
+
   }
   .hour-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.25rem;
-    padding: 0.25rem;
-    border-radius: 0.25rem;
+    padding: 0.5rem;
     transition: background-color 0.2s;
   }
   .hour-time {
