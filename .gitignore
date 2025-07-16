@@ -39,3 +39,6 @@ firebase-service-account-key.json
 redpanda-cca8e-f598f9a87c95.json
 
 dist/
+
+# Firebase
+.firebase/
