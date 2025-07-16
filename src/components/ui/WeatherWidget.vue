@@ -1,84 +1,14 @@
-<template>
-  <div class="weather-widget dropdown" @mouseenter="showForecast = true" @mouseleave="showForecast = false">
-    <div class="widget-body">
-      <div v-if="weather" class="nav-item">
-        <span class="temperature">{{ Math.round(weather.current_weather.temperature) }}°C</span>
-        <div class="weather-icon-wrapper">
-          <img :src="getWeatherIcon(weather.current_weather.weathercode)" alt="Иконка погоды" class="weather-icon">
-        </div>
-      </div>
-      <div v-else-if="error" class="nav-item">Ошибка</div>
-      <div v-else class="nav-item">...</div>
-    </div>
-
-    <transition name="slide-down">
-      <div v-if="showForecast && processedForecast" class="dropdown-menu">
-        <div 
-          v-for="(day, dayIndex) in processedForecast" 
-          :key="day.date" 
-          class="forecast-item-wrapper"
-          :class="{'expanded': expandedIndex === dayIndex}"
-        >
-          <div 
-            class="forecast-day"
-            :class="{'next-week-text': day.isNextWeek}"
-            @click="toggleDetails(dayIndex)"
-          >
-            <div class="day-info">
-              <span class="day-of-week">{{ day.dayOfWeek }}</span>
-              <span class="day-number">{{ day.dayNumber }}</span>
-            </div>
-            <div class="temp-and-icon">
-              <img :src="day.icon" alt="Иконка погоды" class="forecast-icon">
-              <span class="max-temp">{{ day.maxTemp }}</span>
-            </div>
-          </div>
-          
-          <transition name="expand">
-            <div v-if="expandedIndex === dayIndex" class="detailed-forecast">
-              <div class="time-periods-grid">
-                <div 
-                  v-for="period in day.details" 
-                  :key="period.name" 
-                  class="time-period"
-                  @click="toggleHourlyDetails(dayIndex, period.name)"
-                >
-                  <span class="period-name">{{ period.name }}</span>
-                  <img :src="period.icon" alt="Иконка погоды" class="period-icon">
-                  <span class="period-temp">{{ period.temp }}</span>
-                </div>
-              </div>
-
-              <transition name="expand-hourly">
-                <div v-if="activePeriod.dayIndex === dayIndex && activePeriod.periodName" class="hourly-forecast">
-                  <div 
-                    v-for="hour in getActivePeriodHours(dayIndex)" 
-                    :key="hour.time" 
-                    class="hour-item"
-                    :class="{ 'active-hour': hour.isActive }"
-                  >
-                    <span class="hour-time">{{ hour.time }}</span>
-                    <img :src="hour.icon" :alt="hour.time" class="hour-icon">
-                    <span class="hour-temp">{{ hour.temp }}</span>
-                  </div>
-                </div>
-              </transition>
-            </div>
-          </transition>
-        </div>
-      </div>
-    </transition>
-  </div>
-</template>
-
 <script setup>
 import { ref, onMounted, onUnmounted, computed } from 'vue';
 
 const weather = ref(null);
 const error = ref(null);
 const showForecast = ref(false);
-const expandedIndex = ref(0);
-const activePeriod = ref({ dayIndex: 0, periodName: 'День' }); // Открываем "День" для "Сегодня" по умолчанию
+
+// ИЗМЕНЕНИЕ: "Сегодня" (индекс 0) раскрыт по умолчанию
+const expandedIndex = ref(0); 
+// ИЗМЕНЕНИЕ: Почасовой прогноз по умолчанию скрыт
+const activePeriod = ref({ dayIndex: null, periodName: null }); 
 let weatherInterval = null;
 
 const fetchWeather = async () => {
@@ -92,21 +22,22 @@ const fetchWeather = async () => {
   }
 };
 
+// ИЗМЕНЕНИЕ: Упрощенная логика. Клик на день только раскрывает/скрывает его.
 const toggleDetails = (index) => {
   if (expandedIndex.value === index) {
     expandedIndex.value = null;
   } else {
     expandedIndex.value = index;
-    // При открытии нового дня по умолчанию показываем "День" или ничего
-    activePeriod.value = { dayIndex: index, periodName: 'День' }; 
   }
+  // При любом клике на день сбрасываем активный почасовой период.
+  activePeriod.value = { dayIndex: null, periodName: null };
 };
 
 const toggleHourlyDetails = (dayIndex, periodName) => {
   if (isActivePeriod(dayIndex, periodName)) {
-    activePeriod.value = { dayIndex, periodName: null }; // Закрываем
+    activePeriod.value = { dayIndex: null, periodName: null };
   } else {
-    activePeriod.value = { dayIndex, periodName }; // Открываем
+    activePeriod.value = { dayIndex, periodName };
   }
 };
 
@@ -114,7 +45,6 @@ const isActivePeriod = (dayIndex, periodName) => {
   return activePeriod.value.dayIndex === dayIndex && activePeriod.value.periodName === periodName;
 };
 
-// НОВАЯ ФУНКЦИЯ: Получение почасовых данных для активного периода
 const getActivePeriodHours = (dayIndex) => {
   const periodName = activePeriod.value.periodName;
   if (!periodName || !processedForecast.value) return [];
@@ -122,7 +52,6 @@ const getActivePeriodHours = (dayIndex) => {
   const period = day.details.find(p => p.name === periodName);
   return period ? period.hourly : [];
 };
-
 
 const getModeWeatherCode = (codes) => {
   if (!codes || codes.length === 0) return 3;
@@ -181,7 +110,6 @@ const processedForecast = computed(() => {
           time: new Date(t).toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' }),
           temp: `${Math.round(tempsInPeriod[i])}°`,
           icon: getWeatherIcon(codesInPeriod[i]),
-          // Добавляем флаг для активного часа только для "Сегодня"
           isActive: index === 0 && hour === currentHour,
         };
       });
@@ -249,11 +177,85 @@ onUnmounted(() => {
 });
 </script>
 
+<template>
+  <div class="weather-widget dropdown" @mouseenter="showForecast = true" @mouseleave="showForecast = false">
+    <div class="widget-body">
+      <div v-if="weather" class="nav-item">
+        <div class="weather-icon-wrapper">
+          <img :src="getWeatherIcon(weather.current_weather.weathercode)" alt="Иконка погоды" class="weather-icon">
+        </div>
+        <span class="temperature">{{ Math.round(weather.current_weather.temperature) }}°</span>
+      </div>
+      <div v-else-if="error" class="nav-item">Ошибка</div>
+      <div v-else class="nav-item">...</div>
+    </div>
+
+    <transition name="slide-down">
+      <div v-if="showForecast && processedForecast" class="dropdown-menu">
+        <div 
+          v-for="(day, dayIndex) in processedForecast" 
+          :key="day.date" 
+          class="forecast-item-wrapper"
+          :class="{'expanded': expandedIndex === dayIndex}"
+        >
+          <div 
+            class="forecast-day"
+            :class="{'next-week-text': day.isNextWeek}"
+            @click="toggleDetails(dayIndex)"
+          >
+            <div class="day-info">
+              <span class="day-of-week">{{ day.dayOfWeek }}</span>
+              <span class="day-number">{{ day.dayNumber }}</span>
+            </div>
+            <div class="temp-and-icon">
+              <img :src="day.icon" alt="Иконка погоды" class="forecast-icon">
+              <span class="max-temp">{{ day.maxTemp }}</span>
+            </div>
+          </div>
+          
+          <transition name="expand">
+            <div v-if="expandedIndex === dayIndex" class="detailed-forecast">
+              <div class="time-periods-grid">
+                <div 
+                  v-for="period in day.details" 
+                  :key="period.name" 
+                  class="time-period"
+                  :class="{ 'active-period': isActivePeriod(dayIndex, period.name) }"
+                  @click.stop="toggleHourlyDetails(dayIndex, period.name)"
+                >
+                  <span class="period-name">{{ period.name }}</span>
+                  <img :src="period.icon" alt="Иконка погоды" class="period-icon">
+                  <span class="period-temp">{{ period.temp }}</span>
+                </div>
+              </div>
+
+              <transition name="expand-hourly">
+                <div v-if="activePeriod.dayIndex === dayIndex && activePeriod.periodName" class="hourly-forecast">
+                  <div 
+                    v-for="hour in getActivePeriodHours(dayIndex)" 
+                    :key="hour.time" 
+                    class="hour-item"
+                    :class="{ 'active-hour': hour.isActive }"
+                  >
+                    <span class="hour-time">{{ hour.time }}</span>
+                    <img :src="hour.icon" :alt="hour.time" class="hour-icon">
+                    <span class="hour-temp">{{ hour.temp }}</span>
+                  </div>
+                </div>
+              </transition>
+            </div>
+          </transition>
+        </div>
+      </div>
+    </transition>
+  </div>
+</template>
+
 <style scoped>
   .weather-widget { position: relative; }
-  .widget-body { border: 0.0625rem solid #E3E3E3; padding: 0.25rem 0.75rem; border-radius: 9999px; background-color: white; }
+  .widget-body { border: 0.0625rem solid #E3E3E3; padding: 0.25rem 0.8rem; border-radius: 9999px; background-color: white; }
   .nav-item { font-family: 'Gilroy-SemiBold', sans-serif; color: #131C26; cursor: pointer; display: flex; align-items: center; font-size: 1rem; transition: color 0.2s ease-in-out; }
-  .temperature { padding-left: 0.5rem; padding-right: 0.125rem; }
+  .temperature { padding-right: 0.125rem; }
   .weather-icon-wrapper { width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; }
   .weather-icon { width: 100%; height: 100%; }
   
@@ -275,10 +277,9 @@ onUnmounted(() => {
 
   .day-info { display: flex; align-items: baseline; gap: 0.5rem; }
   .day-of-week { text-transform: capitalize; }
-  .temp-and-icon { display: flex; align-items: center; gap: 0.75rem; justify-content: flex-end; }
+  .temp-and-icon { display: flex; align-items: center; justify-content: flex-end; }
   .forecast-icon { width: 2.25rem; height: 2.25rem; }
 
-  /* --- ИЗМЕНЕНИЯ В СТИЛЯХ --- */
   .detailed-forecast { display: flex; flex-direction: column; gap: 0.5rem; padding: 0.5rem 0.75rem 0.75rem; background-color: #FFFFFF; position: relative; z-index: 2; }
   
   .time-periods-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.25rem; }
@@ -288,18 +289,29 @@ onUnmounted(() => {
   .period-icon { width: 2rem; height: 2rem; }
   .period-temp { font-family: 'Gilroy-SemiBold', sans-serif; font-size: 0.9375rem; }
 
+  .time-period.active-period {
+    background-color: rgba(241, 95, 49, 0.1);
+  }
+  .time-period.active-period .period-name,
+  .time-period.active-period .period-temp {
+    color: #D94D1A; 
+  }
+
   .hourly-forecast {
     background-color: rgba(0,0,0,0.02);
+    padding: 0.5rem;
+    border-radius: 0.375rem;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-
+    gap: 0.5rem;
   }
   .hour-item {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 0.25rem;
-    padding: 0.5rem;
+    padding: 0.25rem;
+    border-radius: 0.25rem;
     transition: background-color 0.2s;
   }
   .hour-time {
@@ -316,15 +328,14 @@ onUnmounted(() => {
     font-size: 0.875rem;
   }
   .hour-item.active-hour {
-    background-color: rgba(241, 95, 49, 0.1); /* Легкий оранжевый фон */
+    background-color: rgba(241, 95, 49, 0.1);
     color: #F15F31;
   }
   .hour-item.active-hour .hour-time,
   .hour-item.active-hour .hour-temp {
-    color: #D94D1A; /* Более темный оранжевый для текста */
+    color: #D94D1A; 
   }
   
-  /* --- Анимации --- */
   .expand-enter-active, .expand-leave-active { transition: all 0.3s ease-out; }
   .expand-enter-from, .expand-leave-to { opacity: 0; transform: translateY(-0.625rem); max-height: 0; padding-top: 0; padding-bottom: 0; }
   .expand-enter-to, .expand-leave-from { max-height: 31.25rem; }
