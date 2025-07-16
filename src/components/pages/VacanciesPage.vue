@@ -56,8 +56,13 @@ const closePopup = () => {
               </div>
             </div>
             
-            <div @click="openPopup(vacancy.title)" class="mt-auto cursor-pointer">
-              <BaseButton variant="fill-black" :is-interactive="false">Откликнуться</BaseButton>
+            <div class="mt-auto">
+              <BaseButton 
+                @click="openPopup(vacancy.title)" 
+                variant="fill-black"
+              >
+                Откликнуться
+              </BaseButton>
             </div>
           </div>
         </div>

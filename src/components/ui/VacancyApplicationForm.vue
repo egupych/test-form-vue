@@ -1,7 +1,8 @@
 <script setup>
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, computed } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
-import { useNotificationStore } from '@/stores/notifications.js'; // 1. ИМПОРТ
+import { useNotificationStore } from '@/stores/notifications.js';
+import { useFormValidation } from '@/composables/useFormValidation.js';
 
 const props = defineProps({
   positionTitle: {
@@ -10,12 +11,14 @@ const props = defineProps({
   }
 });
 
-const notificationStore = useNotificationStore(); // 2. ИНИЦИАЛИЗАЦИЯ
+const notificationStore = useNotificationStore();
 
 const formData = reactive({
   name: '',
   phone: '',
 });
+const validationFields = ['name', 'phone'];
+const { errors, validateField, validateForm, formatPhoneInput } = useFormValidation(formData, validationFields);
 const files = ref([]);
 const isSubmitting = ref(false);
 
@@ -24,20 +27,26 @@ watch(() => props.positionTitle, (newVal) => {
   desiredPosition.value = newVal;
 });
 
+const isFormValid = computed(() => {
+    const allFieldsFilled = validationFields.every(field => !!formData[field]);
+    const noErrors = validationFields.every(field => !errors[field]);
+    // Добавляем проверку наличия файла
+    return allFieldsFilled && noErrors && files.value.length > 0;
+});
+
 const handleFileUpload = (event) => {
     const target = event.target;
     if (!target.files) return;
     const newFiles = Array.from(target.files);
     const MAX_FILES = 1;
     const MAX_TOTAL_SIZE = 15 * 1024 * 1024;
-    if (files.value.length + newFiles.length > MAX_FILES) {
+    if (newFiles.length > MAX_FILES) {
         notificationStore.showNotification(`Вы можете загрузить не более ${MAX_FILES} файла.`, 'error');
         target.value = '';
         return;
     }
-    const currentSize = files.value.reduce((acc, file) => acc + file.size, 0);
-    const newSize = newFiles.reduce((acc, file) => acc + file.size, 0);
-    if (currentSize + newSize > MAX_TOTAL_SIZE) {
+    const totalSize = newFiles.reduce((acc, file) => acc + file.size, 0);
+    if (totalSize > MAX_TOTAL_SIZE) {
         notificationStore.showNotification(`Размер файла не должен превышать 15 МБ.`, 'error');
         target.value = '';
         return;
@@ -50,9 +59,8 @@ const removeFile = (index) => {
   files.value.splice(index, 1);
 };
 
-// --- ИСПРАВЛЕННАЯ ФУНКЦИЯ ОТПРАВКИ ---
 const handleSubmit = () => {
-  if (!formData.name || !formData.phone) {
+  if (!validateForm(validationFields)) {
     notificationStore.showNotification('Пожалуйста, заполните имя и телефон.', 'error');
     return;
   }
@@ -92,15 +100,17 @@ const handleSubmit = () => {
               <div class="flex flex-col gap-2">
                 <div class="form-group">
                   <div class="form-control">
-                    <input type="text" placeholder="Ваше имя" required v-model.trim="formData.name">
+                    <input type="text" placeholder="Ваше имя" required v-model.trim="formData.name" @input="validateField('name')">
                     <span class="input-border"></span>
                   </div>
+                  <div class="error-message" v-if="errors.name">{{ errors.name }}</div>
                 </div>
                 <div class="form-group">
                   <div class="form-control">
-                    <input type="tel" placeholder="Телефон" required v-model="formData.phone">
+                    <input type="tel" placeholder="Телефон" required v-model="formData.phone" @input="formatPhoneInput">
                     <span class="input-border"></span>
                   </div>
+                  <div class="error-message" v-if="errors.phone">{{ errors.phone }}</div>
                 </div>
               </div>
 
@@ -125,7 +135,7 @@ const handleSubmit = () => {
                 </label>
                 <input id="resume-upload" type="file" class="hidden" @change="handleFileUpload" accept=".pdf,.doc,.docx">
                 <p class="upload-caption">.pdf, .doc, .docx, не более 15 МБ</p>
-                <BaseButton type="submit" :disabled="isSubmitting" class="mt-6 w-full">
+                <BaseButton type="submit" :disabled="isSubmitting || !isFormValid" class="mt-6 w-full" variant="fill-orange">
                   <span v-if="!isSubmitting">Отправить отклик</span>
                   <span v-else>Отправка...</span>
                 </BaseButton>
@@ -231,6 +241,7 @@ const handleSubmit = () => {
   color: #F15F31;
   font-size: 0.75rem;
   margin-top: 0.25rem;
+  min-height: 1.25rem;
 }
 input, textarea {
   font-family: 'Gilroy-Medium', sans-serif;

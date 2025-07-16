@@ -1,9 +1,9 @@
 <script setup>
-import { ref, reactive, watch } from 'vue';
+import { ref, reactive, watch, computed } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
-// --- ИМПОРТИРУЕМ ХРАНИЛИЩЕ УВЕДОМЛЕНИЙ ---
 import { useNotificationStore } from '@/stores/notifications.js';
+import { useFormValidation } from '@/composables/useFormValidation.js';
 
 const props = defineProps({
   initialPosition: {
@@ -12,7 +12,6 @@ const props = defineProps({
   }
 });
 
-// Инициализируем хранилище
 const notificationStore = useNotificationStore();
 
 const formData = reactive({
@@ -20,12 +19,22 @@ const formData = reactive({
   name: '',
   phone: '',
 });
+const validationFields = ['name', 'phone'];
+const { errors, validateField, validateForm, formatPhoneInput } = useFormValidation(formData, validationFields);
 const files = ref([]);
+const isSubmitting = ref(false);
 const hoveredFileUrl = ref(null);
 const previewStyle = ref({});
 
 watch(() => props.initialPosition, (newVal) => {
   formData.desiredPosition = newVal;
+});
+
+// ИЗМЕНЕНИЕ: Добавлена проверка на наличие файла
+const isFormValid = computed(() => {
+    const allFieldsFilled = validationFields.every(field => !!formData[field]);
+    const noErrors = validationFields.every(field => !errors[field]);
+    return allFieldsFilled && noErrors && files.value.length > 0;
 });
 
 const handleFileUpload = (event) => {
@@ -34,19 +43,19 @@ const handleFileUpload = (event) => {
     const newFiles = Array.from(target.files);
     const MAX_FILES = 1;
     const MAX_TOTAL_SIZE = 15 * 1024 * 1024;
-    if (files.value.length + newFiles.length > MAX_FILES) {
+    if (newFiles.length > MAX_FILES) {
       notificationStore.showNotification(`Вы можете загрузить не более ${MAX_FILES} файла.`, 'error');
       target.value = '';
       return;
     }
-    const currentSize = files.value.reduce((acc, file) => acc + file.size, 0);
-    const newSize = newFiles.reduce((acc, file) => acc + file.size, 0);
-    if (currentSize + newSize > MAX_TOTAL_SIZE) {
+    const totalSize = newFiles.reduce((acc, file) => acc + file.size, 0);
+    if (totalSize > MAX_TOTAL_SIZE) {
       notificationStore.showNotification(`Размер файла не должен превышать 15 МБ.`, 'error');
       target.value = '';
       return;
     }
-    files.value.push(...newFiles);
+    // Заменяем старый файл новым, а не добавляем
+    files.value = newFiles;
   }
   target.value = '';
 };
@@ -73,15 +82,19 @@ const handleFileMouseLeave = () => {
   }
 };
 
-// --- ИСПРАВЛЕННАЯ ФУНКЦИЯ ОТПРАВКИ ---
 const submitApplication = () => {
-  if (!formData.name || !formData.phone) {
+  if (!validateForm(validationFields)) {
     notificationStore.showNotification('Пожалуйста, заполните имя и телефон.', 'error');
     return;
   }
+  // ИЗМЕНЕНИЕ: Добавлена проверка на наличие файла при отправке
+  if (files.value.length === 0) {
+    notificationStore.showNotification('Пожалуйста, прикрепите ваше резюме.', 'error');
+    return;
+  }
+
   notificationStore.showNotification(`Спасибо за отклик, ${formData.name}! Мы свяжемся с вами.`, 'success');
   
-  // Очистка формы
   formData.desiredPosition = '';
   formData.name = '';
   formData.phone = '';
@@ -125,15 +138,17 @@ const submitApplication = () => {
                 </div>
                 <div class="form-group">
                   <div class="form-control">
-                    <input type="text" placeholder="Ваше имя" required v-model.trim="formData.name">
+                    <input type="text" placeholder="Ваше имя" required v-model.trim="formData.name" @input="validateField('name')">
                     <span class="input-border"></span>
                   </div>
+                  <div class="error-message" v-if="errors.name">{{ errors.name }}</div>
                 </div>
                 <div class="form-group">
                   <div class="form-control">
-                    <input type="tel" placeholder="Телефон" required v-model="formData.phone">
+                    <input type="tel" placeholder="Телефон" required v-model="formData.phone" @input="formatPhoneInput">
                     <span class="input-border"></span>
                   </div>
+                  <div class="error-message" v-if="errors.phone">{{ errors.phone }}</div>
                 </div>
               </div>
 
@@ -150,7 +165,7 @@ const submitApplication = () => {
                     <button @click="removeFile(index)" class="remove-file-button">&times;</button>
                   </div>
                 </div>
-                <label for="file-upload" class="upload-button">
+                <label for="talent-file-upload" class="upload-button">
                   <svg xmlns="http://www.w3.org/2000/svg" class="upload-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                     <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
                   </svg>
@@ -158,9 +173,9 @@ const submitApplication = () => {
                     {{ files.length > 0 ? 'Файл прикреплен' : 'Прикрепить резюме' }}
                   </span>
                 </label>
-                <input id="file-upload" type="file" class="hidden" @change="handleFileUpload" accept=".pdf,.doc,.docx,image/*">
+                <input id="talent-file-upload" type="file" class="hidden" @change="handleFileUpload" accept=".pdf,.doc,.docx,image/*">
                 <p class="upload-caption">до 1 файла, не более 15 МБ</p>
-                <BaseButton type="submit" class="mt-6 w-full">
+                <BaseButton type="submit" :disabled="isSubmitting || !isFormValid" class="mt-6 w-full" variant="fill-black">
                   Отправить
                 </BaseButton>
               </div>
@@ -180,7 +195,6 @@ const submitApplication = () => {
 
 <style scoped>
 /* Стили в этом файле полностью идентичны тем, что были ранее, и уже используют rem */
-/* Я оставляю их здесь для полноты компонента, но они не менялись */
 .file-preview-window {
   position: fixed;
   z-index: 9999;
@@ -301,6 +315,7 @@ const submitApplication = () => {
   color: #F15F31;
   font-size: 0.75rem;
   margin-top: 0.25rem;
+  min-height: 1.25rem;
 }
 input, textarea {
   font-family: 'Gilroy-Medium', sans-serif;

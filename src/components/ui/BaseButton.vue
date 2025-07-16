@@ -14,6 +14,11 @@ const props = defineProps({
     type: String,
     default: 'fill-black',
   },
+  // ИЗМЕНЕНИЕ: Добавлено свойство disabled
+  disabled: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 const componentType = computed(() => {
@@ -25,6 +30,10 @@ const componentType = computed(() => {
 const baseClasses = 'px-5 py-2.5 rounded-full inline-flex items-center justify-center gap-2 text-center transition-colors duration-200 ease-in-out cursor-pointer';
 
 const variantClasses = computed(() => {
+  // ИЗМЕНЕНИЕ: Если кнопка отключена, применяем стили для неактивного состояния
+  if (props.disabled) {
+    return 'bg-gray text-dark-gray opacity-50 cursor-not-allowed';
+  }
   switch (props.variant) {
     case 'stroke':
       return 'bg-white text-panda-orange border-2 border-panda-orange hover:bg-panda-orange hover:text-light-gray';
@@ -46,6 +55,7 @@ const variantClasses = computed(() => {
     :is="componentType"
     :to="to"
     :href="href"
+    :disabled="disabled"
     :class="[baseClasses, variantClasses, 'text-button-panda font-semibold']"
   >
     <slot></slot>

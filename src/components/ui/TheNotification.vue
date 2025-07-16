@@ -1,6 +1,5 @@
 <script setup>
 import { useNotificationStore } from '@/stores/notifications.js';
-import BaseButton from '@/components/ui/BaseButton.vue'; // Импортируем кнопку для единообразия
 
 const notificationStore = useNotificationStore();
 </script>
@@ -25,14 +24,7 @@ const notificationStore = useNotificationStore();
 
           <p class="message-text">{{ notificationStore.message }}</p>
 
-          <BaseButton
-            @click="notificationStore.hideNotification"
-            variant="fill-black"
-            class="mt-6 w-full"
-          >
-            Понятно
-          </BaseButton>
-        </div>
+          </div>
       </div>
     </transition>
   </Teleport>

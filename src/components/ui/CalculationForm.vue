@@ -4,6 +4,7 @@ import BaseButton from '@/components/ui/BaseButton.vue';
 import { useAuth } from '@/composables/useAuth.js';
 import { useReferencesStore } from '@/stores/references.js';
 import { useNotificationStore } from '@/stores/notifications.js';
+import { useFormValidation } from '@/composables/useFormValidation.js';
 
 const props = defineProps({ promoCode: { type: String, default: '' } });
 const { user } = useAuth();
@@ -11,7 +12,9 @@ const referencesStore = useReferencesStore();
 const notificationStore = useNotificationStore();
 
 const formData = reactive({ name: '', phone: '', email: '', company: '', task: '', promo: '' });
-const errors = reactive({ name: '', phone: '', email: '', task: '' });
+const validationFields = ['name', 'phone', 'email', 'task'];
+const { errors, validateField, validateForm, formatPhoneInput } = useFormValidation(formData, validationFields);
+
 const isSubmitting = ref(false);
 const files = ref([]);
 const hoveredFileUrl = ref(null);
@@ -35,15 +38,15 @@ const handleFileUpload = (event) => {
 const removeFile = (index) => { files.value.splice(index, 1); };
 watch(() => props.promoCode, (newPromo) => { if (newPromo) formData.promo = newPromo; }, { immediate: true });
 watch(user, (currentUser) => { if (currentUser) { if (!formData.name) formData.name = currentUser.displayName || ''; if (!formData.email) formData.email = currentUser.email || ''; } }, { immediate: true });
-const isFormValid = computed(() => (formData.name && !errors.name && formData.phone && !errors.phone && formData.email && !errors.email && formData.task && !errors.task));
-const validateEmail = (email) => /^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$/.test(String(email).toLowerCase().trim());
-const validatePhone = (phone) => { const cleanPhone = phone.replace(/[\s\-()]/g, ''); return [ /^\+7[0-9]{10}$/, /^8[0-9]{10}$/, /^7[0-9]{10}$/, /^\+[1-9][0-9]{7,14}$/ ].some(pattern => pattern.test(cleanPhone)); };
-const formatPhoneInput = () => { let value = formData.phone.replace(/\D/g, ''); if (value.length > 0) { if (value.startsWith('8')) value = '7' + value.slice(1); if (value.startsWith('7')) value = '+7' + value.slice(1); else if (!value.startsWith('+')) value = '+' + value; if (value.startsWith('+7') && value.length > 2) { const digits = value.slice(2); if (digits.length <= 3) value = `+7 (${digits}`; else if (digits.length <= 6) value = `+7 (${digits.slice(0, 3)}) ${digits.slice(3)}`; else if (digits.length <= 8) value = `+7 (${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}`; else value = `+7 (${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6, 8)}-${digits.slice(8, 10)}`; } } formData.phone = value; validateField('phone'); };
-const validateField = (field) => { errors[field] = ''; const value = formData[field]; switch (field) { case 'name': if (!value) errors.name = 'Пожалуйста, введите ваше имя'; else if (value.length < 2) errors.name = 'Имя должно содержать минимум 2 символа'; break; case 'phone': if (!value) errors.phone = 'Пожалуйста, введите номер телефона'; else if (!validatePhone(value)) errors.phone = 'Введите корректный номер телефона'; break; case 'email': if (!value) errors.email = 'Пожалуйста, введите email адрес'; else if (!validateEmail(value)) errors.email = 'Введите корректный email адрес'; break; case 'task': if (!value) errors.task = 'Пожалуйста, опишите задачу'; else if (value.length < 10) errors.task = 'Описание должно быть не менее 10 символов'; break; } return !errors[field]; };
-const validateForm = () => ['name', 'phone', 'email', 'task'].every(validateField);
+
+const isFormValid = computed(() => {
+    const allFieldsFilled = validationFields.every(field => !!formData[field]);
+    const noErrors = validationFields.every(field => !errors[field]);
+    return allFieldsFilled && noErrors;
+});
 
 const handleSubmit = async () => {
-    if (!validateForm()) {
+    if (!validateForm(validationFields)) {
         notificationStore.showNotification('Пожалуйста, исправьте ошибки в форме.', 'error');
         return;
     }
@@ -157,7 +160,7 @@ const handleSubmit = async () => {
           </div>
         </div>
         
-        <BaseButton type="submit" :disabled="isSubmitting || !isFormValid" class="mt-9">
+        <BaseButton type="submit" :disabled="isSubmitting || !isFormValid" class="mt-9" variant="fill-orange">
           <div v-if="isSubmitting" class="flex items-center justify-center">
             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -209,7 +212,7 @@ const handleSubmit = async () => {
 @media (min-width: 48rem) { .form-wrapper { grid-template-columns: 1fr 1fr; gap: 3.75rem; } }
 .form-info { display: flex; flex-direction: column; gap: 1.25rem; max-width: 28.125rem; }
 .form-body { width: 100%; }
-.form-group .error-message { color: #F15F31; font-size: 0.75rem; margin-top: 0.25rem; padding-left: 0.25rem; }
+.form-group .error-message { color: #F15F31; font-size: 0.75rem; margin-top: 0.25rem; padding-left: 0.25rem; min-height: 1.25rem; }
 input, textarea { font-family: 'Gilroy-Medium', sans-serif; font-size: 1rem; width: 100%; border: none; border-bottom: 0.0625rem solid #E3E3E3; padding: 0.625rem 0.25rem; color: #131C26; background-color: transparent; transition: background-color 0.2s ease, border-color 0.3s ease; position: relative; z-index: 1; }
 input::placeholder, textarea::placeholder { color: #8F8F8F; }
 input:focus, textarea:focus { outline: none; }
