@@ -25,15 +25,15 @@ html.lenis {
 
 @layer components {
   .gap-page {
-    @apply mt-16 md:mt-25; /* 100px */
+    @apply mt-16 md:mt-25; /* 6.25rem */
   }
   .gap-container {
-    @apply mb-10 md:mb-15; /* 60px */
+    @apply mb-10 md:mb-15; /* 3.75rem */
   }
 }
 
 /* Глобальные стили теперь применяются через tailwind.config.js,
-  оставляем только подключение файлов шрифтов.
+   оставляем только подключение файлов шрифтов.
 */
 @font-face {
     font-family: 'Gilroy-Medium';
@@ -72,11 +72,11 @@ html.lenis {
 /* --- ИЗМЕНЕНИЯ В СТИЛЯХ КНОПКИ-ПОДСКАЗКИ --- */
 /* From Uiverse.io by satyamchaudharydev - адаптировано */
 .button {
-  --width: 100px;
-  --height: 35px;
-  --tooltip-height: 35px;
-  --tooltip-width: 90px;
-  --gap-between-tooltip-to-button: 12px; /* Расстояние от кнопки до подсказки */
+  --width: 6.25rem; /* 100px -> 6.25rem */
+  --height: 2.1875rem; /* 35px -> 2.1875rem */
+  --tooltip-height: 2.1875rem; /* 35px -> 2.1875rem */
+  --tooltip-width: 5.625rem; /* 90px -> 5.625rem */
+  --gap-between-tooltip-to-button: 0.75rem; /* 12px -> 0.75rem */
   --button-color: #131C26;
   --tooltip-color: #E3E3E3;
   width: var(--width);
@@ -104,7 +104,7 @@ html.lenis {
   /* Анимация */
   opacity: 0;
   visibility: hidden;
-  transform: translateY(8px);
+  transform: translateY(0.5rem); /* 8px -> 0.5rem */
   transition: all 0.25s ease;
   pointer-events: none; /* Чтобы подсказка не мешала курсору */
 }
@@ -143,8 +143,8 @@ html.lenis {
 }
 
 .icon svg {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem; /* 24px -> 1.5rem */
+  height: 1.5rem; /* 24px -> 1.5rem */
 }
 
 .button:hover {
@@ -173,7 +173,7 @@ html.lenis {
 
 img { /* запрет на выделение картинок на сайте */
   -webkit-user-select: none; /* Safari */
-  -moz-user-select: none;    /* Firefox */
-  -ms-user-select: none;     /* Internet Explorer/Edge */
-  user-select: none;         /* Standard */
+  -moz-user-select: none;     /* Firefox */
+  -ms-user-select: none;      /* Internet Explorer/Edge */
+  user-select: none;          /* Standard */
 }

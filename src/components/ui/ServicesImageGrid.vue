@@ -118,8 +118,8 @@ const services = ref([
   grid-template-columns: repeat(4, 1fr);
   grid-auto-flow: dense;
   gap: 0;
-  border-top: 1px solid #e5e7eb;
-  border-left: 1px solid #e5e7eb;
+  border-top: 0.0625rem solid #e5e7eb;
+  border-left: 0.0625rem solid #e5e7eb;
 }
 
 .grid-item {
@@ -130,8 +130,8 @@ const services = ref([
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s ease-out;
-  border-right: 1px solid #e5e7eb;
-  border-bottom: 1px solid #e5e7eb;
+  border-right: 0.0625rem solid #e5e7eb;
+  border-bottom: 0.0625rem solid #e5e7eb;
   min-width: 0;
   overflow: hidden;
 }
@@ -156,7 +156,7 @@ const services = ref([
   transform: scale(1);
 }
 
-@media (max-width: 1024px) {
+@media (max-width: 64rem) {
   .services-image-grid {
     grid-template-columns: repeat(2, 1fr);
   }
@@ -166,7 +166,7 @@ const services = ref([
   }
 }
 
-@media (max-width: 640px) {
+@media (max-width: 40rem) {
   .services-image-grid {
     grid-template-columns: repeat(1, 1fr);
   }

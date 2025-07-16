@@ -180,13 +180,13 @@ const mainIconClose = closeIcon;
   padding: 0.5rem 0.75rem;
   background-color: #F7F7F7;
   color: #131C26;
-  border: 1px solid #E5E7EB;
+  border: 0.0625rem solid #E5E7EB; /* 1px -> 0.0625rem */
   border-radius: 0.375rem;
   white-space: nowrap;
   font-family: 'Gilroy-SemiBold', sans-serif;
   font-size: 0.875rem;
   opacity: 0;
-  transform: translateX(10px);
+  transform: translateX(0.625rem); /* 10px -> 0.625rem */
   pointer-events: none;
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
@@ -201,7 +201,7 @@ const mainIconClose = closeIcon;
   left: 100%;
   transform: translateY(-50%);
   border-style: solid;
-  border-width: 6px;
+  border-width: 0.375rem; /* 6px -> 0.375rem */
   border-color: transparent transparent transparent #F7F7F7;
   filter: drop-shadow(1px 0 0 #E5E7EB);
 }
@@ -214,7 +214,7 @@ const mainIconClose = closeIcon;
 .fab-list-enter-from,
 .fab-list-leave-to {
   opacity: 0;
-  transform: translateY(15px) scale(0.8);
+  transform: translateY(0.9375rem) scale(0.8); /* 15px -> 0.9375rem */
 }
 .icon-fade-enter-active,
 .icon-fade-leave-active {

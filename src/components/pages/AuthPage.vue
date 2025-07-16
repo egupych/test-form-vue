@@ -110,20 +110,20 @@ const handleGoogleSignIn = async () => {
 </template>
 
 <style scoped>
-/* Стили остаются такими же, как и были */
+/* Стили остаются такими же, как и были, но с rem вместо px */
 .form-group .error-message {
   color: #F15F31;
-  font-size: 14px;
-  margin-top: 4px;
-  min-height: 20px;
+  font-size: 0.875rem; /* 14px -> 0.875rem */
+  margin-top: 0.25rem; /* 4px -> 0.25rem */
+  min-height: 1.25rem; /* 20px -> 1.25rem */
 }
 input {
   font-family: 'Gilroy-Medium', sans-serif;
-  font-size: 16px;
+  font-size: 1rem; /* 16px -> 1rem */
   width: 100%;
   border: none;
-  border-bottom: 1px solid #E3E3E3;
-  padding: 10px 4px;
+  border-bottom: 0.0625rem solid #E3E3E3; /* 1px -> 0.0625rem */
+  padding: 0.625rem 0.25rem; /* 10px 4px -> 0.625rem 0.25rem */
   color: #131C26;
   background-color: transparent;
   transition: background-color 0.2s ease;
@@ -142,7 +142,7 @@ input:hover {
   position: absolute;
   background: #F15F31;
   width: 0%;
-  height: 2px;
+  height: 0.125rem; /* 2px -> 0.125rem */
   bottom: 0;
   left: 0;
   transition: width 0.3s ease-in-out;

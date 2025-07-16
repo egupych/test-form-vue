@@ -100,52 +100,52 @@ const cancelHidePreviewTimer = () => {
 
         <nav class="mx-auto hidden md:block">
           <ul class="flex items-center space-x-8 text-header-panda">
-             <li
-              v-for="link in navLinks"
-              :key="link.name"
-              class="relative"
-              :class="{ 'dropdown': link.isDropdown || link.inDevelopment }"
-              @mouseenter="showDropdown(link.id); handleMouseEnterPreview($event, link)"
-              @mouseleave="hideDropdown(); handleMouseLeavePreview()"
-            >
-              <div v-if="link.inDevelopment" class="nav-item-inactive">
-                {{ link.name }}
-              </div>
-              <router-link v-else-if="!link.isDropdown" :to="link.path">
-                {{ link.name }}
-              </router-link>
-              <div v-else class="nav-item">
-                {{ link.name }}
-                <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-              </div>
-
-              <transition name="slide-down">
-                <ul
-                  v-if="link.isDropdown && activeDropdown === link.id"
-                  class="dropdown-menu"
-                  @mouseenter="showDropdown(link.id)"
-                  @mouseleave="hideDropdown()"
-                >
-                  <li v-for="child in link.children" :key="child.name">
-                    <router-link :to="child.path" class="dropdown-item">{{ child.name }}</router-link>
-                  </li>
-                </ul>
-              </transition>
-
-              <transition name="slide-down">
-                <div
-                  v-if="link.inDevelopment && activeDropdown === link.id"
-                  class="dropdown-menu dev-dropdown"
-                  @mouseenter="showDropdown(link.id)"
-                  @mouseleave="hideDropdown()"
-                >
-                <svg width="21" height="19" viewBox="0 0 21 19" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path fill-rule="evenodd" clip-rule="evenodd" d="M18.2596 8.55593L17.1396 6.34832L20.2705 5.04088L20.0391 7.547L18.2596 8.55593ZM17.4844 9.63659L11.8288 9.10204L4.2503 17.5414C2.3736 19.7953 -0.981776 16.7847 0.753765 14.7507L7.44601 8.01212L3.79212 4.03889L2.686 3.98104L1.23972 1.41244L2.76237 0.111938L5.05791 1.92847L4.96997 2.96748L8.58453 6.8551L10.1396 5.28848L12.007 0.556237L17.8963 0.137393L18.7455 1.64153L14.9019 3.60153L17.4844 9.63659ZM3.60005 14.9219C2.44303 13.9546 0.922691 15.6601 2.14914 16.6898C3.26683 17.6293 4.7432 15.8845 3.59774 14.9219H3.60005ZM13.9277 10.4905C13.9277 10.4905 16.6652 13.3044 18.255 14.8201C20.2173 16.6945 16.2672 20.0036 14.4414 18.0945C13.053 16.6528 10.2761 13.0035 10.2761 13.0035L12.324 10.5483L13.9277 10.4905Z" fill="#8F8F8F"/>
-                </svg>
-                  <span>Раздел в разработке</span>
+              <li
+                v-for="link in navLinks"
+                :key="link.name"
+                class="relative"
+                :class="{ 'dropdown': link.isDropdown || link.inDevelopment }"
+                @mouseenter="showDropdown(link.id); handleMouseEnterPreview($event, link)"
+                @mouseleave="hideDropdown(); handleMouseLeavePreview()"
+              >
+                <div v-if="link.inDevelopment" class="nav-item-inactive">
+                  {{ link.name }}
                 </div>
-              </transition>
-            </li>
+                <router-link v-else-if="!link.isDropdown" :to="link.path">
+                  {{ link.name }}
+                </router-link>
+                <div v-else class="nav-item">
+                  {{ link.name }}
+                  <svg class="w-4 h-4 ml-1" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
+                </div>
+
+                <transition name="slide-down">
+                  <ul
+                    v-if="link.isDropdown && activeDropdown === link.id"
+                    class="dropdown-menu"
+                    @mouseenter="showDropdown(link.id)"
+                    @mouseleave="hideDropdown()"
+                  >
+                    <li v-for="child in link.children" :key="child.name">
+                      <router-link :to="child.path" class="dropdown-item">{{ child.name }}</router-link>
+                    </li>
+                  </ul>
+                </transition>
+
+                <transition name="slide-down">
+                  <div
+                    v-if="link.inDevelopment && activeDropdown === link.id"
+                    class="dropdown-menu dev-dropdown"
+                    @mouseenter="showDropdown(link.id)"
+                    @mouseleave="hideDropdown()"
+                  >
+                  <svg width="21" height="19" viewBox="0 0 21 19" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path fill-rule="evenodd" clip-rule="evenodd" d="M18.2596 8.55593L17.1396 6.34832L20.2705 5.04088L20.0391 7.547L18.2596 8.55593ZM17.4844 9.63659L11.8288 9.10204L4.2503 17.5414C2.3736 19.7953 -0.981776 16.7847 0.753765 14.7507L7.44601 8.01212L3.79212 4.03889L2.686 3.98104L1.23972 1.41244L2.76237 0.111938L5.05791 1.92847L4.96997 2.96748L8.58453 6.8551L10.1396 5.28848L12.007 0.556237L17.8963 0.137393L18.7455 1.64153L14.9019 3.60153L17.4844 9.63659ZM3.60005 14.9219C2.44303 13.9546 0.922691 15.6601 2.14914 16.6898C3.26683 17.6293 4.7432 15.8845 3.59774 14.9219H3.60005ZM13.9277 10.4905C13.9277 10.4905 16.6652 13.3044 18.255 14.8201C20.2173 16.6945 16.2672 20.0036 14.4414 18.0945C13.053 16.6528 10.2761 13.0035 10.2761 13.0035L12.324 10.5483L13.9277 10.4905Z" fill="#8F8F8F"/>
+                  </svg>
+                    <span>Раздел в разработке</span>
+                  </div>
+                </transition>
+              </li>
           </ul>
         </nav>
 
@@ -255,8 +255,8 @@ const cancelHidePreviewTimer = () => {
 <style scoped>
 /* Стили для мобильного меню и прочего остаются без изменений */
 .burger-button {
-  width: 24px;
-  height: 24px;
+  width: 1.5rem;
+  height: 1.5rem;
   flex-direction: column;
   justify-content: space-around;
   background: transparent;
@@ -268,22 +268,22 @@ const cancelHidePreviewTimer = () => {
 .burger-button .line {
   display: block;
   width: 100%;
-  height: 3px;
+  height: 0.1875rem;
   background-color: #131C26;
-  border-radius: 3px;
+  border-radius: 0.1875rem;
   transition: all 0.3s ease-in-out;
 }
 .burger-button.is-active .line {
   background-color: #131C26;
 }
 .burger-button.is-active .line:nth-child(1) {
-  transform: translateY(8.5px) rotate(45deg);
+  transform: translateY(0.53125rem) rotate(45deg);
 }
 .burger-button.is-active .line:nth-child(2) {
   opacity: 0;
 }
 .burger-button.is-active .line:nth-child(3) {
-  transform: translateY(-8.5px) rotate(-45deg);
+  transform: translateY(-0.53125rem) rotate(-45deg);
 }
 
 .mobile-menu-container {
@@ -306,7 +306,7 @@ const cancelHidePreviewTimer = () => {
   width: 100%;
   max-width: 20rem; /* 320px */
   background-color: white;
-  box-shadow: -10px 0 30px rgba(0,0,0,0.1);
+  box-shadow: -0.625rem 0 1.875rem rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
 }
@@ -354,8 +354,8 @@ const cancelHidePreviewTimer = () => {
   align-items: center;
   padding: 1rem;
   background-color: #f7f7f7cc;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  backdrop-filter: blur(10px);
+  box-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.05);
+  backdrop-filter: blur(0.625rem);
   
   /* Меняем sticky на fixed и добавляем свойства для растягивания */
   position: fixed;
@@ -372,11 +372,11 @@ nav a, .nav-item {
   color: #131C26;
   text-decoration: none;
   cursor: pointer;
-  padding: 6px 0;
+  padding: 0.375rem 0;
   transition: color 0.2s ease-in-out;
   display: flex;
   align-items: center;
-  font-size: 16px;
+  font-size: 1rem;
 }
 nav a:hover, .dropdown:hover .nav-item {
   color: #F15F31;
@@ -387,7 +387,7 @@ nav a::after {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 2px;
+  height: 0.125rem;
   background-color: #F15F31;
   transform: scaleX(0);
   transform-origin: center;
@@ -409,7 +409,7 @@ nav a.router-link-exact-active::after {
   top: 100%;
   left: 0;
   right: 0;
-  height: 22px;
+  height: 1.375rem;
   background-color: transparent;
 }
 .dropdown-menu {
@@ -417,30 +417,30 @@ nav a.router-link-exact-active::after {
   top: 100%;
   left: 50%;
   transform: translateX(-50%);
-  margin-top: 22px;
+  margin-top: 1.375rem;
   background-color:#F7F7F7;
-  min-width: 200px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  min-width: 12.5rem;
+  box-shadow: 0 0.625rem 1.5625rem rgba(0, 0, 0, 0.1);
   z-index: 20;
-  border-radius: 8px;
-  padding: 8px 0;
+  border-radius: 0.5rem;
+  padding: 0.5rem 0;
 }
 .dropdown-menu::before {
   content: '';
   position: absolute;
-  top: -10px;
+  top: -0.625rem;
   left: 50%;
   transform: translateX(-50%);
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0 10px 10px 10px;
+  border-width: 0 0.625rem 0.625rem 0.625rem;
   border-color: transparent transparent #F7F7F7 transparent;
-  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.03));
+  filter: drop-shadow(0 -0.125rem 0.125rem rgba(0, 0, 0, 0.03));
 }
 .dropdown-item {
   color: black;
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   text-decoration: none;
   display: block;
   text-align: left;
@@ -456,11 +456,11 @@ nav a.router-link-exact-active::after {
 }
 .preview-window {
   position: fixed;
-  width: 320px;
-  height: 240px;
+  width: 20rem;
+  height: 15rem;
   background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  border-radius: 0.5rem;
+  box-shadow: 0 0.625rem 1.5625rem rgba(0, 0, 0, 0.1);
   overflow: hidden;
   z-index: 50;
   cursor: pointer;
@@ -468,15 +468,15 @@ nav a.router-link-exact-active::after {
 .preview-window::after {
   content: '';
   position: absolute;
-  top: -10px;
+  top: -0.625rem;
   left: 50%;
   transform: translateX(-50%);
   width: 0;
   height: 0;
   border-style: solid;
-  border-width: 0 10px 10px 10px;
+  border-width: 0 0.625rem 0.625rem 0.625rem;
   border-color: transparent transparent white transparent;
-  filter: drop-shadow(0 -2px 2px rgba(0, 0, 0, 0.03));
+  filter: drop-shadow(0 -0.125rem 0.125rem rgba(0, 0, 0, 0.03));
 }
 .preview-image {
   width: 100%;
@@ -485,7 +485,7 @@ nav a.router-link-exact-active::after {
   transition: transform 0.5s ease-out;
 }
 .preview-window:hover .preview-image {
-  transform: scale(1.1) translateY(-10px);
+  transform: scale(1.1) translateY(-0.625rem);
 }
 .slide-down-enter-active,
 .slide-down-leave-active {
@@ -494,18 +494,18 @@ nav a.router-link-exact-active::after {
 .slide-down-enter-from,
 .slide-down-leave-to {
   opacity: 0;
-  transform: translateX(-50%) translateY(-10px);
+  transform: translateX(-50%) translateY(-0.625rem);
 }
 .user-menu.slide-down-enter-from,
 .user-menu.slide-down-leave-to {
-    transform: translateY(-10px);
+    transform: translateY(-0.625rem);
 }
 .preview-enter-active, .preview-leave-active {
   transition: opacity 0.2s ease, transform 0.2s ease;
 }
 .preview-enter-from, .preview-leave-to {
   opacity: 0;
-  transform: translateY(10px) scale(0.98);
+  transform: translateY(0.625rem) scale(0.98);
 }
 .user-menu {
   left: auto !important;
@@ -522,10 +522,10 @@ nav a.router-link-exact-active::after {
   font-family: 'Gilroy-SemiBold', sans-serif;
   color: #8F8F8F;
   cursor: pointer;
-  padding: 6px 0;
+  padding: 0.375rem 0;
   display: flex;
   align-items: center;
-  font-size: 16px;
+  font-size: 1rem;
 }
 .nav-item-inactive::after {
   content: '';
@@ -533,7 +533,7 @@ nav a.router-link-exact-active::after {
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 2px;
+  height: 0.125rem;
   background-color: #8F8F8F;
   transform: scaleX(0);
   transform-origin: center;
@@ -543,14 +543,14 @@ nav a.router-link-exact-active::after {
   transform: scaleX(1);
 }
 .dev-dropdown {
-  padding: 12px 16px;
+  padding: 0.75rem 1rem;
   color: #8F8F8F;
   font-family: 'Gilroy-SemiBold', sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
   text-align: center;
   white-space: nowrap;
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.5rem;
 }
 </style>

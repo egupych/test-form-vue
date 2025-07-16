@@ -42,19 +42,19 @@ const toggle = () => {
 <style scoped>
 .button-container {
     position: absolute;
-    top: 12px;
-    right: 12px;
+    top: 0.75rem;
+    right: 0.75rem;
 }
 
 .like-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  height: 36px;
-  padding: 8px;
-  border-radius: 50px; /* Закругление для формы "пилюли" */
+  height: 2.25rem;
+  padding: 0.5rem;
+  border-radius: 3.125rem; /* Закругление для формы "пилюли" */
   background-color: rgba(19, 28, 38, 0.2);
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(0.25rem);
   cursor: pointer;
   transition: all 0.3s cubic-bezier(0.23, 1, 0.32, 1);
   overflow: hidden; /* Скрываем текст, который выходит за пределы */
@@ -67,12 +67,12 @@ const toggle = () => {
 /* Расширяем кнопку при наведении или в активном состоянии */
 .like-button:hover,
 .like-button.is-liked {
-  padding: 8px 16px 8px 12px;
+  padding: 0.5rem 1rem 0.5rem 0.75rem;
 }
 
 .like-icon {
-  width: 20px;
-  height: 20px;
+  width: 1.25rem;
+  height: 1.25rem;
   stroke: #f7f7f7;
   stroke-width: 2;
   fill: transparent;
@@ -82,10 +82,10 @@ const toggle = () => {
 
 .like-text {
   color: white;
-  font-size: 14px;
+  font-size: 0.875rem;
   font-family: 'Gilroy-SemiBold', sans-serif;
   white-space: nowrap; /* Запрещаем перенос текста */
-  margin-left: 0px;
+  margin-left: 0;
   max-width: 0;
   opacity: 0;
   transition: max-width 0.2s ease-out, opacity 0.15s ease-out, margin-left 0.2s ease-out;
@@ -94,9 +94,9 @@ const toggle = () => {
 /* Показываем текст при наведении или в активном состоянии */
 .like-button:hover .like-text,
 .like-button.is-liked .like-text {
-  max-width: 200px; /* Максимальная ширина, до которой "выезжает" текст */
+  max-width: 12.5rem; /* Максимальная ширина, до которой "выезжает" текст */
   opacity: 1;
-  margin-left: 8px; /* Отступ между иконкой и текстом */
+  margin-left: 0.5rem; /* Отступ между иконкой и текстом */
 }
 
 /* Стили для активного состояния "is-liked" */

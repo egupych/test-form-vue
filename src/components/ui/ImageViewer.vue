@@ -117,7 +117,7 @@ onUnmounted(() => {
   width: 100vw;
   height: 100vh;
   background-color: rgba(19, 28, 38, 0.8);
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(0.5rem); /* 8px -> 0.5rem */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -141,7 +141,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: calc(100% - 100px);
+  height: calc(100% - 6.25rem); /* 100px -> 6.25rem */
   max-width: 95vw;
   max-height: 85vh;
   position: relative;
@@ -156,9 +156,9 @@ onUnmounted(() => {
 }
 
 /* [ИЗМЕНЕНИЕ] Увеличил отступ для центральной картинки, чтобы был зазор */
-@media (min-width: 768px) {
+@media (min-width: 48rem) { /* 768px -> 48rem */
   .image-container {
-    max-width: calc(100% - 416px);
+    max-width: calc(100% - 26rem); /* 416px -> 26rem */
   }
 }
 
@@ -167,8 +167,8 @@ onUnmounted(() => {
   max-width: 100%;
   max-height: 100%;
   object-fit: contain;
-  border-radius: 16px;
-  box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+  border-radius: 1rem; /* 16px -> 1rem */
+  box-shadow: 0 0.625rem 2.5rem rgba(0,0,0,0.3); /* 10px 40px -> 0.625rem 2.5rem */
 }
 
 .close-button {
@@ -196,13 +196,13 @@ onUnmounted(() => {
   transform: translateY(-50%);
   align-items: center;
   justify-content: center;
-  width: 160px;
-  height: 160px;
+  width: 10rem; /* 160px -> 10rem */
+  height: 10rem; /* 160px -> 10rem */
   z-index: 5;
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48rem) { /* 768px -> 48rem */
   .nav-container {
     display: flex;
   }
@@ -219,7 +219,7 @@ onUnmounted(() => {
   width: 100%;
   height: 100%;
   object-fit: cover;
-  border-radius: 16px;
+  border-radius: 1rem; /* 16px -> 1rem */
   filter: grayscale(1) opacity(0.5);
   cursor: pointer;
   transition: all 0.3s ease-out;
@@ -249,7 +249,7 @@ onUnmounted(() => {
   background-color: rgba(19, 28, 38, 0.5);
   padding: 0.5rem 0.5rem;
   border-radius: 9999px;
-  backdrop-filter: blur(4px);
+  backdrop-filter: blur(0.25rem); /* 4px -> 0.25rem */
 }
 .counter {
   color: #e3e3e3;
@@ -262,7 +262,7 @@ onUnmounted(() => {
     background-color: #ffffff12;
     color: #8F8F8F;
     font-family: 'Gilroy-SemiBold', sans-serif;
-    font-size: 14px;
+    font-size: 0.875rem; /* 14px -> 0.875rem */
     cursor: pointer;
     transition: all 0.2s ease;
 }

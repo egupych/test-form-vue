@@ -13,7 +13,7 @@ defineProps({
 const emit = defineEmits(['image-click']);
 const target = ref(null);
 
-const { isIntersecting } = useIntersectionObserver(target, { rootMargin: '200px' });
+const { isIntersecting } = useIntersectionObserver(target, { rootMargin: '12.5rem' });
 
 // ИЗМЕНЕНИЕ: Просто пробрасываем объект события { image, index } наверх
 const onImageClick = (eventPayload) => {
@@ -33,6 +33,6 @@ const onImageClick = (eventPayload) => {
 
 <style scoped>
 .lazy-grid-wrapper {
-  min-height: 400px;
+  min-height: 25rem;
 }
 </style>

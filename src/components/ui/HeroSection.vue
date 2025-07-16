@@ -112,7 +112,7 @@ const closeVideoPopup = () => {
 .hero-content-wrapper {
   position: relative;
   width: 100%;
-  max-width: 1140px;
+  max-width: 71.25rem; /* 1140px -> 71.25rem */
   aspect-ratio: 1140 / 423;
 }
 
@@ -145,7 +145,7 @@ const closeVideoPopup = () => {
 }
 
 /* Адаптация для мобильных устройств */
-@media (max-width: 768px) {
+@media (max-width: 48rem) { /* 768px -> 48rem */
 
   .hero-content-wrapper {
     display: flex;
@@ -176,25 +176,25 @@ const closeVideoPopup = () => {
 .popup-overlay {
   position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background-color: rgba(19, 28, 38, 0.8);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(0.3125rem); /* 5px -> 0.3125rem */
   display: flex; justify-content: center; align-items: center;
   z-index: 1000; padding: 1rem;
 }
 .popup-container {
   position: relative; background: white;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-  width: 100%; max-width: 1140px;
+  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); /* 10px 30px -> 0.625rem 1.875rem */
+  width: 100%; max-width: 71.25rem; /* 1140px -> 71.25rem */
   transform: scale(1); transition: transform 0.3s ease;
   overflow-y: auto; max-height: 95vh;
 }
 .popup-container > :deep(.form-wrapper) {
   padding: 4rem !important;
 }
-@media (min-width: 768px) {
+@media (min-width: 48rem) { /* 768px -> 48rem */
   .popup-container > :deep(.form-wrapper) { padding: 7rem !important; }
 }
 .popup-close-button {
-  position: absolute; top: 15px; right: 22px;
+  position: absolute; top: 0.9375rem; right: 1.375rem; /* 15px -> 0.9375rem; 22px -> 1.375rem */
   background: none; border: none; font-size: 2.5rem; line-height: 1;
   color: #8F8F8F; cursor: pointer; transition: color 0.2s;
   z-index: 1001;
@@ -211,11 +211,12 @@ const closeVideoPopup = () => {
     transform: scale(0.95);
 }
 .video-container {
-  width: 90%; max-width: 1280px; aspect-ratio: 16 / 9;
+  width: 90%; max-width: 80rem; /* 1280px -> 80rem */
+  aspect-ratio: 16 / 9;
   position: relative; transition: transform 0.3s ease;
 }
 .video-close-button {
-  color: #a0a0a0; top: -40px; right: 0; transform: scale(1.2);
+  color: #a0a0a0; top: -2.5rem; right: 0; transform: scale(1.2); /* -40px -> -2.5rem */
 }
 .video-close-button:hover { color: white; }
 video { outline: none; }

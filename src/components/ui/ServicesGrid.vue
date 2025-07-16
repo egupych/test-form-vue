@@ -172,13 +172,13 @@ const previewStyle = computed(() => {
 .services-grid-container {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  border-left: 1px solid #E3E3E3;
-  border-top: 1px solid #E3E3E3;
+  border-left: 0.0625rem solid #E3E3E3;
+  border-top: 0.0625rem solid #E3E3E3;
 }
 
 .service-cell {
-  border-right: 1px solid #E3E3E3;
-  border-bottom: 1px solid #E3E3E3;
+  border-right: 0.0625rem solid #E3E3E3;
+  border-bottom: 0.0625rem solid #E3E3E3;
   transition: background-color 0.2s, border-color 0.2s;
   height: 3rem; /* 48px */
   display: flex;
@@ -197,25 +197,25 @@ const previewStyle = computed(() => {
   color: white;
 }
 
-@media (max-width: 1200px) {
+@media (max-width: 75rem) {
   .services-grid-container {
     grid-template-columns: repeat(4, 1fr);
   }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 48rem) {
   .services-grid-container {
     grid-template-columns: repeat(3, 1fr);
   }
 }
 
-@media (max-width: 540px) {
+@media (max-width: 33.75rem) {
   .services-grid-container {
     grid-template-columns: repeat(2, 1fr);
   }
 }
 
-@media (max-width: 420px) {
+@media (max-width: 26.25rem) {
   .services-grid-container {
     grid-template-columns: 1fr;
   }
@@ -227,7 +227,7 @@ const previewStyle = computed(() => {
 
 .alphabet-bar {
   /* ИЗМЕНЕНИЕ ЗДЕСЬ: убрали фиксированную высоту, чтобы контейнер мог расти */
-  min-height: 60px; /* Задаем минимальную высоту для сохранения отступа */
+  min-height: 3.75rem; /* Задаем минимальную высоту для сохранения отступа */
   display: flex; /* Tailwind класс flex уже есть, но для наглядности */
   align-items: center;
   flex-wrap: wrap; /* Tailwind класс flex-wrap теперь в шаблоне */
@@ -238,12 +238,12 @@ const previewStyle = computed(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 12px;
+  padding: 0.25rem 0.75rem;
   cursor: pointer;
 }
 .alphabet-letter {
   font-family: 'Gilroy-SemiBold', sans-serif;
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #8F8F8F;
   transition: transform 0.2s ease-out, color 0.2s ease-out;
   display: block;

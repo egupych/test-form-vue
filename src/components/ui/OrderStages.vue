@@ -57,7 +57,7 @@ onMounted(() => {
     </SectionHeader>
     
     <div>
-      <div class="grid grid-cols-1 lg:grid-cols-[261px_auto] lg:gap-x-8 items-start">
+      <div class="grid grid-cols-1 lg:grid-cols-[16.3125rem_auto] lg:gap-x-8 items-start">
         
         <div>
           <h2 class="text-h2-panda font-bold text-panda-black">Стадии заказа</h2>
@@ -74,7 +74,7 @@ onMounted(() => {
                       v-for="(stage, index) in stages"
                       :key="stage.id"
                       @mouseenter="setActiveStage(index)"
-                      class="transition-all duration-300 h-[51px] flex items-center px-4 cursor-pointer"
+                      class="transition-all duration-300 h-[3.1875rem] flex items-center px-4 cursor-pointer"
                       :class="[
                         'text-button-panda font-semibold',
                         activeIndex === index 

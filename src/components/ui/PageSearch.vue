@@ -99,7 +99,7 @@ const noResultsFound = computed(() => {
 /* [НОВОЕ] Главный контейнер, чтобы результаты поиска были под строкой */
 .search-wrapper {
   position: relative;
-  max-width: 620px;
+  max-width: 38.75rem;
   margin: 0 auto;
 }
 
@@ -108,14 +108,14 @@ const noResultsFound = computed(() => {
   width: 100%;
   border-radius: 9999px; /* Круглые края */
   background-color: #FFFFFF;
-  border: 1px solid #E3E3E3;
+  border: 0.0625rem solid #E3E3E3;
   transition: box-shadow 0.2s ease-in-out;
   position: relative; /* Для z-index */
   z-index: 1;
 }
 
 .search-container:focus-within {
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 0.25rem 0.9375rem rgba(0, 0, 0, 0.05);
   border-color: #d1d1d1;
 }
 
@@ -126,7 +126,7 @@ const noResultsFound = computed(() => {
 }
 
 .search-icon {
-  margin: 0 12px 0 20px;
+  margin: 0 0.75rem 0 1.25rem;
   color: #8F8F8F;
 }
 
@@ -134,8 +134,8 @@ const noResultsFound = computed(() => {
   width: 100%;
   border: none;
   background: transparent;
-  padding: 16px 0;
-  font-size: 16px;
+  padding: 1rem 0;
+  font-size: 1rem;
   color: #131C26;
   outline: none;
   font-family: 'Gilroy-Medium', sans-serif;
@@ -147,11 +147,11 @@ const noResultsFound = computed(() => {
 
 .search-button {
   font-family: 'Gilroy-SemiBold', sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
   border: none;
   background-color: #131C26; /* Черный цвет кнопки */
   color: white;
-  padding: 0 32px;
+  padding: 0 2rem;
   border-radius: 0 9999px 9999px 0;
   cursor: pointer;
   transition: background-color 0.2s;
@@ -165,15 +165,15 @@ const noResultsFound = computed(() => {
 /* [НОВЫЕ СТИЛИ] Стили для блока результатов */
 .search-results-container {
   position: absolute;
-  top: calc(100% - 28px); /* Позиционируем под строкой поиска с небольшим нахлестом */
+  top: calc(100% - 1.75rem); /* Позиционируем под строкой поиска с небольшим нахлестом */
   left: 0;
   right: 0;
   background-color: #fff;
-  border: 1px solid #E3E3E3;
+  border: 0.0625rem solid #E3E3E3;
   border-top: none; /* Убираем верхнюю границу, чтобы не двоилась */
-  box-shadow: 0 15px 20px rgba(0, 0, 0, 0.07);
-  border-radius: 0 0 24px 24px; /* Скругляем только нижние углы */
-  padding: 36px 4px 8px 4px; /* Отступы: сверху больше, чтобы выйти из-под строки поиска */
+  box-shadow: 0 0.9375rem 1.25rem rgba(0, 0, 0, 0.07);
+  border-radius: 0 0 1.5rem 1.5rem; /* Скругляем только нижние углы */
+  padding: 2.25rem 0.25rem 0.5rem 0.25rem; /* Отступы: сверху больше, чтобы выйти из-под строки поиска */
   z-index: 0;
 }
 
@@ -181,7 +181,7 @@ const noResultsFound = computed(() => {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 400px; /* Ограничиваем высоту, чтобы список не был бесконечным */
+  max-height: 25rem; /* Ограничиваем высоту, чтобы список не был бесконечным */
   overflow-y: auto; /* Добавляем скролл, если результатов много */
 }
 
@@ -189,10 +189,10 @@ const noResultsFound = computed(() => {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 20px;
+  padding: 0.75rem 1.25rem;
   text-decoration: none;
   color: #131C26;
-  border-radius: 20px;
+  border-radius: 1.25rem;
   transition: background-color 0.2s ease-in-out;
 }
 
@@ -206,12 +206,12 @@ const noResultsFound = computed(() => {
 }
 
 .result-item__category {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #8F8F8F;
 }
 
 .no-results-message {
-  padding: 16px 24px;
+  padding: 1rem 1.5rem;
   text-align: center;
   color: #8F8F8F;
 }
@@ -225,6 +225,6 @@ const noResultsFound = computed(() => {
 .fade-enter-from,
 .fade-leave-to {
   opacity: 0;
-  transform: translateY(-10px);
+  transform: translateY(-0.625rem);
 }
 </style>

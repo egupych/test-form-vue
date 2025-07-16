@@ -105,7 +105,7 @@ const nextReview = () => {
 
 <style scoped>
 .reviews-slider {
- min-height: 400px; /* Увеличим высоту под новую структуру */
+ min-height: 25rem; /* Увеличим высоту под новую структуру */
  display: flex;
  align-items: center; /* Вертикальное выравнивание по центру */
  justify-content: center; /* Горизонтальное выравнивание по центру, если нужно */
@@ -127,11 +127,11 @@ const nextReview = () => {
 
 .slide-fade-enter-from {
  opacity: 0;
- transform: translateX(50px);
+ transform: translateX(3.125rem);
 }
 
 .slide-fade-leave-to {
  opacity: 0;
- transform: translateX(-50px);
+ transform: translateX(-3.125rem);
 }
 </style>

@@ -101,6 +101,6 @@ const sliderStyle = computed(() => ({
 
 <style scoped>
 .logo-container {
-  width: 160px;
+  width: 10rem;
 }
 </style>

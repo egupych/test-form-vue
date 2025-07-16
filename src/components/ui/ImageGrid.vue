@@ -50,8 +50,8 @@ const handleImageClick = (image, index) => {
 }
 .like-button {
   position: absolute;
-  top: 12px;
-  right: 12px;
+  top: 0.75rem;
+  right: 0.75rem;
   opacity: 0;
   transition: opacity 0.2s ease-in-out;
   pointer-events: none;

@@ -142,36 +142,36 @@ const handleSubmit = () => {
 <style scoped>
 /* Стили скопированы из TalentReserveForm для консистентности */
 .file-list {
-  margin-bottom: 12px;
-  max-height: 125px;
+  margin-bottom: 0.75rem;
+  max-height: 7.8125rem;
   overflow-y: auto;
-  padding-right: 4px;
+  padding-right: 0.25rem;
 }
 .file-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem;
   background-color: #f0f0f0;
-  border-radius: 8px;
-  margin-bottom: 8px;
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
 }
 .file-name {
-  font-size: 14px;
+  font-size: 0.875rem;
   color: #131C26;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-right: 8px;
+  padding-right: 0.5rem;
 }
 .remove-file-button {
   background: none;
   border: none;
   color: #8F8F8F;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 1.25rem;
   line-height: 1;
-  padding: 0 4px;
+  padding: 0 0.25rem;
   transition: color 0.2s;
 }
 .remove-file-button:hover {
@@ -182,14 +182,14 @@ const handleSubmit = () => {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 16px;
-  border: 2px dashed #E3E3E3;
+  padding: 1rem;
+  border: 0.125rem dashed #E3E3E3;
   background-color: #F7F7F7;
   cursor: pointer;
   transition: all 0.3s ease;
-  font-family: 'Gilroy-Semibold', sans-serif;
+  font-family: 'Gilroy-SemiBold', sans-serif;
   color: #8F8F8F;
-  border-radius: 16px;
+  border-radius: 1rem;
 }
 .upload-button:hover {
   border-color: #F15F31;
@@ -197,52 +197,52 @@ const handleSubmit = () => {
   background-color: #fff;
 }
 .upload-icon {
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.5rem;
 }
 .upload-text {
-  font-size: 16px;
+  font-size: 1rem;
 }
 .upload-caption {
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #8F8F8F;
-  margin-top: 8px;
+  margin-top: 0.5rem;
   text-align: center;
 }
 .form-wrapper {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 40px;
+  gap: 2.5rem;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 64rem) {
   .form-wrapper {
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
+    gap: 3.75rem;
   }
 }
 
 .form-info {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 1.25rem;
 }
 .form-body {
   width: 100%;
 }
 .form-group .error-message {
   color: #F15F31;
-  font-size: 12px;
-  margin-top: 4px;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
 }
 input, textarea {
   font-family: 'Gilroy-Medium', sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
   width: 100%;
   border: none;
-  border-bottom: 1px solid #E3E3E3;
-  padding: 10px 4px;
+  border-bottom: 0.0625rem solid #E3E3E3;
+  padding: 0.625rem 0.25rem;
   color: #131C26;
   background-color: transparent;
   transition: background-color 0.2s ease;
@@ -261,7 +261,7 @@ input:hover, textarea:hover {
   position: absolute;
   background: #F15F31;
   width: 0%;
-  height: 2px;
+  height: 0.125rem;
   bottom: 0;
   left: 0;
   transition: width 0.3s ease-in-out;

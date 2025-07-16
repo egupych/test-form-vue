@@ -82,7 +82,7 @@ const closePopup = () => {
   height: 100%;
   /* --- ИЗМЕНЕНИЯ ЗДЕСЬ --- */
   background-color: rgba(19, 28, 38, 0.8); /* Цвет как на главной для единообразия */
-  backdrop-filter: blur(5px);               /* Эффект размытия фона */
+  backdrop-filter: blur(0.3125rem);            /* 5px -> 0.3125rem. Эффект размытия фона */
   /* --- КОНЕЦ ИЗМЕНЕНИЙ --- */
   display: flex;
   justify-content: center;
@@ -95,9 +95,9 @@ const closePopup = () => {
   position: relative;
   background: white;
   /* border-radius: 16px; - убрали скругление */
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); /* 10px 30px -> 0.625rem 1.875rem */
   width: 100%; /* Ширина будет зависеть от контента */
-  max-width: 1140px; /* Ограничим максимальную ширину */
+  max-width: 71.25rem; /* 1140px -> 71.25rem. Ограничим максимальную ширину */
   transform: scale(1);
   transition: transform 0.3s ease;
   overflow-y: auto; /* Добавим скролл на случай, если форма не помещается */
@@ -111,8 +111,8 @@ const closePopup = () => {
 
 .popup-close-button {
   position: absolute;
-  top: 15px;
-  right: 22px;
+  top: 0.9375rem;  /* 15px -> 0.9375rem */
+  right: 1.375rem; /* 22px -> 1.375rem */
   background: none;
   border: none;
   font-size: 2.5rem;

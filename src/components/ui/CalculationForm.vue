@@ -321,11 +321,11 @@ const handleSubmit = async () => {
 .file-preview-window {
   position: fixed;
   z-index: 9999;
-  width: 250px;
+  width: 15.625rem; /* 250px -> 15.625rem */
   height: auto;
   background-color: #fff;
-  border-radius: 8px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  border-radius: 0.5rem; /* 8px -> 0.5rem */
+  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); /* 10px 30px -> 0.625rem 1.875rem */
   pointer-events: none;
   overflow: hidden;
   transform-origin: top left;
@@ -347,30 +347,30 @@ const handleSubmit = async () => {
 
 /* Общие стили для секций референсов и файлов */
 .references-section, .file-list-section {
-    margin-bottom: 24px;
+    margin-bottom: 1.5rem; /* 24px -> 1.5rem */
 }
 .section-title {
     font-family: 'Gilroy-Semibold', sans-serif;
     color: #131C26;
-    margin-bottom: 12px;
-    font-size: 16px;
+    margin-bottom: 0.75rem; /* 12px -> 0.75rem */
+    font-size: 1rem; /* 16px -> 1rem */
 }
 
 /* Стили для списка референсов */
 .references-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(72px, 1fr));
-    gap: 8px;
-    max-height: 164px; /* 2 ряда по 72px + отступ 8px */
+    grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr)); /* 72px -> 4.5rem */
+    gap: 0.5rem; /* 8px -> 0.5rem */
+    max-height: 10.25rem; /* 164px -> 10.25rem (2 ряда по 72px + отступ 8px) */
     overflow-y: auto;
-    padding: 8px;
+    padding: 0.5rem; /* 8px -> 0.5rem */
     background-color: #f7f7f7;
-    border-radius: 12px;
+    border-radius: 0.75rem; /* 12px -> 0.75rem */
 }
 .reference-item {
     position: relative;
     aspect-ratio: 1 / 1;
-    border-radius: 8px;
+    border-radius: 0.5rem; /* 8px -> 0.5rem */
     overflow: hidden;
     background-color: #e3e3e3;
 }
@@ -381,21 +381,21 @@ const handleSubmit = async () => {
 }
 .remove-reference-button {
     position: absolute;
-    top: 4px;
-    right: 4px;
-    width: 20px;
-    height: 20px;
+    top: 0.25rem; /* 4px -> 0.25rem */
+    right: 0.25rem; /* 4px -> 0.25rem */
+    width: 1.25rem; /* 20px -> 1.25rem */
+    height: 1.25rem; /* 20px -> 1.25rem */
     border-radius: 50%;
     background-color: rgba(19, 28, 38, 0.7);
     color: white;
     border: none;
     cursor: pointer;
-    font-size: 14px;
-    line-height: 20px;
+    font-size: 0.875rem; /* 14px -> 0.875rem */
+    line-height: 1.25rem; /* 20px -> 1.25rem */
     text-align: center;
     opacity: 0;
     transition: all 0.2s;
-    backdrop-filter: blur(2px);
+    backdrop-filter: blur(0.125rem); /* 2px -> 0.125rem */
 }
 .reference-item:hover .remove-reference-button {
     opacity: 1;
@@ -407,18 +407,18 @@ const handleSubmit = async () => {
 
 /* Стили для списка файлов */
 .file-list {
-  max-height: 125px;
+  max-height: 7.8125rem; /* 125px -> 7.8125rem */
   overflow-y: auto;
-  padding-right: 8px; /* Место для скроллбара */
+  padding-right: 0.5rem; /* 8px -> 0.5rem. Место для скроллбара */
 }
 .file-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
+  padding: 0.5rem 0.75rem; /* 8px 12px -> 0.5rem 0.75rem */
   background-color: #f7f7f7;
-  border-radius: 8px;
-  margin-bottom: 8px;
+  border-radius: 0.5rem; /* 8px -> 0.5rem */
+  margin-bottom: 0.5rem; /* 8px -> 0.5rem */
   transition: background-color 0.2s;
 }
 .file-item:hover {
@@ -428,23 +428,23 @@ const handleSubmit = async () => {
   margin-bottom: 0;
 }
 .file-name {
-  font-size: 14px;
+  font-size: 0.875rem; /* 14px -> 0.875rem */
   color: #131C26;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-right: 10px;
+  padding-right: 0.625rem; /* 10px -> 0.625rem */
 }
 .remove-file-button {
   background: none;
   border: none;
   color: #8F8F8F;
   cursor: pointer;
-  font-size: 20px;
+  font-size: 1.25rem; /* 20px -> 1.25rem */
   line-height: 1;
-  padding: 0 4px;
+  padding: 0 0.25rem; /* 0 4px -> 0 0.25rem */
   transition: color 0.2s;
-  margin-left: 8px;
+  margin-left: 0.5rem; /* 8px -> 0.5rem */
   flex-shrink: 0;
 }
 .remove-file-button:hover {
@@ -457,14 +457,14 @@ const handleSubmit = async () => {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 16px;
-  border: 2px dashed #E3E3E3;
+  padding: 1rem; /* 16px -> 1rem */
+  border: 0.125rem dashed #E3E3E3; /* 2px -> 0.125rem */
   background-color: #F7F7F7;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: 'Gilroy-Semibold', sans-serif;
   color: #8F8F8F;
-  border-radius: 16px;
+  border-radius: 1rem; /* 16px -> 1rem */
 }
 .upload-button:hover {
   border-color: #F15F31;
@@ -472,20 +472,20 @@ const handleSubmit = async () => {
   background-color: #fff;
 }
 .upload-icon {
-  width: 24px;
-  height: 24px;
-  margin-right: 8px;
+  width: 1.5rem; /* 24px -> 1.5rem */
+  height: 1.5rem; /* 24px -> 1.5rem */
+  margin-right: 0.5rem; /* 8px -> 0.5rem */
 }
 .upload-text {
-  font-size: 16px;
+  font-size: 1rem; /* 16px -> 1rem */
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .upload-caption {
-  font-size: 12px;
+  font-size: 0.75rem; /* 12px -> 0.75rem */
   color: #8F8F8F;
-  margin-top: 8px;
+  margin-top: 0.5rem; /* 8px -> 0.5rem */
   text-align: center;
 }
 
@@ -493,38 +493,38 @@ const handleSubmit = async () => {
 .form-wrapper {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 40px;
+  gap: 2.5rem; /* 40px -> 2.5rem */
 }
 
 @media (min-width: 768px) {
   .form-wrapper {
     grid-template-columns: 1fr 1fr;
-    gap: 60px;
+    gap: 3.75rem; /* 60px -> 3.75rem */
   }
 }
 
 .form-info {
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  max-width: 450px; 
+  gap: 1.25rem; /* 20px -> 1.25rem */
+  max-width: 28.125rem; /* 450px -> 28.125rem */
 }
 .form-body {
   width: 100%;
 }
 .form-group .error-message {
   color: #F15F31;
-  font-size: 12px;
-  margin-top: 4px;
-  padding-left: 4px;
+  font-size: 0.75rem; /* 12px -> 0.75rem */
+  margin-top: 0.25rem; /* 4px -> 0.25rem */
+  padding-left: 0.25rem; /* 4px -> 0.25rem */
 }
 input, textarea {
   font-family: 'Gilroy-Medium', sans-serif;
-  font-size: 16px;
+  font-size: 1rem; /* 16px -> 1rem */
   width: 100%;
   border: none;
-  border-bottom: 1px solid #E3E3E3;
-  padding: 10px 4px;
+  border-bottom: 0.0625rem solid #E3E3E3; /* 1px -> 0.0625rem */
+  padding: 0.625rem 0.25rem; /* 10px 4px -> 0.625rem 0.25rem */
   color: #131C26;
   background-color: transparent;
   transition: background-color 0.2s ease, border-color 0.3s ease;
@@ -535,7 +535,7 @@ input::placeholder, textarea::placeholder { color: #8F8F8F; }
 input:focus, textarea:focus { outline: none; }
 textarea {
   resize: vertical;
-  min-height: 100px;
+  min-height: 6.25rem; /* 100px -> 6.25rem */
 }
 input:hover, textarea:hover {
   background-color: rgba(227, 227, 227, 0.2);
@@ -547,7 +547,7 @@ input:hover, textarea:hover {
   position: absolute;
   background: #F15F31;
   width: 0%;
-  height: 2px;
+  height: 0.125rem; /* 2px -> 0.125rem */
   bottom: 0;
   left: 0;
   transition: width 0.3s ease-in-out;
@@ -560,5 +560,5 @@ input:focus ~ .input-border,
 textarea:focus ~ .input-border {
   width: 100%;
 }
-.success-message { padding: 15px 20px; border-radius: 8px; color: #FFFFFF; text-align: center; }
+.success-message { padding: 0.9375rem 1.25rem; border-radius: 0.5rem; color: #FFFFFF; text-align: center; } /* 15px 20px -> 0.9375rem 1.25rem; 8px -> 0.5rem */
 </style>

@@ -114,7 +114,7 @@ const setActiveEvent = (index) => {
 .nav-arrow {
   flex-shrink: 0;
   color: #8F8F8F;
-  padding: 8px;
+  padding: 0.5rem; /* 8px -> 0.5rem */
   border-radius: 50%;
   transition: all 0.2s ease;
 }
@@ -142,13 +142,13 @@ const setActiveEvent = (index) => {
   top: 50%;
   left: 0;
   right: 0;
-  height: 2px;
+  height: 0.125rem; /* 2px -> 0.125rem */
   background-color: #F15F31;
   transform: translateY(-50%);
   z-index: 1;
   /* Корректировка, чтобы линия не выходила за пределы крайних кругов */
-  left: 29px;
-  right: 29px;
+  left: 1.8125rem; /* 29px -> 1.8125rem */
+  right: 1.8125rem; /* 29px -> 1.8125rem */
 }
 
 .timeline-dot-wrapper {
@@ -159,14 +159,14 @@ const setActiveEvent = (index) => {
 /* --- [СОХРАНЕНЫ] Исправленные стили для кнопки и круга --- */
 .timeline-dot {
   position: relative;
-  width: 58px;
-  height: 58px;
+  width: 3.625rem; /* 58px -> 3.625rem */
+  height: 3.625rem; /* 58px -> 3.625rem */
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: 'Gilroy-Bold', sans-serif;
-  font-size: 16px;
+  font-size: 1rem; /* 16px -> 1rem */
   cursor: pointer;
   background: none;
   border: none;
@@ -183,7 +183,7 @@ const setActiveEvent = (index) => {
   width: 100%;
   height: 100%;
   border-radius: 50%;
-  border: 2px solid #F15F31;
+  border: 0.125rem solid #F15F31; /* 2px -> 0.125rem */
   background-color: #f7f7f7;
   z-index: -1;
   transform: scale(1);
@@ -215,7 +215,7 @@ const setActiveEvent = (index) => {
   gap: 2rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48rem) { /* 768px -> 48rem */
   .event-content {
     grid-template-columns: 1fr 1.5fr;
     gap: 4rem;
@@ -243,11 +243,11 @@ const setActiveEvent = (index) => {
 
 .slide-fade-enter-from {
   opacity: 0;
-  transform: translateX(30px);
+  transform: translateX(1.875rem); /* 30px -> 1.875rem */
 }
 
 .slide-fade-leave-to {
   opacity: 0;
-  transform: translateX(-30px);
+  transform: translateX(-1.875rem); /* -30px -> -1.875rem */
 }
 </style>

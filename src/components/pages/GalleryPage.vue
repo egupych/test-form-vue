@@ -97,6 +97,6 @@ const closeViewer = () => { isViewerOpen.value = false; };
 <style scoped>
 /* Удаляем старые стили для попапа, они больше не нужны */
 .scroll-mt-24 { 
-  scroll-margin-top: 100px; 
+  scroll-margin-top: 6.25rem; /* 100px -> 6.25rem */
 }
 </style>

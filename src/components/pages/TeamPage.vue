@@ -179,8 +179,8 @@ const closePopup = () => {
   justify-content: center;
   aspect-ratio: 1 / 1;
   width: 100%;
-  padding: 16px;
-  border: 2px dashed #E3E3E3;
+  padding: 1rem; /* 16px -> 1rem */
+  border: 0.125rem dashed #E3E3E3; /* 2px -> 0.125rem */
   background-color: #F7F7F7;
   transition: all 0.3s ease;
 }
@@ -190,9 +190,9 @@ const closePopup = () => {
 }
 
 .vacancy-card-icon {
-  width: 40px;
-  height: 40px;
-  margin-bottom: 8px;
+  width: 2.5rem; /* 40px -> 2.5rem */
+  height: 2.5rem; /* 40px -> 2.5rem */
+  margin-bottom: 0.5rem; /* 8px -> 0.5rem */
   color: #8F8F8F;
   transition: color 0.3s ease;
 }
@@ -203,7 +203,7 @@ const closePopup = () => {
 
 .vacancy-card-text {
   font-family: 'Gilroy-Semibold', sans-serif;
-  font-size: 16px;
+  font-size: 1rem; /* 16px -> 1rem */
   color: #8F8F8F;
   transition: color 0.3s ease;
 }
@@ -219,7 +219,7 @@ const closePopup = () => {
   width: 100%;
   height: 100%;
   background-color: rgba(19, 28, 38, 0.8);
-  backdrop-filter: blur(5px);
+  backdrop-filter: blur(0.3125rem); /* 5px -> 0.3125rem */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -230,9 +230,9 @@ const closePopup = () => {
 .popup-container {
   position: relative;
   background: white;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); /* 10px 30px -> 0.625rem 1.875rem */
   width: 100%;
-  max-width: 1140px;
+  max-width: 71.25rem; /* 1140px -> 71.25rem */
   transform: scale(1);
   transition: transform 0.3s ease;
   overflow-y: auto;
@@ -249,8 +249,8 @@ const closePopup = () => {
 
 .popup-close-button {
   position: absolute;
-  top: 15px;
-  right: 22px;
+  top: 0.9375rem; /* 15px -> 0.9375rem */
+  right: 1.375rem; /* 22px -> 1.375rem */
   background: none;
   border: none;
   font-size: 2.5rem;

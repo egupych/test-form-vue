@@ -119,7 +119,7 @@ const { services } = storeToRefs(servicesStore);
 
 <style scoped>
 .benefits-grid {
-  perspective: 1000px;
+  perspective: 62.5rem;
 }
 
 .benefit-card {
