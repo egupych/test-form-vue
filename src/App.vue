@@ -3,6 +3,8 @@ import { useSmoothScroll } from '@/composables/useSmoothScroll.js';
 import FloatingActionButton from '@/components/ui/FloatingActionButton.vue';
 import TheHeader from '@/components/ui/TheHeader.vue';
 import TheFooter from '@/components/ui/TheFooter.vue';
+// 1. Импортируем компонент уведомлений
+import TheNotification from '@/components/ui/TheNotification.vue';
 
 useSmoothScroll();
 </script>
@@ -17,6 +19,7 @@ useSmoothScroll();
 
     <TheFooter />
 
+    <TheNotification />
     <FloatingActionButton />
   </div>
 </template>
@@ -27,9 +30,6 @@ useSmoothScroll();
   flex-direction: column;
   min-height: 100vh;
   background-color: #F7F7F7;
-
-  /* === ГЛАВНОЕ ИЗМЕНЕНИЕ ЗДЕСЬ === */
-  /* Добавляем отступ сверху, равный высоте хедера */
   padding-top: 6rem;
 }
 .main-content {

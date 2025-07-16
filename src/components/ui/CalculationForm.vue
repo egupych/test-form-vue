@@ -2,10 +2,8 @@
 import { reactive, ref, computed, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import { useAuth } from '@/composables/useAuth.js';
-import { useReferencesStore } from '@/stores/references.js'; // 1. ИМПОРТ ХРАНИЛИЩА РЕФЕРЕНСОВ
-
-const MAX_FILES = 10;
-const MAX_TOTAL_SIZE = 100 * 1024 * 1024; // 100 MB
+import { useReferencesStore } from '@/stores/references.js';
+import { useNotificationStore } from '@/stores/notifications.js'; // 1. ИМПОРТ
 
 const props = defineProps({
   promoCode: {
@@ -15,103 +13,74 @@ const props = defineProps({
 });
 
 const { user } = useAuth();
-const referencesStore = useReferencesStore(); // 2. ИНИЦИАЛИЗАЦИЯ ХРАНИЛИЩА
+const referencesStore = useReferencesStore();
+const notificationStore = useNotificationStore(); // 2. ИНИЦИАЛИЗАЦИЯ
 
 const formData = reactive({ name: '', phone: '', email: '', company: '', task: '', promo: '' });
 const errors = reactive({ name: '', phone: '', email: '', task: '' });
 const isSubmitting = ref(false);
-const message = ref('');
-const messageType = ref('success');
-
 const files = ref([]);
-
-// Логика для превью загружаемых файлов при наведении
 const hoveredFileUrl = ref(null);
 const previewStyle = ref({});
+
+// --- ЛОГИКА КОМПОНЕНТА (без изменений, кроме handleSubmit) ---
 
 const handleFileMouseEnter = (event, file) => {
   if (file.type.startsWith('image/')) {
     const rect = event.currentTarget.getBoundingClientRect();
     hoveredFileUrl.value = URL.createObjectURL(file);
-    previewStyle.value = {
-      top: `${rect.top}px`,
-      left: `${rect.right + 15}px`,
-    };
+    previewStyle.value = { top: `${rect.top}px`, left: `${rect.right + 15}px` };
   }
 };
-
 const handleFileMouseLeave = () => {
   if (hoveredFileUrl.value) {
     URL.revokeObjectURL(hoveredFileUrl.value);
     hoveredFileUrl.value = null;
   }
 };
-
-// Вся остальная логика компонента (валидация, загрузка файлов и т.д.) остается без изменений
 const handleFileUpload = (event) => {
   const target = event.target;
-  if (target && target.files) {
-    const newFiles = Array.from(target.files);
+  if (!target.files) return;
+  const newFiles = Array.from(target.files);
+  const MAX_FILES = 10;
+  const MAX_TOTAL_SIZE = 100 * 1024 * 1024;
 
-    if (files.value.length + newFiles.length > MAX_FILES) {
-      showMessage(`Вы не можете загрузить больше ${MAX_FILES} файлов.`, 'error');
-      target.value = '';
-      return;
-    }
-
-    const currentSize = files.value.reduce((acc, file) => acc + file.size, 0);
-    const newSize = newFiles.reduce((acc, file) => acc + file.size, 0);
-
-    if (currentSize + newSize > MAX_TOTAL_SIZE) {
-      showMessage(`Общий размер файлов не должен превышать 100 МБ.`, 'error');
-      target.value = '';
-      return;
-    }
-    
-    files.value.push(...newFiles);
+  if (files.value.length + newFiles.length > MAX_FILES) {
+    notificationStore.showNotification(`Вы не можете загрузить больше ${MAX_FILES} файлов.`, 'error');
+    target.value = '';
+    return;
   }
+  const currentSize = files.value.reduce((acc, file) => acc + file.size, 0);
+  const newSize = newFiles.reduce((acc, file) => acc + file.size, 0);
+  if (currentSize + newSize > MAX_TOTAL_SIZE) {
+    notificationStore.showNotification(`Общий размер файлов не должен превышать 100 МБ.`, 'error');
+    target.value = '';
+    return;
+  }
+  files.value.push(...newFiles);
   target.value = '';
 };
-
 const removeFile = (index) => {
   files.value.splice(index, 1);
 };
-
-
 watch(() => props.promoCode, (newPromo) => {
-  if (newPromo) {
-    formData.promo = newPromo;
-  }
+  if (newPromo) formData.promo = newPromo;
 }, { immediate: true });
-
 watch(user, (currentUser) => {
   if (currentUser) {
-    if (!formData.name) {
-      formData.name = currentUser.displayName || '';
-    }
-    if (!formData.email) {
-      formData.email = currentUser.email || '';
-    }
+    if (!formData.name) formData.name = currentUser.displayName || '';
+    if (!formData.email) formData.email = currentUser.email || '';
   }
 }, { immediate: true });
-
 const isFormValid = computed(() => (
     formData.name && !errors.name && formData.phone && !errors.phone &&
     formData.email && !errors.email && formData.task && !errors.task
 ));
-
-const showMessage = (msg, type = 'success') => {
-    message.value = msg;
-    messageType.value = type;
-    setTimeout(() => { message.value = ''; }, 5000);
-};
-
 const validateEmail = (email) => /^[a-zA-Z0-9]([a-zA-Z0-9._-]*[a-zA-Z0-9])?@[a-zA-Z0-9]([a-zA-Z0-9.-]*[a-zA-Z0-9])?\.[a-zA-Z]{2,}$/.test(String(email).toLowerCase().trim());
 const validatePhone = (phone) => {
     const cleanPhone = phone.replace(/[\s\-()]/g, '');
     return [ /^\+7[0-9]{10}$/, /^8[0-9]{10}$/, /^7[0-9]{10}$/, /^\+[1-9][0-9]{7,14}$/ ].some(pattern => pattern.test(cleanPhone));
 };
-
 const formatPhoneInput = () => {
     let value = formData.phone.replace(/\D/g, '');
     if (value.length > 0) {
@@ -129,7 +98,6 @@ const formatPhoneInput = () => {
     formData.phone = value;
     validateField('phone');
 };
-
 const validateField = (field) => {
     errors[field] = '';
     const value = formData[field];
@@ -153,51 +121,47 @@ const validateField = (field) => {
     }
     return !errors[field];
 };
-
 const validateForm = () => ['name', 'phone', 'email', 'task'].every(validateField);
 
+// --- ИЗМЕНЕННАЯ ЛОГИКА ОТПРАВКИ ---
 const handleSubmit = async () => {
     if (!validateForm()) {
-        showMessage('Пожалуйста, исправьте ошибки в форме.', 'error');
+        // 3. ИСПОЛЬЗУЕМ НОВУЮ СИСТЕМУ
+        notificationStore.showNotification('Пожалуйста, исправьте ошибки в форме.', 'error');
         return;
     }
     isSubmitting.value = true;
     
     const data = new FormData();
-    
     for (const key in formData) {
         data.append(key, formData[key]);
     }
-    
     if (files.value.length > 0) {
         files.value.forEach(file => {
-            data.append('files[]', file); // Используем files[] для массива
+            data.append('files[]', file);
         });
     }
-
-    // 3. ДОБАВЛЕНИЕ РЕФЕРЕНСОВ В ОТПРАВЛЯЕМЫЕ ДАННЫЕ
     if (referencesStore.items.length > 0) {
         referencesStore.items.forEach((refUrl) => {
-            data.append('references[]', refUrl); // Используем references[] для массива
+            data.append('references[]', refUrl);
         });
     }
 
     try {
-        const response = await fetch('/api/submit-form', {
-            method: 'POST',
-            body: data
-        });
-
+        const response = await fetch('/api/submit-form', { method: 'POST', body: data });
         const result = await response.json();
         if (!response.ok) throw new Error(result.message || 'Ошибка сервера');
         
-        showMessage(result.message, 'success');
+        // 3. ИСПОЛЬЗУЕМ НОВУЮ СИСТЕМУ
+        notificationStore.showNotification(result.message, 'success');
+        
         Object.keys(formData).forEach(key => formData[key] = '');
         files.value = [];
-        referencesStore.clearReferences(); // 4. ОЧИСТКА РЕФЕРЕНСОВ ПОСЛЕ ОТПРАВКИ
+        referencesStore.clearReferences();
     } catch (error) {
         console.error('Ошибка отправки формы:', error);
-        showMessage(error.message || 'Ошибка соединения с сервером. Проверьте консоль.', 'error');
+        // 3. ИСПОЛЬЗУЕМ НОВУЮ СИСТЕМУ
+        notificationStore.showNotification(error.message || 'Ошибка соединения с сервером.', 'error');
     } finally {
         isSubmitting.value = false;
     }
@@ -242,7 +206,7 @@ const handleSubmit = async () => {
             <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12" />
           </svg>
           <span class="upload-text">
-            {{ files.length > 0 ? `Добавить еще (${files.length} из ${MAX_FILES})` : 'Прикрепить макет' }}
+            {{ files.length > 0 ? `Добавить еще (${files.length} из 10)` : 'Прикрепить макет' }}
           </span>
         </label>
         <input id="file-upload" type="file" class="hidden" @change="handleFileUpload" multiple>
@@ -303,8 +267,7 @@ const handleSubmit = async () => {
           <span v-else>Отправить заявку</span>
         </BaseButton>
       </form>
-        <div v-if="message" class="success-message mt-5" :class="[messageType === 'success' ? 'bg-panda-green' : 'bg-red-500']">{{ message }}</div>
-    </div>
+      </div>
   </div>
   
   <Teleport to="body">
@@ -321,11 +284,11 @@ const handleSubmit = async () => {
 .file-preview-window {
   position: fixed;
   z-index: 9999;
-  width: 15.625rem; /* 250px -> 15.625rem */
+  width: 15.625rem;
   height: auto;
   background-color: #fff;
-  border-radius: 0.5rem; /* 8px -> 0.5rem */
-  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); /* 10px 30px -> 0.625rem 1.875rem */
+  border-radius: 0.5rem;
+  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2);
   pointer-events: none;
   overflow: hidden;
   transform-origin: top left;
@@ -347,30 +310,30 @@ const handleSubmit = async () => {
 
 /* Общие стили для секций референсов и файлов */
 .references-section, .file-list-section {
-    margin-bottom: 1.5rem; /* 24px -> 1.5rem */
+    margin-bottom: 1.5rem;
 }
 .section-title {
     font-family: 'Gilroy-Semibold', sans-serif;
     color: #131C26;
-    margin-bottom: 0.75rem; /* 12px -> 0.75rem */
-    font-size: 1rem; /* 16px -> 1rem */
+    margin-bottom: 0.75rem;
+    font-size: 1rem;
 }
 
 /* Стили для списка референсов */
 .references-list {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr)); /* 72px -> 4.5rem */
-    gap: 0.5rem; /* 8px -> 0.5rem */
-    max-height: 10.25rem; /* 164px -> 10.25rem (2 ряда по 72px + отступ 8px) */
+    grid-template-columns: repeat(auto-fill, minmax(4.5rem, 1fr));
+    gap: 0.5rem;
+    max-height: 10.25rem;
     overflow-y: auto;
-    padding: 0.5rem; /* 8px -> 0.5rem */
+    padding: 0.5rem;
     background-color: #f7f7f7;
-    border-radius: 0.75rem; /* 12px -> 0.75rem */
+    border-radius: 0.75rem;
 }
 .reference-item {
     position: relative;
     aspect-ratio: 1 / 1;
-    border-radius: 0.5rem; /* 8px -> 0.5rem */
+    border-radius: 0.5rem;
     overflow: hidden;
     background-color: #e3e3e3;
 }
@@ -381,21 +344,21 @@ const handleSubmit = async () => {
 }
 .remove-reference-button {
     position: absolute;
-    top: 0.25rem; /* 4px -> 0.25rem */
-    right: 0.25rem; /* 4px -> 0.25rem */
-    width: 1.25rem; /* 20px -> 1.25rem */
-    height: 1.25rem; /* 20px -> 1.25rem */
+    top: 0.25rem;
+    right: 0.25rem;
+    width: 1.25rem;
+    height: 1.25rem;
     border-radius: 50%;
     background-color: rgba(19, 28, 38, 0.7);
     color: white;
     border: none;
     cursor: pointer;
-    font-size: 0.875rem; /* 14px -> 0.875rem */
-    line-height: 1.25rem; /* 20px -> 1.25rem */
+    font-size: 0.875rem;
+    line-height: 1.25rem;
     text-align: center;
     opacity: 0;
     transition: all 0.2s;
-    backdrop-filter: blur(0.125rem); /* 2px -> 0.125rem */
+    backdrop-filter: blur(0.125rem);
 }
 .reference-item:hover .remove-reference-button {
     opacity: 1;
@@ -407,18 +370,18 @@ const handleSubmit = async () => {
 
 /* Стили для списка файлов */
 .file-list {
-  max-height: 7.8125rem; /* 125px -> 7.8125rem */
+  max-height: 7.8125rem;
   overflow-y: auto;
-  padding-right: 0.5rem; /* 8px -> 0.5rem. Место для скроллбара */
+  padding-right: 0.5rem;
 }
 .file-item {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.5rem 0.75rem; /* 8px 12px -> 0.5rem 0.75rem */
+  padding: 0.5rem 0.75rem;
   background-color: #f7f7f7;
-  border-radius: 0.5rem; /* 8px -> 0.5rem */
-  margin-bottom: 0.5rem; /* 8px -> 0.5rem */
+  border-radius: 0.5rem;
+  margin-bottom: 0.5rem;
   transition: background-color 0.2s;
 }
 .file-item:hover {
@@ -428,23 +391,23 @@ const handleSubmit = async () => {
   margin-bottom: 0;
 }
 .file-name {
-  font-size: 0.875rem; /* 14px -> 0.875rem */
+  font-size: 0.875rem;
   color: #131C26;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  padding-right: 0.625rem; /* 10px -> 0.625rem */
+  padding-right: 0.625rem;
 }
 .remove-file-button {
   background: none;
   border: none;
   color: #8F8F8F;
   cursor: pointer;
-  font-size: 1.25rem; /* 20px -> 1.25rem */
+  font-size: 1.25rem;
   line-height: 1;
-  padding: 0 0.25rem; /* 0 4px -> 0 0.25rem */
+  padding: 0 0.25rem;
   transition: color 0.2s;
-  margin-left: 0.5rem; /* 8px -> 0.5rem */
+  margin-left: 0.5rem;
   flex-shrink: 0;
 }
 .remove-file-button:hover {
@@ -457,14 +420,14 @@ const handleSubmit = async () => {
   align-items: center;
   justify-content: center;
   width: 100%;
-  padding: 1rem; /* 16px -> 1rem */
-  border: 0.125rem dashed #E3E3E3; /* 2px -> 0.125rem */
+  padding: 1rem;
+  border: 0.125rem dashed #E3E3E3;
   background-color: #F7F7F7;
   cursor: pointer;
   transition: all 0.3s ease;
   font-family: 'Gilroy-Semibold', sans-serif;
   color: #8F8F8F;
-  border-radius: 1rem; /* 16px -> 1rem */
+  border-radius: 1rem;
 }
 .upload-button:hover {
   border-color: #F15F31;
@@ -472,20 +435,20 @@ const handleSubmit = async () => {
   background-color: #fff;
 }
 .upload-icon {
-  width: 1.5rem; /* 24px -> 1.5rem */
-  height: 1.5rem; /* 24px -> 1.5rem */
-  margin-right: 0.5rem; /* 8px -> 0.5rem */
+  width: 1.5rem;
+  height: 1.5rem;
+  margin-right: 0.5rem;
 }
 .upload-text {
-  font-size: 1rem; /* 16px -> 1rem */
+  font-size: 1rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
 .upload-caption {
-  font-size: 0.75rem; /* 12px -> 0.75rem */
+  font-size: 0.75rem;
   color: #8F8F8F;
-  margin-top: 0.5rem; /* 8px -> 0.5rem */
+  margin-top: 0.5rem;
   text-align: center;
 }
 
@@ -493,38 +456,38 @@ const handleSubmit = async () => {
 .form-wrapper {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 2.5rem; /* 40px -> 2.5rem */
+  gap: 2.5rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 48rem) {
   .form-wrapper {
     grid-template-columns: 1fr 1fr;
-    gap: 3.75rem; /* 60px -> 3.75rem */
+    gap: 3.75rem;
   }
 }
 
 .form-info {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem; /* 20px -> 1.25rem */
-  max-width: 28.125rem; /* 450px -> 28.125rem */
+  gap: 1.25rem;
+  max-width: 28.125rem;
 }
 .form-body {
   width: 100%;
 }
 .form-group .error-message {
   color: #F15F31;
-  font-size: 0.75rem; /* 12px -> 0.75rem */
-  margin-top: 0.25rem; /* 4px -> 0.25rem */
-  padding-left: 0.25rem; /* 4px -> 0.25rem */
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+  padding-left: 0.25rem;
 }
 input, textarea {
   font-family: 'Gilroy-Medium', sans-serif;
-  font-size: 1rem; /* 16px -> 1rem */
+  font-size: 1rem;
   width: 100%;
   border: none;
-  border-bottom: 0.0625rem solid #E3E3E3; /* 1px -> 0.0625rem */
-  padding: 0.625rem 0.25rem; /* 10px 4px -> 0.625rem 0.25rem */
+  border-bottom: 0.0625rem solid #E3E3E3;
+  padding: 0.625rem 0.25rem;
   color: #131C26;
   background-color: transparent;
   transition: background-color 0.2s ease, border-color 0.3s ease;
@@ -535,7 +498,7 @@ input::placeholder, textarea::placeholder { color: #8F8F8F; }
 input:focus, textarea:focus { outline: none; }
 textarea {
   resize: vertical;
-  min-height: 6.25rem; /* 100px -> 6.25rem */
+  min-height: 6.25rem;
 }
 input:hover, textarea:hover {
   background-color: rgba(227, 227, 227, 0.2);
@@ -547,7 +510,7 @@ input:hover, textarea:hover {
   position: absolute;
   background: #F15F31;
   width: 0%;
-  height: 0.125rem; /* 2px -> 0.125rem */
+  height: 0.125rem;
   bottom: 0;
   left: 0;
   transition: width 0.3s ease-in-out;
@@ -560,5 +523,4 @@ input:focus ~ .input-border,
 textarea:focus ~ .input-border {
   width: 100%;
 }
-.success-message { padding: 0.9375rem 1.25rem; border-radius: 0.5rem; color: #FFFFFF; text-align: center; } /* 15px 20px -> 0.9375rem 1.25rem; 8px -> 0.5rem */
 </style>

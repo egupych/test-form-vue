@@ -9,7 +9,7 @@ export const useVacanciesStore = defineStore('vacancies', () => {
       id: 1,
       title: 'Офис-менеджер',
       salary: 'от 250 000 тенге до вычета налогов',
-      tags: ['Девушка', '20-35 лет'],
+      tags: ['Опыт 1 год'],
       conditions: 'Официальное трудоустройство. Рабочий день 09:00-18:00 (5/2).',
       responsibilities: [
         'Ответы на телефонные звонки;',
@@ -23,7 +23,7 @@ export const useVacanciesStore = defineStore('vacancies', () => {
       id: 2,
       title: 'Печатник',
       salary: 'от 250 000 тенге до вычета налогов',
-      tags: ['Мужчина', '20-40 лет'],
+      tags: ['Опыт 2 года'],
       conditions: 'Официальное трудоустройство. Рабочий день 09:00-18:00 (5/2).',
       responsibilities: [
         'Знание CorelDRAW, Acrobat, Illustrator',

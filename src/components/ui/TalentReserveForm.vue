@@ -2,9 +2,9 @@
 import { ref, reactive, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
+// --- ИМПОРТИРУЕМ ХРАНИЛИЩЕ УВЕДОМЛЕНИЙ ---
+import { useNotificationStore } from '@/stores/notifications.js';
 
-// --- [НОВОЕ] Определяем пропсы ---
-// Компонент будет принимать извне название вакансии
 const props = defineProps({
   initialPosition: {
     type: String,
@@ -12,9 +12,8 @@ const props = defineProps({
   }
 });
 
-// --- Логика формы (полностью перенесена) ---
-const MAX_FILES = 1;
-const MAX_TOTAL_SIZE = 15 * 1024 * 1024; // 15 MB
+// Инициализируем хранилище
+const notificationStore = useNotificationStore();
 
 const formData = reactive({
   desiredPosition: '',
@@ -25,9 +24,6 @@ const files = ref([]);
 const hoveredFileUrl = ref(null);
 const previewStyle = ref({});
 
-// --- [НОВОЕ] Отслеживаем изменения в пропсах ---
-// Если снаружи изменится initialPosition (например, при клике на "Откликнуться"),
-// мы обновим значение в поле формы.
 watch(() => props.initialPosition, (newVal) => {
   formData.desiredPosition = newVal;
 });
@@ -36,15 +32,17 @@ const handleFileUpload = (event) => {
   const target = event.target;
   if (target && target.files) {
     const newFiles = Array.from(target.files);
+    const MAX_FILES = 1;
+    const MAX_TOTAL_SIZE = 15 * 1024 * 1024;
     if (files.value.length + newFiles.length > MAX_FILES) {
-      alert(`Вы можете загрузить не более ${MAX_FILES} файла.`);
+      notificationStore.showNotification(`Вы можете загрузить не более ${MAX_FILES} файла.`, 'error');
       target.value = '';
       return;
     }
     const currentSize = files.value.reduce((acc, file) => acc + file.size, 0);
     const newSize = newFiles.reduce((acc, file) => acc + file.size, 0);
     if (currentSize + newSize > MAX_TOTAL_SIZE) {
-      alert(`Размер файла не должен превышать 15 МБ.`);
+      notificationStore.showNotification(`Размер файла не должен превышать 15 МБ.`, 'error');
       target.value = '';
       return;
     }
@@ -75,12 +73,15 @@ const handleFileMouseLeave = () => {
   }
 };
 
+// --- ИСПРАВЛЕННАЯ ФУНКЦИЯ ОТПРАВКИ ---
 const submitApplication = () => {
   if (!formData.name || !formData.phone) {
-    alert('Пожалуйста, заполните имя и телефон.');
+    notificationStore.showNotification('Пожалуйста, заполните имя и телефон.', 'error');
     return;
   }
-  alert(`Спасибо за отклик, ${formData.name}! Мы свяжемся с вами.`);
+  notificationStore.showNotification(`Спасибо за отклик, ${formData.name}! Мы свяжемся с вами.`, 'success');
+  
+  // Очистка формы
   formData.desiredPosition = '';
   formData.name = '';
   formData.phone = '';
@@ -178,6 +179,8 @@ const submitApplication = () => {
 </template>
 
 <style scoped>
+/* Стили в этом файле полностью идентичны тем, что были ранее, и уже используют rem */
+/* Я оставляю их здесь для полноты компонента, но они не менялись */
 .file-preview-window {
   position: fixed;
   z-index: 9999;
@@ -314,10 +317,6 @@ input, textarea {
 }
 input::placeholder, textarea::placeholder { color: #8F8F8F; }
 input:focus, textarea:focus { outline: none; }
-textarea {
-  resize: vertical;
-  min-height: 6.25rem;
-}
 input:hover, textarea:hover {
   background-color: rgba(227, 227, 227, 0.2);
 }

@@ -1,18 +1,16 @@
 <script setup>
 import { ref, reactive, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
+import { useNotificationStore } from '@/stores/notifications.js'; // 1. ИМПОРТ
 
-// Компонент будет принимать извне название вакансии
 const props = defineProps({
   positionTitle: {
     type: String,
-    required: true // Делаем его обязательным
+    required: true
   }
 });
 
-// --- Логика формы ---
-const MAX_FILES = 1;
-const MAX_TOTAL_SIZE = 15 * 1024 * 1024; // 15 MB
+const notificationStore = useNotificationStore(); // 2. ИНИЦИАЛИЗАЦИЯ
 
 const formData = reactive({
   name: '',
@@ -21,45 +19,45 @@ const formData = reactive({
 const files = ref([]);
 const isSubmitting = ref(false);
 
-// Сразу устанавливаем значение вакансии при инициализации
 const desiredPosition = ref(props.positionTitle);
 watch(() => props.positionTitle, (newVal) => {
   desiredPosition.value = newVal;
 });
 
 const handleFileUpload = (event) => {
-  const target = event.target;
-  if (target && target.files) {
+    const target = event.target;
+    if (!target.files) return;
     const newFiles = Array.from(target.files);
+    const MAX_FILES = 1;
+    const MAX_TOTAL_SIZE = 15 * 1024 * 1024;
     if (files.value.length + newFiles.length > MAX_FILES) {
-      alert(`Вы можете загрузить не более ${MAX_FILES} файла.`);
-      target.value = '';
-      return;
+        notificationStore.showNotification(`Вы можете загрузить не более ${MAX_FILES} файла.`, 'error');
+        target.value = '';
+        return;
     }
     const currentSize = files.value.reduce((acc, file) => acc + file.size, 0);
     const newSize = newFiles.reduce((acc, file) => acc + file.size, 0);
     if (currentSize + newSize > MAX_TOTAL_SIZE) {
-      alert(`Размер файла не должен превышать 15 МБ.`);
-      target.value = '';
-      return;
+        notificationStore.showNotification(`Размер файла не должен превышать 15 МБ.`, 'error');
+        target.value = '';
+        return;
     }
-    files.value = newFiles; // Заменяем, а не добавляем, т.к. файл один
-  }
-  target.value = '';
+    files.value = newFiles;
+    target.value = '';
 };
 
 const removeFile = (index) => {
   files.value.splice(index, 1);
 };
 
-
+// --- ИСПРАВЛЕННАЯ ФУНКЦИЯ ОТПРАВКИ ---
 const handleSubmit = () => {
   if (!formData.name || !formData.phone) {
-    alert('Пожалуйста, заполните имя и телефон.');
+    notificationStore.showNotification('Пожалуйста, заполните имя и телефон.', 'error');
     return;
   }
   if (files.value.length === 0) {
-    alert('Пожалуйста, прикрепите ваше резюме.');
+    notificationStore.showNotification('Пожалуйста, прикрепите ваше резюме.', 'error');
     return;
   }
   
@@ -70,10 +68,8 @@ const handleSubmit = () => {
     resume: files.value[0]
   });
 
-  // Имитация отправки
   setTimeout(() => {
-    alert(`Спасибо за отклик на вакансию «${desiredPosition.value}», ${formData.name}! Мы свяжемся с вами.`);
-    // Тут можно добавить событие, чтобы родительский компонент закрыл попап
+    notificationStore.showNotification(`Спасибо за отклик, ${formData.name}! Мы свяжемся с вами.`, 'success');
     isSubmitting.value = false;
   }, 1500);
 };
@@ -140,7 +136,7 @@ const handleSubmit = () => {
 </template>
 
 <style scoped>
-/* Стили скопированы из TalentReserveForm для консистентности */
+/* Стили в этом файле полностью идентичны тем, что были ранее, и уже используют rem */
 .file-list {
   margin-bottom: 0.75rem;
   max-height: 7.8125rem;
