@@ -1,79 +1,87 @@
 <script setup>
-import { ref, computed, onMounted, nextTick } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute } from 'vue-router';
-import SectionHeader from '@/components/ui/SectionHeader.vue';
-import LazyImageGrid from '@/components/ui/LazyImageGrid.vue';
-// import GallerySidebar from '@/components/ui/GallerySidebar.vue'; // --- УДАЛЕНО
 import { useGalleryStore } from '@/stores/gallery.js';
 import { useServicesStore } from '@/stores/services.js';
+import SectionHeader from '@/components/ui/SectionHeader.vue';
+import ImageGrid from '@/components/ui/ImageGrid.vue'; // <-- ИМПОРТИРУЕМ НАПРЯМУЮ
 import ImageViewer from '@/components/ui/ImageViewer.vue';
 
+// --- Инициализация хранилищ и роутера ---
 const galleryStore = useGalleryStore();
 const servicesStore = useServicesStore();
 const route = useRoute();
 
-// const activeCategory = ref(null); // --- УДАЛЕНО
-const sectionRefs = ref({});
-
+// --- Подготовка данных ---
 const categoriesWithItems = computed(() => {
-  return servicesStore.services.filter(service => 
+  return servicesStore.services.filter(service =>
     galleryStore.items[service.id] && galleryStore.items[service.id].length > 0
   );
 });
 
-const handleNavigation = (categoryId) => {
-  const element = document.getElementById(categoryId);
-  if (element) {
-    const headerOffset = 100;
-    const elementPosition = element.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.scrollY - headerOffset;
-    window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
-  }
-};
-
-onMounted(() => {
-  // --- УДАЛЕНО: Весь IntersectionObserver для боковой панели ---
-
-  // Оставляем логику для прокрутки по хешу в URL
-  const hash = route.hash.replace('#', '');
-  if (hash) {
-    setTimeout(() => {
-        handleNavigation(hash)
-    }, 500);
-  }
-});
-
+// --- Логика для просмотра изображений ---
 const isViewerOpen = ref(false);
 const viewerImages = ref([]);
 const viewerStartIndex = ref(0);
 
-const openViewer = ({ index, gallery }) => {
-  viewerImages.value = gallery;
-  viewerStartIndex.value = index;
-  isViewerOpen.value = true;
+// Открывает просмотрщик, получая данные о кликнутом изображении
+const openViewer = (payload) => {
+  const clickedImage = payload.image;
+  // Находим все работы, принадлежащие той же категории, что и кликнутое изображение
+  const imagesForViewer = galleryStore.getItemsByCategoryId(clickedImage.category);
+
+  if (imagesForViewer && imagesForViewer.length > 0) {
+    viewerImages.value = imagesForViewer;
+    // Находим индекс кликнутого изображения в его категории
+    viewerStartIndex.value = imagesForViewer.findIndex(img => img.id === clickedImage.id);
+    isViewerOpen.value = true;
+  }
 };
-const closeViewer = () => { isViewerOpen.value = false; };
+
+const closeViewer = () => {
+  isViewerOpen.value = false;
+};
+
+// --- Прокрутка к якорю при загрузке страницы ---
+onMounted(() => {
+  const hash = route.hash.replace('#', '');
+  if (hash) {
+    setTimeout(() => {
+      const element = document.getElementById(hash);
+      if (element) {
+        const headerOffset = 120;
+        const elementPosition = element.getBoundingClientRect().top;
+        const offsetPosition = elementPosition + window.scrollY - headerOffset;
+        window.scrollTo({ top: offsetPosition, behavior: 'smooth' });
+      }
+    }, 500);
+  }
+});
 </script>
 
 <template>
   <div>
     <main class="py-10 md:py-25">
       <div class="max-w-6xl mx-auto px-4">
+        <SectionHeader class="text-center justify-center text-h2-panda mb-6">Наше портфолио</SectionHeader>
+        <p class="text-h5-panda text-dark-gray text-center max-w-3xl mx-auto mb-16">
+          Здесь собраны примеры наших работ, чтобы вы могли оценить качество и разнообразие наших возможностей. Каждая категория — это отдельная история успеха.
+        </p>
+
         <div v-if="categoriesWithItems.length > 0" class="space-y-16">
           <section
             v-for="category in categoriesWithItems"
             :key="`section-${category.id}`"
             :id="category.id"
-            :ref="el => { if (el) sectionRefs[category.id] = el }"
-            class="scroll-mt-24"
+            class="scroll-mt-28"
           >
             <SectionHeader class="mb-10">
               {{ category.title }}
             </SectionHeader>
 
-            <LazyImageGrid
+            <ImageGrid
               :images="galleryStore.getItemsByCategoryId(category.id)"
-              @image-click="openViewer({ index: $event.index, gallery: galleryStore.getItemsByCategoryId(category.id) })"
+              @image-click="openViewer"
             />
           </section>
         </div>
@@ -95,8 +103,7 @@ const closeViewer = () => { isViewerOpen.value = false; };
 </template>
 
 <style scoped>
-/* Удаляем старые стили для попапа, они больше не нужны */
-.scroll-mt-24 { 
-  scroll-margin-top: 6.25rem; /* 100px -> 6.25rem */
+.scroll-mt-28 {
+  scroll-margin-top: 7rem;
 }
 </style>
