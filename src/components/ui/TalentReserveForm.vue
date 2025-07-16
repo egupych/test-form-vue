@@ -30,7 +30,6 @@ watch(() => props.initialPosition, (newVal) => {
   formData.desiredPosition = newVal;
 });
 
-// ИЗМЕНЕНИЕ: Добавлена проверка на наличие файла
 const isFormValid = computed(() => {
     const allFieldsFilled = validationFields.every(field => !!formData[field]);
     const noErrors = validationFields.every(field => !errors[field]);
@@ -54,13 +53,17 @@ const handleFileUpload = (event) => {
       target.value = '';
       return;
     }
-    // Заменяем старый файл новым, а не добавляем
     files.value = newFiles;
   }
   target.value = '';
 };
 
+// ИЗМЕНЕНИЕ ЗДЕСЬ
 const removeFile = (index) => {
+  if (hoveredFileUrl.value) {
+    URL.revokeObjectURL(hoveredFileUrl.value);
+    hoveredFileUrl.value = null;
+  }
   files.value.splice(index, 1);
 };
 
@@ -87,12 +90,10 @@ const submitApplication = () => {
     notificationStore.showNotification('Пожалуйста, заполните имя и телефон.', 'error');
     return;
   }
-  // ИЗМЕНЕНИЕ: Добавлена проверка на наличие файла при отправке
   if (files.value.length === 0) {
     notificationStore.showNotification('Пожалуйста, прикрепите ваше резюме.', 'error');
     return;
   }
-
   notificationStore.showNotification(`Спасибо за отклик, ${formData.name}! Мы свяжемся с вами.`, 'success');
   
   formData.desiredPosition = '';

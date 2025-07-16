@@ -35,7 +35,18 @@ const handleFileUpload = (event) => {
   files.value.push(...newFiles);
   target.value = '';
 };
-const removeFile = (index) => { files.value.splice(index, 1); };
+
+// ИЗМЕНЕНИЕ ЗДЕСЬ
+const removeFile = (index) => {
+  // Принудительно закрываем окно предпросмотра, если оно открыто
+  if (hoveredFileUrl.value) {
+    URL.revokeObjectURL(hoveredFileUrl.value);
+    hoveredFileUrl.value = null;
+  }
+  // Удаляем файл из списка
+  files.value.splice(index, 1);
+};
+
 watch(() => props.promoCode, (newPromo) => { if (newPromo) formData.promo = newPromo; }, { immediate: true });
 watch(user, (currentUser) => { if (currentUser) { if (!formData.name) formData.name = currentUser.displayName || ''; if (!formData.email) formData.email = currentUser.email || ''; } }, { immediate: true });
 
