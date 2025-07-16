@@ -55,11 +55,10 @@ const closePopup = () => {
                 </ol>
               </div>
             </div>
-
-            <div @click="openPopup(vacancy.title)" class="mt-auto cursor-pointer">
-              <BaseButton variant="fill-black">Откликнуться</BaseButton>
-            </div>
             
+            <div @click="openPopup(vacancy.title)" class="mt-auto cursor-pointer">
+              <BaseButton variant="fill-black" :is-interactive="false">Откликнуться</BaseButton>
+            </div>
           </div>
         </div>
       </section>
@@ -84,55 +83,12 @@ const closePopup = () => {
 
 <style scoped>
 /* Стили не менялись */
-.popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(19, 28, 38, 0.8);
-  backdrop-filter: blur(0.3125rem);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 1rem;
-}
-.popup-container {
-  position: relative;
-  background: white;
-  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2);
-  width: 100%;
-  max-width: 71.25rem;
-  transform: scale(1);
-  transition: transform 0.3s ease;
-  overflow-y: auto;
-  max-height: 95vh;
-}
-.popup-container > :deep(.form-wrapper) {
-  padding: 4rem !important;
-}
-@media (min-width: 64rem) {
-  .popup-container > :deep(.form-wrapper) {
-    padding: 6rem !important;
-  }
-}
-.popup-close-button {
-  position: absolute;
-  top: 0.9375rem;
-  right: 1.375rem;
-  background: none;
-  border: none;
-  font-size: 2.5rem;
-  line-height: 1;
-  color: #8F8F8F;
-  cursor: pointer;
-  transition: color 0.2s;
-  z-index: 1001;
-}
-.popup-close-button:hover {
-  color: #131C26;
-}
+.popup-overlay { position: fixed; inset: 0; background-color: rgba(19, 28, 38, 0.8); backdrop-filter: blur(0.3125rem); display: flex; justify-content: center; align-items: center; z-index: 1000; padding: 1rem; }
+.popup-container { position: relative; background: white; box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); width: 100%; max-width: 71.25rem; transform: scale(1); transition: transform 0.3s ease; overflow-y: auto; max-height: 95vh; }
+.popup-container > :deep(.form-wrapper) { padding: 4rem !important; }
+@media (min-width: 64rem) { .popup-container > :deep(.form-wrapper) { padding: 6rem !important; } }
+.popup-close-button { position: absolute; top: 0.9375rem; right: 1.375rem; background: none; border: none; font-size: 2.5rem; line-height: 1; color: #8F8F8F; cursor: pointer; transition: color 0.2s; z-index: 1001; }
+.popup-close-button:hover { color: #131C26; }
 .popup-enter-active, .popup-leave-active { transition: opacity 0.3s ease; }
 .popup-enter-from, .popup-leave-to { opacity: 0; }
 .popup-enter-active .popup-container, .popup-leave-active .popup-container { transition: all 0.3s ease; }
