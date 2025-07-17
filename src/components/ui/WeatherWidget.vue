@@ -253,7 +253,7 @@ onUnmounted(() => {
 
 <style scoped>
   .weather-widget { position: relative; }
-  .widget-body { border: 0.0625rem solid #E3E3E3; padding: 0.25rem 0.8rem; border-radius: 9999px; background-color: white; }
+  .widget-body { border: 0.0625rem solid #E3E3E3; padding-left: 0.6rem; padding-right: 1rem; padding-top: 0.25rem; padding-bottom: 0.2rem ; border-radius: 9999px; background-color: white; }
   .nav-item { font-family: 'Gilroy-SemiBold', sans-serif; color: #131C26; cursor: pointer; display: flex; align-items: center; font-size: 1rem; transition: color 0.2s ease-in-out; }
   .temperature { padding-right: 0.125rem; }
   .weather-icon-wrapper { width: 2rem; height: 2rem; display: flex; align-items: center; justify-content: center; }
