@@ -4,7 +4,7 @@ import { useRoute } from 'vue-router';
 import { useGalleryStore } from '@/stores/gallery.js';
 import { useServicesStore } from '@/stores/services.js';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
-import ImageGrid from '@/components/ui/ImageGrid.vue'; // <-- ИМПОРТИРУЕМ НАПРЯМУЮ
+import ImageGrid from '@/components/ui/ImageGrid.vue';
 import ImageViewer from '@/components/ui/ImageViewer.vue';
 
 // --- Инициализация хранилищ и роутера ---
@@ -13,6 +13,7 @@ const servicesStore = useServicesStore();
 const route = useRoute();
 
 // --- Подготовка данных ---
+// Этот код остается без изменений, он нужен для отображения категорий на странице
 const categoriesWithItems = computed(() => {
   return servicesStore.services.filter(service =>
     galleryStore.items[service.id] && galleryStore.items[service.id].length > 0
@@ -27,22 +28,29 @@ const viewerStartIndex = ref(0);
 // Открывает просмотрщик, получая данные о кликнутом изображении
 const openViewer = (payload) => {
   const clickedImage = payload.image;
-  // Находим все работы, принадлежащие той же категории, что и кликнутое изображение
-  const imagesForViewer = galleryStore.getItemsByCategoryId(clickedImage.category);
 
-  if (imagesForViewer && imagesForViewer.length > 0) {
-    viewerImages.value = imagesForViewer;
-    // Находим индекс кликнутого изображения в его категории
-    viewerStartIndex.value = imagesForViewer.findIndex(img => img.id === clickedImage.id);
+  // [ИСПРАВЛЕНО] Создаем единый массив из всех работ всех категорий
+  const allItems = Object.values(galleryStore.items).flat();
+
+  if (allItems && allItems.length > 0) {
+    // Передаем в просмотрщик этот общий массив
+    viewerImages.value = allItems;
+    
+    // Находим индекс кликнутого изображения в этом общем массиве
+    viewerStartIndex.value = allItems.findIndex(img => img.id === clickedImage.id);
+    
+    // Открываем просмотрщик
     isViewerOpen.value = true;
   }
 };
 
+// Закрывает просмотрщик
 const closeViewer = () => {
   isViewerOpen.value = false;
 };
 
 // --- Прокрутка к якорю при загрузке страницы ---
+// Этот код остается без изменений
 onMounted(() => {
   const hash = route.hash.replace('#', '');
   if (hash) {
