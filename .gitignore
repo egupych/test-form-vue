@@ -21,6 +21,9 @@ data/
 *.sqlite
 *.db
 
+# Загрузки пользователей
+uploads/
+
 # Операционная система
 .DS_Store
 Thumbs.db
@@ -35,10 +38,12 @@ Thumbs.db
 tmp/
 temp/
 
+# Ключи сервисных аккаунтов (уже есть, и это правильно)
 firebase-service-account-key.json
 redpanda-cca8e-f598f9a87c95.json
 
+# Результаты сборки (уже есть, и это правильно)
 dist/
 
-# Firebase
+# Firebase (уже есть, и это правильно)
 .firebase/
