@@ -216,9 +216,7 @@ const previewStyle = computed(() => {
 }
 
 @media (max-width: 26.25rem) {
-  .services-grid-container {
-    grid-template-columns: 1fr;
-  }
+
   .service-cell {
       height: auto;
   }
