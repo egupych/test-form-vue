@@ -66,7 +66,7 @@ html.lenis {
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #929292;
+  background-color: #8F8F8F;
 }
 
 /* --- ИЗМЕНЕНИЯ В СТИЛЯХ КНОПКИ-ПОДСКАЗКИ --- */
@@ -94,7 +94,7 @@ html.lenis {
   width: var(--tooltip-width);
   height: var(--tooltip-height);
   background-color: var(--tooltip-color);
-  font-size: 0.9rem;
+  font-size: 0.8125rem;
   color: #111;
   border-radius: .25em;
   line-height: var(--tooltip-height);

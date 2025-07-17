@@ -218,12 +218,12 @@ const handleSubmit = async () => {
 .upload-button:hover { border-color: #F15F31; color: #F15F31; background-color: #fff; }
 .upload-icon { width: 1.5rem; height: 1.5rem; margin-right: 0.5rem; }
 .upload-text { font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.upload-caption { font-size: 0.75rem; color: #8F8F8F; margin-top: 0.5rem; text-align: center; }
+.upload-caption { font-size: 0.8125rem; color: #8F8F8F; margin-top: 0.5rem; text-align: center; }
 .form-wrapper { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
 @media (min-width: 48rem) { .form-wrapper { grid-template-columns: 1fr 1fr; gap: 3.75rem; } }
 .form-info { display: flex; flex-direction: column; gap: 1.25rem; max-width: 28.125rem; }
 .form-body { width: 100%; }
-.form-group .error-message { color: #F15F31; font-size: 0.75rem; margin-top: 0.25rem; padding-left: 0.25rem; min-height: 1.25rem; }
+.form-group .error-message { color: #F15F31; font-size: 0.8125rem; margin-top: 0.25rem; padding-left: 0.25rem; min-height: 1.25rem; }
 input, textarea { font-family: 'Gilroy-Medium', sans-serif; font-size: 1rem; width: 100%; border: none; border-bottom: 0.0625rem solid #E3E3E3; padding: 0.625rem 0.25rem; color: #131C26; background-color: transparent; transition: background-color 0.2s ease, border-color 0.3s ease; position: relative; z-index: 1; }
 input::placeholder, textarea::placeholder { color: #8F8F8F; }
 input:focus, textarea:focus { outline: none; }

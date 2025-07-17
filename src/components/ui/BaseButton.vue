@@ -38,7 +38,7 @@ const variantClasses = computed(() => {
     case 'stroke':
       return 'bg-white text-panda-orange border-2 border-panda-orange hover:bg-panda-orange hover:text-light-gray';
     case 'stroke-white':
-      return 'bg-white text-panda-black border border-gray-300 hover:bg-panda-orange hover:text-light-gray hover:border-panda-orange';
+      return 'bg-white text-panda-black border border-gray hover:bg-panda-orange hover:text-light-gray hover:border-panda-orange';
     case 'gray':
       return 'bg-gray text-dark-gray hover:bg-panda-orange hover:text-light-gray';
     case 'fill-orange':

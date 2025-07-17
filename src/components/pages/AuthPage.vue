@@ -72,7 +72,7 @@ const handleGoogleSignIn = async () => {
             Введите ваш email, чтобы войти или создать аккаунт
         </p>
 
-        <div v-if="linkSent" class="text-center p-4 bg-green-100 text-green-800 rounded-lg mb-6">
+        <div v-if="linkSent" class="text-center p-4 bg-panda-green text-panda-white rounded-lg mb-6">
             <h3 class="font-bold">Ссылка отправлена!</h3>
             <p>Проверьте вашу почту <span class="font-semibold">{{ email }}</span> и перейдите по ссылке для завершения входа.</p>
         </div>

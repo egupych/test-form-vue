@@ -149,7 +149,7 @@ onUnmounted(() => {
 
 .close-button {
   position: static; /* Убираем absolute, т.к. теперь он во flex-контейнере */
-  color: #a0a0a0;
+  color: #8F8F8F;
   font-size: 3rem;
   font-weight: 300;
   line-height: 1;

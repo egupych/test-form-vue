@@ -65,21 +65,21 @@ const handleSubscription = async () => {
                 v-model="subscription.email"
                 type="email"
                 placeholder="Ваш email-адрес"
-                class="w-full px-4 py-2 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
+                class="w-full px-4 py-2 bg-transparent border border-dark-gray rounded-lg text-light-gray placeholder-dark-gray focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
                 required
             >
             <input
                 v-model="subscription.sphere"
                 type="text"
                 placeholder="Сфера вашего бизнеса"
-                class="w-full px-4 py-2 bg-transparent border border-gray-600 rounded-lg text-light-gray placeholder-gray-500 focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
+                class="w-full px-4 py-2 bg-transparent border border-dark-gray rounded-lg text-light-gray placeholder-dark-gray focus:outline-none focus:border-panda-orange focus:ring-1 focus:ring-panda-orange"
             >
             <div class="flex items-start">
                 <input
                   v-model="subscription.consent"
                   id="consent"
                   type="checkbox"
-                  class="h-4 w-4 mt-1 bg-transparent rounded border-gray-500 text-panda-orange focus:ring-panda-orange focus:ring-offset-panda-black"
+                  class="h-4 w-4 mt-1 bg-transparent rounded border-dark-gray text-panda-orange focus:ring-panda-orange focus:ring-offset-panda-black"
                 >
                 <label for="consent" class="ml-3 text-xs">
                   Согласие на информационную рассылку. Отписаться можно в любое время.
@@ -93,7 +93,7 @@ const handleSubscription = async () => {
                 {{ subscription.isSubmitting ? 'Отправка...' : 'Подписаться' }}
             </button>
               <div v-if="subscription.message"
-                :class="[subscription.messageType === 'success' ? 'text-panda-green' : 'text-red-500']"
+                :class="[subscription.messageType === 'success' ? 'text-panda-green' : 'text-panda-orange']"
                 class="text-sm text-center pt-2">
                 {{ subscription.message }}
             </div>
@@ -122,9 +122,9 @@ const handleSubscription = async () => {
             </div>
           </div>
           <div class="flex flex-col items-end gap-2">
-            <a href="https://wa.me/77007257799" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border border-gray-600 rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">Whatsapp</a>
-            <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border border-gray-600 rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">Instagram</a>
-            <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border border-gray-600 rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">2GIS</a>
+            <a href="https://wa.me/77007257799" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border border-dark-gray rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">Whatsapp</a>
+            <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border border-dark-gray rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">Instagram</a>
+            <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-light-gray text-sm font-semibold border border-dark-gray rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">2GIS</a>
           </div>
           
           <div class="flex flex-col gap-1 text-sm w-full lg:text-right">
