@@ -196,8 +196,9 @@ const cancelHidePreviewTimer = () => {
         <div v-if="isMobileMenuOpen" class="mobile-menu-container" @keydown.esc="isMobileMenuOpen = false">
           <div class="mobile-menu-backdrop" @click="isMobileMenuOpen = false"></div>
           <nav class="mobile-menu-panel">
-            <div class="p-6 border-b border-gray">
+            <div class="p-6 border-b border-gray flex justify-between items-center">
                 <h2 class="text-h5-panda font-bold">Меню</h2>
+                <button @click="isMobileMenuOpen = false" class="mobile-menu-close-button">&times;</button>
             </div>
             <ul class="flex-grow p-6 space-y-4 overflow-y-auto">
               <li v-for="link in navLinks" :key="`mobile-${link.name}`">
@@ -309,6 +310,19 @@ const cancelHidePreviewTimer = () => {
   box-shadow: -0.625rem 0 1.875rem rgba(0,0,0,0.1);
   display: flex;
   flex-direction: column;
+}
+
+.mobile-menu-close-button {
+    background: none;
+    border: none;
+    font-size: 2rem;
+    line-height: 1;
+    color: #8F8F8F;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.mobile-menu-close-button:hover {
+    color: #131C26;
 }
 
 .mobile-menu-enter-active .mobile-menu-backdrop,
