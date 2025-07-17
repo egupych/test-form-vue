@@ -7,50 +7,47 @@ import SectionHeader from '@/components/ui/SectionHeader.vue';
 import ImageGrid from '@/components/ui/ImageGrid.vue';
 import ImageViewer from '@/components/ui/ImageViewer.vue';
 
-// --- Инициализация хранилищ и роутера ---
 const galleryStore = useGalleryStore();
 const servicesStore = useServicesStore();
 const route = useRoute();
 
-// --- Подготовка данных ---
-// Этот код остается без изменений, он нужен для отображения категорий на странице
 const categoriesWithItems = computed(() => {
   return servicesStore.services.filter(service =>
     galleryStore.items[service.id] && galleryStore.items[service.id].length > 0
   );
 });
 
-// --- Логика для просмотра изображений ---
 const isViewerOpen = ref(false);
 const viewerImages = ref([]);
 const viewerStartIndex = ref(0);
 
-// Открывает просмотрщик, получая данные о кликнутом изображении
+// [ИСПРАВЛЕНО] Открывает просмотрщик и обогащает данные
 const openViewer = (payload) => {
   const clickedImage = payload.image;
 
-  // [ИСПРАВЛЕНО] Создаем единый массив из всех работ всех категорий
-  const allItems = Object.values(galleryStore.items).flat();
+  // Создаем "справочник" категорий для быстрого поиска названий
+  const servicesMap = new Map(servicesStore.services.map(s => [s.id, s.title]));
 
-  if (allItems && allItems.length > 0) {
-    // Передаем в просмотрщик этот общий массив
+  // Создаем единый массив, добавляя к каждому изображению полное название категории
+  const allItems = Object.values(galleryStore.items)
+    .flat()
+    .map(image => ({
+      ...image,
+      // Находим название категории в "справочнике" по ID
+      categoryTitle: servicesMap.get(image.category) || image.category,
+    }));
+
+  if (allItems.length > 0) {
     viewerImages.value = allItems;
-    
-    // Находим индекс кликнутого изображения в этом общем массиве
     viewerStartIndex.value = allItems.findIndex(img => img.id === clickedImage.id);
-    
-    // Открываем просмотрщик
     isViewerOpen.value = true;
   }
 };
 
-// Закрывает просмотрщик
 const closeViewer = () => {
   isViewerOpen.value = false;
 };
 
-// --- Прокрутка к якорю при загрузке страницы ---
-// Этот код остается без изменений
 onMounted(() => {
   const hash = route.hash.replace('#', '');
   if (hash) {
