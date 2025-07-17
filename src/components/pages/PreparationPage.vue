@@ -1,5 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+// Этот скрипт управляет логикой страницы "Подготовка к печати".
+// Он обрабатывает переключение вкладок, открытие попапа с формой,
+// а также управляет процессом калибровки экрана и отображением
+// точного реального размера визиток и DIN-форматов до А3 включительно.
+
+import { ref, onMounted, computed } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import CalculationForm from '@/components/ui/CalculationForm.vue';
@@ -15,8 +20,8 @@ const closePopup = () => {
 };
 
 const templatesData = [
-  { 
-    id: 'packages', 
+  {
+    id: 'packages',
     name: 'Пакеты',
     items: [
       { name: '230 × 350 × 80 мм', href: '/templates/package-1.cdr' },
@@ -36,7 +41,6 @@ const templatesData = [
   { id: 'ribbons', name: 'Ленты', items: [] },
 ];
 
-// --- ИЗМЕНЕНИЕ: Данные для форматов вынесены в script ---
 const dinFormats = ref([
   { name: 'A0', dimensions: '841×1189 мм' },
   { name: 'A1', dimensions: '594×841 мм' },
@@ -53,6 +57,93 @@ const cardFormats = ref([
     { name: 'Азиа-визитка', dimensions: '90×50 мм' },
     { name: 'Евро-визитка', dimensions: '85×55 мм' },
 ]);
+
+// --- НАЧАЛО ИЗМЕНЕНИЯ: Общая логика калибровки и отображения ---
+
+// Флаг, который определяет, доступен ли предпросмотр для формата (до А3)
+const maxDimensionMm = 421; // A3 длинная сторона 420мм. Все что меньше - подходит.
+const isFormatCalibratable = (format) => {
+  if (!format || !format.dimensions) return false;
+  const parts = format.dimensions.replace(' мм', '').split('×');
+  if (parts.length < 2) return false;
+  const width = Number(parts[0]);
+  const height = Number(parts[1]);
+  return width < maxDimensionMm && height < maxDimensionMm;
+};
+
+
+const isRealSizePopupVisible = ref(false);
+const realSizePopupData = ref({ name: '', top: 0, left: 0 });
+const currentFormatDimensions = ref({ width: 0, height: 0 });
+let leaveTimeout;
+
+// Данные для калибровки
+const userPxPerMm = ref(null);
+const isCalibrating = ref(false);
+const creditCardWidthMm = 85.6; // Стандарт ширины ISO/IEC 7810 ID-1
+const creditCardHeightMm = 53.98; // Стандарт высоты ISO/IEC 7810 ID-1
+const initialCardWidthPx = (creditCardWidthMm / 25.4) * 96;
+const calibrationWidthPx = ref(initialCardWidthPx);
+
+// Вычисляемый стиль для макета предпросмотра, который использует данные калибровки
+const calibratedFormatStyle = computed(() => {
+  if (!userPxPerMm.value) return {};
+  return {
+    width: `${currentFormatDimensions.value.width * userPxPerMm.value}px`,
+    height: `${currentFormatDimensions.value.height * userPxPerMm.value}px`,
+  };
+});
+
+// При загрузке компонента проверяем, есть ли сохраненные данные калибровки
+onMounted(() => {
+  const savedPxPerMm = localStorage.getItem('screenPxPerMm');
+  if (savedPxPerMm) {
+    userPxPerMm.value = parseFloat(savedPxPerMm);
+  }
+});
+
+// Универсальный обработчик наведения мыши на любой формат
+const handleFormatMouseEnter = (format, event) => {
+  if (!isFormatCalibratable(format)) return;
+  if (!userPxPerMm.value) return; // Если не откалибровано, показываем только системную подсказку
+
+  clearTimeout(leaveTimeout);
+  const [width, height] = format.dimensions.replace(' мм', '').split('×');
+  currentFormatDimensions.value = { width: Number(width), height: Number(height) };
+
+  const rect = event.currentTarget.getBoundingClientRect();
+  realSizePopupData.value = {
+    name: format.name,
+    top: rect.bottom + window.scrollY + 10,
+    left: rect.left + window.scrollX,
+  };
+  isRealSizePopupVisible.value = true;
+};
+
+// Универсальный обработчик увода мыши с формата
+const handleFormatMouseLeave = () => {
+  leaveTimeout = setTimeout(() => {
+    isRealSizePopupVisible.value = false;
+  }, 100);
+};
+
+// Функции управления модальным окном калибровки
+const startCalibration = () => {
+  isRealSizePopupVisible.value = false;
+  isCalibrating.value = true;
+  calibrationWidthPx.value = initialCardWidthPx;
+};
+
+const saveCalibration = () => {
+  const calculatedPxPerMm = calibrationWidthPx.value / creditCardWidthMm;
+  userPxPerMm.value = calculatedPxPerMm;
+  localStorage.setItem('screenPxPerMm', calculatedPxPerMm.toString());
+  isCalibrating.value = false;
+};
+
+const cancelCalibration = () => {
+  isCalibrating.value = false;
+};
 // --- КОНЕЦ ИЗМЕНЕНИЯ ---
 
 </script>
@@ -63,159 +154,142 @@ const cardFormats = ref([
 
       <section>
         <SectionHeader class="gap-container">Шаблоны</SectionHeader>
-        
         <div class="flex flex-wrap gap-2 mb-10">
-          <BaseButton
-            v-for="tab in templatesData"
-            :key="tab.id"
-            @click="activeTab = tab.id"
-            :variant="activeTab === tab.id ? 'fill-black' : 'gray'"
-          >
-            {{ tab.name }}
-          </BaseButton>
-        </div>
-
-        <div v-for="tab in templatesData" :key="tab.id + '-content'">
-          <div v-if="activeTab === tab.id">
-            <div v-if="tab.items.length > 0" class="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-6">
-              
-              <a 
-                v-for="item in tab.items" 
-                :key="item.name" 
-                :href="item.href" 
-                download
-                class="flex flex-col items-center group text-center no-underline"
-              >
-                <div class="bg-light-gray w-full rounded-lg flex items-center justify-center p-4 mb-3 aspect-[3/4]">
-                  <svg class="w-full h-full text-gray" viewBox="0 0 100 133" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 1H80L99 20V113L80 132H20L1 113V20L20 1Z" stroke="currentColor" stroke-width="2"/>
-                    <path d="M1 20H20H99" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
-                    <path d="M20 1V20V132" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
-                    <path d="M80 1V20V132" stroke="currentColor" stroke-width="1" stroke-dasharray="4 4"/>
-                  </svg>
-                </div>
-                
-                <div class="text-body-panda text-panda-black mb-4">{{ item.name }}</div>      
-                
-                <div class="button mt-auto" data-tooltip="Corel .CDR">
-                  <div class="button-wrapper">
-                    <div class="text">Скачать</div>
-                    <span class="icon">
-                      <svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" width="2em" height="2em" preserveAspectRatio="xMidYMid meet" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17"></path></svg>
-                    </span>
-                  </div>
-                </div>
-              </a>
-
-            </div>
-            <div v-else class="text-center py-10 text-dark-gray text-xl">
-              Шаблоны для категории «{{ tab.name }}» скоро появятся.
-            </div>
           </div>
-        </div>
+        <div v-for="tab in templatesData" :key="tab.id + '-content'">
+         </div>
       </section>
 
       <section class="gap-page">
         <SectionHeader class="gap-container">Размеры</SectionHeader>
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-12 items-start">
-          
 
+        <div class="calibration-prompt">
+          <div class="calibration-prompt__info">
+            <h4 class="calibration-prompt__title">Хотите увидеть реальный размер?</h4>
+            <p class="calibration-prompt__text">
+              Для точного отображения форматов на вашем экране пройдите быструю калибровку.
+              Это нужно сделать всего один раз.
+            </p>
+          </div>
+          <BaseButton @click="startCalibration" variant="outline-gray">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"></path></svg>
+            Откалибровать экран
+          </BaseButton>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-12 items-start mt-10">
             <div>
               <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Стандартные DIN-форматы</h3>
               <div class="bg-white p-4 rounded-lg">
-                <div v-for="(format, index) in dinFormats" :key="format.name" class="flex justify-between items-center py-3" :class="{ 'border-b border-light-gray': index < dinFormats.length - 1 }">
-                  <div class="text-body-panda text-panda-black">
-                    <span class="font-bold">{{ format.name }}</span>
-                    <span v-if="format.note" class="text-dark-gray text-sm ml-2">{{ format.note }}</span>
+                <div 
+                  v-for="(format, index) in dinFormats" 
+                  :key="format.name" 
+                  class="format-row"
+                  :class="{ 'format-row--interactive': isFormatCalibratable(format) }"
+                  :title="!userPxPerMm && isFormatCalibratable(format) ? 'Откалибруйте экран, чтобы увидеть реальный размер' : ''"
+                  @mouseenter="handleFormatMouseEnter(format, $event)"
+                  @mouseleave="handleFormatMouseLeave"
+                >
+                  <div class="flex justify-between items-center py-3">
+                    <div class="text-body-panda text-panda-black">
+                      <span class="font-bold">{{ format.name }}</span>
+                    </div>
+                    <div class="font-mono text-dark-gray">{{ format.dimensions }}</div>
                   </div>
-                  <div class="font-mono text-dark-gray">{{ format.dimensions }}</div>
+                   <div class="format-row__border" :class="{ 'format-row__border--full': index >= dinFormats.length - 1 }"></div>
                 </div>
-              </div>
+                </div>
             </div>
             
             <div>
               <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Визитки</h3>
                <div class="bg-white p-4 rounded-lg">
-                <div v-for="(format, index) in cardFormats" :key="format.name" class="flex justify-between items-center py-3" :class="{ 'border-b border-light-gray': index < cardFormats.length - 1 }">
-                  <div class="text-body-panda text-panda-black font-bold">{{ format.name }}</div>
-                  <div class="font-mono text-dark-gray">{{ format.dimensions }}</div>
+                 <div 
+                  v-for="(format, index) in cardFormats" 
+                  :key="format.name" 
+                  class="format-row format-row--interactive"
+                  :title="!userPxPerMm ? 'Откалибруйте экран, чтобы увидеть реальный размер' : ''"
+                  @mouseenter="handleFormatMouseEnter(format, $event)"
+                  @mouseleave="handleFormatMouseLeave"
+                >
+                   <div class="flex justify-between items-center py-3">
+                    <div class="text-body-panda text-panda-black font-bold">{{ format.name }}</div>
+                    <div class="font-mono text-dark-gray">{{ format.dimensions }}</div>
+                  </div>
+                  <div class="format-row__border" :class="{ 'format-row__border--full': index >= cardFormats.length - 1 }"></div>
                 </div>
-              </div>
+                 </div>
             </div>
-
-
         </div>
       </section>
+      
       <section class="gap-page">
         <SectionHeader class="gap-container">Требования к макетам</SectionHeader>
-        <div class="space-y-10">
-          <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Формат файла</h3>
-            <p class="text-dark-gray text-body-panda max-w-4xl">
-              Макет желательно присылать в PDF. Если конвертации в PDF нет, допускается присылать макет в программах, где он был разработан (AI, CDR, PSD). Если макет был разработан в онлайн-редакторах (Figma, Canva), рекомендуется прикладывать ссылку для возможной корректировки.
-            </p>
-          </div>
-          <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Отступы</h3>
-            <p class="text-dark-gray text-body-panda max-w-4xl">
-              Необходимо во всех дизайн-макетах оставлять отступы с фоном по периметру по 3 мм для обреза. Например, если вы делаете визитку размером 90x50 мм, то размер макета с вылетами должен быть 96x56 мм. Отступ содержимого (текста, изображений) от края реза должен составлять от 5 мм.
-            </p>
-          </div>
-          <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Цвета</h3>
-            <p class="text-dark-gray text-body-panda max-w-4xl">
-              Желательно отправлять файлы на печать в цветовой модели CMYK. Если вы работаете в программе, где нет цветовой модели CMYK, то старайтесь использовать цвета из палитры PANTONE. В таком случае, при работе в цветовой модели RGB (Figma, Canva), при использовании цветов PANTONE вы будете видеть макет почти таким же, каким он получится после печати.
-            </p>
-          </div>
-          <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Шрифты</h3>
-            <p class="text-dark-gray text-body-panda max-w-4xl">
-              Шрифты необходимо перевести в кривые.
-              <br>Corel Draw: Ctrl+Q | Illustrator/Figma: Ctrl+Shift+O.
-              <br>Либо отправить шрифты нашему менеджеру, для избежания ситуаций, когда программа может поменять шрифт, если его нет в системе.
-            </p>
-          </div>
-          <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Графические элементы</h3>
-            <div class="space-y-3 text-dark-gray text-body-panda max-w-4xl">
-              <p>Вектор — лучший выбор. Для четкой печати желательно использовать логотипы и иконки в векторном формате (SVG, AI, EPS, CDR). Векторные изображения печатаются без искажений и потери качества.</p>
-              <p>1 мм при 300 DPI = 12 пикселей. Если вы делаете дизайн в программе, которая выдает размер только в пикселях (Figma, Canva), то нужно учитывать, что для 1 мм физического размера (при качественной печати 300 DPI) необходимо 12 пикселей.</p>
-            </div>
-          </div>
-          <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Эффекты и прочее</h3>
-            <div class="space-y-3 text-dark-gray text-body-panda max-w-4xl">
-                <p>Тени, градиенты, прозрачность должны быть растрированы.</p>
-                <p>Линии должны иметь видимую толщину, от 0.2 pt.</p>
-                <p>В макете не должно быть лишних элементов, чтобы они случайно не оказались на печати.</p>
-            </div>
-          </div>
-        </div>
-      </section>
+        </section>
 
       <div class="bg-light-gray rounded-2xl p-8 flex flex-col items-center justify-center text-center h-full mt-10 gap-page">
-        <img src="@/assets/images/pages/PreparationPage/call.svg" alt="Иконка документа" class="w-20 h-20 mb-6">
-        
-        <p class="text-h5-panda font-semibold text-panda-black mb-6 max-w-sm leading-tight">
-          Нет времени на подготовку файлов? <br>Оперативно сделаем за Вас!
-        </p>
-    
-        <BaseButton 
-          @click="openPopup" 
-          variant="fill-black"
-        >
-          Написать менеджеру
-        </BaseButton>
-      </div>
+        </div>
     </div>
   </main>
 
   <Teleport to="body">
     <transition name="popup">
       <div v-if="isPopupVisible" class="popup-overlay" @click.self="closePopup">
-        <div class="popup-container">
-          <button @click="closePopup" class="popup-close-button">&times;</button>
-          <CalculationForm />
+        </div>
+    </transition>
+  </Teleport>
+  
+  <Teleport to="body">
+    <transition name="real-size-popup-transition">
+      <div
+        v-if="isRealSizePopupVisible && userPxPerMm"
+        class="real-size-popup"
+        :style="{ top: `${realSizePopupData.top}px`, left: `${realSizePopupData.left}px` }"
+        @mouseenter="clearTimeout(leaveTimeout)"
+        @mouseleave="handleFormatMouseLeave"
+      >
+        <div class="real-size-popup__header">
+          <div class="font-bold text-panda-black">{{ realSizePopupData.name }}</div>
+        </div>
+        <div 
+          class="real-size-popup__box"
+          :style="calibratedFormatStyle"
+        ></div>
+        <div class="real-size-popup__note">Размер показан 1 к 1</div>
+      </div>
+    </transition>
+  </Teleport>
+  <Teleport to="body">
+    <transition name="popup">
+      <div v-if="isCalibrating" class="popup-overlay">
+        <div class="popup-container !max-w-lg text-center">
+            <div class="p-8 md:p-12 flex flex-col items-center gap-6">
+              <h3 class="text-h4-panda font-semibold text-panda-black">Калибровка экрана</h3>
+              <p class="text-dark-gray">Приложите банковскую или любую другую пластиковую карту (ID) к экрану и двигайте ползунок, пока оранжевый прямоугольник не совпадет с ее размером.</p>
+              
+              <div class="calibration-area">
+                <div 
+                  class="calibration-card"
+                  :style="{ 
+                    width: `${calibrationWidthPx}px`, 
+                    height: `${(calibrationWidthPx / creditCardWidthMm) * creditCardHeightMm}px` 
+                  }"
+                ></div>
+              </div>
+              
+              <input 
+                type="range" 
+                v-model="calibrationWidthPx"
+                min="250"
+                max="500"
+                step="0.1"
+                class="w-full"
+              >
+              
+              <div class="flex items-center gap-4 mt-4">
+                <BaseButton @click="cancelCalibration" variant="gray">Отмена</BaseButton>
+                <BaseButton @click="saveCalibration" variant="fill-black">Сохранить</BaseButton>
+              </div>
+            </div>
         </div>
       </div>
     </transition>
@@ -223,170 +297,151 @@ const cardFormats = ref([
 </template>
 
 <style scoped>
-.no-underline {
-  text-decoration: none;
-}
+/* ... ваши существующие стили ... */
+.no-underline { text-decoration: none; }
 .popup-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
+  position: fixed; top: 0; left: 0; width: 100%; height: 100%;
   background-color: rgba(19, 28, 38, 0.8);
-  backdrop-filter: blur(0.3125rem); /* 5px -> 0.3125rem */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-  padding: 1rem;
+  backdrop-filter: blur(0.3125rem);
+  display: flex; justify-content: center; align-items: center;
+  z-index: 1000; padding: 1rem;
 }
-
 .popup-container {
-  position: relative;
-  background: white;
-  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); /* 10px 30px -> 0.625rem 1.875rem */
-  width: 100%;
-  max-width: 71.25rem; /* 1140px -> 71.25rem */
-  transform: scale(1);
-  transition: transform 0.3s ease;
-  overflow-y: auto;
-  max-height: 95vh;
+  position: relative; background: white;
+  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2);
+  width: 100%; max-width: 71.25rem;
+  transform: scale(1); transition: transform 0.3s ease;
+  overflow-y: auto; max-height: 95vh; border-radius: 1rem;
 }
-
-.popup-container > :deep(.form-wrapper) {
-  padding: 4rem !important;
-}
-
-@media (min-width: 768px) {
-  .popup-container > :deep(.form-wrapper) {
-    padding: 7rem !important;
-  }
-}
-
 .popup-close-button {
-  position: absolute;
-  top: 0.9375rem; /* 15px -> 0.9375rem */
-  right: 1.375rem; /* 22px -> 1.375rem */
-  background: none;
-  border: none;
-  font-size: 2.5rem;
-  line-height: 1;
-  color: #8F8F8F;
-  cursor: pointer;
-  transition: color 0.2s;
-  z-index: 1001;
+  position: absolute; top: 0.9375rem; right: 1.375rem;
+  background: none; border: none; font-size: 2.5rem; line-height: 1;
+  color: #8F8F8F; cursor: pointer; transition: color 0.2s; z-index: 1001;
 }
+.popup-close-button:hover { color: #131C26; }
+.popup-enter-active, .popup-leave-active { transition: opacity 0.3s ease, transform 0.3s ease; }
+.popup-enter-from, .popup-leave-to { opacity: 0; transform: scale(0.95); }
 
-.popup-close-button:hover {
+/* --- НАЧАЛО ИЗМЕНЕНИЯ: Новые стили --- */
+.calibration-prompt {
+  background-color: #F7F7F7;
+  border-radius: 1rem; /* 16px */
+  padding: 1.5rem; /* 24px */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+.calibration-prompt__title {
+  font-size: 1.125rem; /* 18px */
+  font-weight: 600;
   color: #131C26;
+  margin-bottom: 0.25rem;
+}
+.calibration-prompt__text {
+  font-size: 0.875rem; /* 14px */
+  color: #8F8F8F;
+  max-width: 25rem; /* 400px */
 }
 
-.popup-enter-active,
-.popup-leave-active {
-  transition: opacity 0.3s ease;
-}
-.popup-enter-from,
-.popup-leave-to {
-  opacity: 0;
-}
-.popup-enter-active .popup-container,
-.popup-leave-active .popup-container {
-  transition: all 0.3s ease;
-}
-.popup-enter-from .popup-container,
-.popup-leave-to .popup-container {
-  transform: scale(0.95);
-}
-
-.button {
-  --width: 6.25rem; /* 100px -> 6.25rem */
-  --height: 2.1875rem; /* 35px -> 2.1875rem */
-  --tooltip-height: 2.1875rem; /* 35px -> 2.1875rem */
-  --tooltip-width: 5.625rem; /* 90px -> 5.625rem */
-  --gap-between-tooltip-to-button: 0.75rem; /* 12px -> 0.75rem */
-  --button-color: #131C26;
-  --tooltip-color: #E3E3E3;
-  width: var(--width);
-  height: var(--height);
-  background: var(--button-color);
+.format-row {
   position: relative;
-  text-align: center;
-  border-radius: 2rem;
-  font-family: 'Gilroy-SemiBold', sans-serif;
+}
+
+.format-row__border {
+  border-bottom: 1px solid #F7F7F7;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+}
+.format-row__border--full {
+  display: none; /* Скрываем бордер у последнего элемента */
+}
+
+.format-row--interactive {
   cursor: pointer;
+  border-radius: 0.5rem; /* 8px */
+  margin: -0.5rem -1rem;
+  padding: 0.5rem 1rem;
   transition: background-color 0.2s ease;
 }
 
-.group:hover .button {
-  background: #F15F31;
+.format-row--interactive:hover {
+  background-color: #F7F7F7;
 }
 
-.button::before {
+.real-size-popup {
   position: absolute;
-  content: attr(data-tooltip);
-  width: var(--tooltip-width);
-  height: var(--tooltip-height);
-  background-color: var(--tooltip-color);
-  font-size: 0.9rem;
-  color: #111;
-  border-radius: .25em;
-  line-height: var(--tooltip-height);
-  top: calc(100% + var(--gap-between-tooltip-to-button));
-  left: calc(50% - var(--tooltip-width) / 2);
+  z-index: 1050;
+  background-color: #ffffff;
+  border: 1px solid #E3E3E3;
+  border-radius: 0.75rem; /* 12px */
+  padding: 1rem; /* 16px */
+  box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.1);
+  pointer-events: all;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem; /* 12px */
+  min-width: 12.5rem; /* 200px */
+  max-width: 90vw;
+  max-height: 80vh;
+  overflow: auto;
+}
+.real-size-popup__header { /* ... */ }
+.real-size-popup__box {
+  border: 2px dashed #F15F31;
+  background-color: rgba(241, 95, 49, 0.05);
+  transition: width 0.1s, height 0.1s;
+}
+.real-size-popup__note {
+  font-size: 0.75rem; /* 12px */
+  color: #8F8F8F;
+  text-align: center;
+  margin: 0 auto;
+  line-height: 1.4;
+}
+.real-size-popup-transition-enter-active, .real-size-popup-transition-leave-active {
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+.real-size-popup-transition-enter-from, .real-size-popup-transition-leave-to {
   opacity: 0;
-  visibility: hidden;
-  transform: translateY(0.5rem); /* 8px -> 0.5rem */
-  transition: all 0.25s ease;
-  pointer-events: none;
+  transform: translateY(0.625rem); /* 10px */
 }
-
-.text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.button-wrapper,.text,.icon {
-  overflow: hidden;
-  position: absolute;
+.calibration-area {
   width: 100%;
-  height: 100%;
-  left: 0;
-  color: #F7F7F7;
-}
-
-.text {
-  top: 0
-}
-
-.text,.icon {
-  transition: top 0.5s;
-}
-
-.icon {
-  color: #F7F7F7;
-  top: 100%;
+  padding: 2rem 0;
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+.calibration-card {
+  border: 2px solid #F15F31;
+  background-color: rgba(241, 95, 49, 0.1);
+  border-radius: 0.5rem;
+  transition: width 0.05s linear, height 0.05s linear;
 }
 
-.icon svg {
-  width: 1.5rem; /* 24px -> 1.5rem */
-  height: 1.5rem; /* 24px -> 1.5rem */
+input[type="range"] {
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 0.5rem; /* 8px */
+  background: #E3E3E3; border-radius: 0.3125rem; /* 5px */
+  outline: none; opacity: 0.7; transition: opacity .2s;
 }
+input[type="range"]:hover { opacity: 1; }
+input[type="range"]::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 1.5rem; /* 24px */ height: 1.5rem; /* 24px */
+  background: #F15F31; cursor: pointer; border-radius: 50%;
+  border: 4px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 1.5rem; /* 24px */ height: 1.5rem; /* 24px */
+  background: #F15F31; cursor: pointer; border-radius: 50%;
+  border: 4px solid #fff; box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+/* --- КОНЕЦ ИЗМЕНЕНИЯ --- */
 
-.group:hover .button .text {
-  top: -100%;
-}
-
-.group:hover .button .icon {
-  top: 0;
-}
-
-.group:hover .button:before {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
-}
 </style>
