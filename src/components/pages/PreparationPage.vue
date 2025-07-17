@@ -35,6 +35,26 @@ const templatesData = [
   { id: 'calendars', name: 'Календари', items: [] },
   { id: 'ribbons', name: 'Ленты', items: [] },
 ];
+
+// --- ИЗМЕНЕНИЕ: Данные для форматов вынесены в script ---
+const dinFormats = ref([
+  { name: 'A0', dimensions: '841×1189 мм' },
+  { name: 'A1', dimensions: '594×841 мм' },
+  { name: 'A2', dimensions: '420×594 мм' },
+  { name: 'SRA3', dimensions: '320×450 мм' },
+  { name: 'A3', dimensions: '297×420 мм' },
+  { name: 'A4', dimensions: '210×297 мм'},
+  { name: 'A5', dimensions: '148×210 мм' },
+  { name: 'A6', dimensions: '105×148 мм' },
+  { name: 'A7', dimensions: '105×74 мм' },
+]);
+
+const cardFormats = ref([
+    { name: 'Азиа-визитка', dimensions: '90×50 мм' },
+    { name: 'Евро-визитка', dimensions: '85×55 мм' },
+]);
+// --- КОНЕЦ ИЗМЕНЕНИЯ ---
+
 </script>
 
 <template>
@@ -57,7 +77,7 @@ const templatesData = [
 
         <div v-for="tab in templatesData" :key="tab.id + '-content'">
           <div v-if="activeTab === tab.id">
-            <div v-if="tab.items.length > 0" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-6">
+            <div v-if="tab.items.length > 0" class="grid grid-cols-3 md:grid-cols-3 lg:grid-cols-5 gap-6">
               
               <a 
                 v-for="item in tab.items" 
@@ -97,28 +117,35 @@ const templatesData = [
 
       <section class="gap-page">
         <SectionHeader class="gap-container">Размеры</SectionHeader>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
-          <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Стандартные DIN-форматы</h3>
-            <ul class="space-y-2 text-dark-gray text-body-panda">
-              <li>A0 – 841×1189 мм</li>
-              <li>A1 – 594×841 мм</li>
-              <li>A2 – 420×594 мм</li>
-              <li>A3 – 297×420 мм</li>
-              <li>A4 – 210×297 мм (размер офисной бумаги)</li>
-              <li>A5 – 148×210 мм</li>
-              <li>A6 – 105×148 мм</li>
-              <li>A7 – 105×74 мм</li>
-              <li class="pt-4">Визитка – 90x50 мм</li>
-              <li>Евро-визитка – 85x55 мм</li>
-            </ul>
-          </div>
-          <div class="bg-light-gray rounded-2xl">
-            <img src="@/assets/images/pages/PreparationPage/formats.png" alt="Схема форматов бумаги" class="object-cover">
-          </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 gap-12 items-start">
+          
+
+            <div>
+              <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Стандартные DIN-форматы</h3>
+              <div class="bg-white p-4 rounded-lg">
+                <div v-for="(format, index) in dinFormats" :key="format.name" class="flex justify-between items-center py-3" :class="{ 'border-b border-light-gray': index < dinFormats.length - 1 }">
+                  <div class="text-body-panda text-panda-black">
+                    <span class="font-bold">{{ format.name }}</span>
+                    <span v-if="format.note" class="text-dark-gray text-sm ml-2">{{ format.note }}</span>
+                  </div>
+                  <div class="font-mono text-dark-gray">{{ format.dimensions }}</div>
+                </div>
+              </div>
+            </div>
+            
+            <div>
+              <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Визитки</h3>
+               <div class="bg-white p-4 rounded-lg">
+                <div v-for="(format, index) in cardFormats" :key="format.name" class="flex justify-between items-center py-3" :class="{ 'border-b border-light-gray': index < cardFormats.length - 1 }">
+                  <div class="text-body-panda text-panda-black font-bold">{{ format.name }}</div>
+                  <div class="font-mono text-dark-gray">{{ format.dimensions }}</div>
+                </div>
+              </div>
+            </div>
+
+
         </div>
       </section>
-
       <section class="gap-page">
         <SectionHeader class="gap-container">Требования к макетам</SectionHeader>
         <div class="space-y-10">
