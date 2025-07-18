@@ -28,10 +28,10 @@ export default {
       },
       fontSize: {
         'h1-panda': ['4rem', { lineHeight: '110%' }],
-        'h2-panda': ['3rem', { lineHeight: '105%' }],
+        'h2-panda': ['2.7rem', { lineHeight: '105%' }],
         'h3-panda': ['2rem', { lineHeight: '120%' }],
         'h4-panda': ['1.5rem', { lineHeight: '120%' }],
-        'h5-panda': ['1.25rem', { lineHeight: '125%' }],
+        'h5-panda': ['1.2rem', { lineHeight: '125%' }],
         'body-panda': ['1rem', { lineHeight: '140%' }],
         'small-panda': ['0.8125rem', { lineHeight: '120%' }],
         'button-panda': ['1rem', { lineHeight: '120%' }],
