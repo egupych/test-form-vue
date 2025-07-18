@@ -1,6 +1,6 @@
 <template>
   <main class="py-10 md:py-25">
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-6xl mx-auto">
       <article class="news-layout">
         <h1 class="news-title text-h2-panda font-bold text-panda-black">{{ news.title }}</h1>
         <p class="news-description text-body-panda text-dark-gray leading-relaxed">{{ news.description }}</p>

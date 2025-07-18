@@ -67,7 +67,7 @@ onMounted(() => {
 <template>
   <div>
     <main class="py-10 md:py-25">
-      <div class="max-w-6xl mx-auto px-4">
+      <div class="max-w-6xl mx-auto">
         <SectionHeader class="text-center justify-center text-h2-panda mb-6">Наше портфолио</SectionHeader>
         <p class="text-h5-panda text-dark-gray text-center max-w-3xl mx-auto mb-16">
           Здесь собраны примеры наших работ, чтобы вы могли оценить качество и разнообразие наших возможностей. Каждая категория — это отдельная история успеха.

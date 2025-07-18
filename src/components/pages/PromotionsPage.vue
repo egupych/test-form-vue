@@ -45,7 +45,7 @@ const closePopup = () => {
 
 <template>
   <main class="py-10 md:py-25">
-    <div class="max-w-6xl mx-auto px-4">
+    <div class="max-w-6xl mx-auto">
         <SectionHeader class="gap-container">Акции</SectionHeader>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
