@@ -3,7 +3,7 @@
 // Вся логика предпросмотра реальных размеров теперь вынесена в единый
 // инструмент, который открывается в полноэкранном режиме, стилизованном под просмотрщик изображений.
 
-import { ref, onMounted, computed } from 'vue';
+import { ref, onMounted, computed, nextTick, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import CalculationForm from '@/components/ui/CalculationForm.vue';
@@ -45,7 +45,6 @@ const dinFormats = ref([
   { name: 'A1', dimensions: '594×841 мм' },
   { name: 'A2', dimensions: '420×594 мм' },
   { name: 'SRA3', dimensions: '320×450 мм' },
-  { name: 'A3', dimensions: '297×420 мм' },
   { name: 'A4', dimensions: '210×297 мм'},
   { name: 'A5', dimensions: '148×210 мм' },
   { name: 'A6', dimensions: '105×148 мм' },
@@ -63,6 +62,33 @@ const isSizeToolVisible = ref(false);
 const toolStep = ref(1); // 1: Калибровка, 2: Предпросмотр, 3: Приветствие для уже откалиброванных
 const userPxPerMm = ref(null);
 const selectedFormatId = ref(null);
+
+// --- Логика для кастомного выпадающего списка ---
+const isFormatDropdownOpen = ref(false);
+const customSelectRef = ref(null);
+
+const selectFormat = (formatName) => {
+  selectedFormatId.value = formatName;
+  isFormatDropdownOpen.value = false;
+};
+
+// Закрытие списка по клику вне его области
+watch(isFormatDropdownOpen, (isOpen) => {
+  if (isOpen) {
+    nextTick(() => {
+      document.addEventListener('click', handleClickOutside);
+    });
+  } else {
+    document.removeEventListener('click', handleClickOutside);
+  }
+});
+
+const handleClickOutside = (event) => {
+  if (customSelectRef.value && !customSelectRef.value.contains(event.target)) {
+    isFormatDropdownOpen.value = false;
+  }
+};
+
 
 const creditCardWidthMm = 85.6;
 const creditCardHeightMm = 53.98;
@@ -102,9 +128,7 @@ const previewBoxStyle = computed(() => {
   const idealWidth = landscapeWidth * userPxPerMm.value;
   const idealHeight = landscapeHeight * userPxPerMm.value;
   
-  // Определяем максимально доступное место под превью, оставляя отступы по краям
   const maxPreviewWidth = window.innerWidth * 0.9; 
-  // Учитываем высоту нижней панели управления (примерно 150px)
   const maxPreviewHeight = (window.innerHeight - 150) * 0.9;
 
   const widthScale = maxPreviewWidth / idealWidth;
@@ -219,13 +243,13 @@ const saveCalibration = () => {
 
       <section class="gap-page">
         <SectionHeader class="gap-container">Размеры</SectionHeader>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
             
             <div>
                 <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Реальный размер</h3>
                 <div class="bg-white p-4 rounded-lg flex flex-col gap-4 h-full">
                     <p class="text-body-panda text-dark-gray">
-                      Запустите наш инструмент проверки размера. Для точной работы может потребоваться быстрая калибровка экрана по банковской карте.
+                      Для точной работы потребуется быстрая калибровка экрана по банковской карте, карты имеют единый размер по стандарту ISO 7810.
                     </p>
                     <BaseButton @click="openSizeTool" variant="outline-gray" class="w-full mt-auto">
                         <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"></path></svg>
@@ -371,13 +395,31 @@ const saveCalibration = () => {
             <div v-else class="preview-box" :style="previewBoxStyle"></div>
           
             <div class="fullscreen-controls">
-                <div class="flex flex-col sm:flex-row gap-4 items-center w-full max-w-md">
-                    <label for="format-select" class="font-semibold whitespace-nowrap text-white">Выберите формат</label>
-                    <select id="format-select" v-model="selectedFormatId" class="size-tool-select">
-                        <option v-for="format in availableFormats" :key="format.name" :value="format.name">
-                        {{ format.name }} ({{ format.dimensions }})
-                        </option>
-                    </select>
+                <div class="flex flex-col sm:flex-row gap-4 items-center w-full">
+                    <label class="font-semibold whitespace-nowrap text-white">Выберите формат</label>
+                    
+                    <div ref="customSelectRef" class="relative w-full">
+                        <button @click="isFormatDropdownOpen = !isFormatDropdownOpen" class="custom-select-button">
+                            <span v-if="selectedFormatData">
+                                {{ selectedFormatData.name }} ({{ selectedFormatData.dimensions }})
+                            </span>
+                            <svg class="custom-select-arrow" :class="{ 'is-open': isFormatDropdownOpen }" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20"><path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M6 8l4 4 4-4"/></svg>
+                        </button>
+                        <transition name="fade-fast">
+                            <ul v-if="isFormatDropdownOpen" class="custom-select-options">
+                                <li 
+                                    v-for="format in availableFormats" 
+                                    :key="format.name" 
+                                    @click="selectFormat(format.name)" 
+                                    class="custom-select-option"
+                                >
+                                    <span>{{ format.name }}</span>
+                                    <span>{{ format.dimensions }}</span>
+                                </li>
+                            </ul>
+                        </transition>
+                    </div>
+
                 </div>
             </div>
         </div>
@@ -507,7 +549,7 @@ const saveCalibration = () => {
 .group:hover .button .icon { top: 0; }
 .group:hover .button:before { opacity: 1; visibility: visible; transform: translateY(0); }
 
-/* --- Стили для полноэкранного инструмента, адаптированные под ImageViewer --- */
+/* --- Стили для полноэкранного инструмента --- */
 .popup-fullscreen-enter-active,
 .popup-fullscreen-leave-active {
   transition: opacity 0.3s ease;
@@ -550,17 +592,12 @@ const saveCalibration = () => {
 .fullscreen-title {
   font-family: 'Gilroy-SemiBold', sans-serif;
   font-size: 1.5rem;
-
-
 }
 .fullscreen-text {
   font-size: 1rem;
   max-width: 32rem;
   color: var(--panda-gray, #8F8F8F);
-
-
 }
-
 .preview-box {
   border: 2px dashed rgba(241, 95, 49, 0.8);
   background-color: rgba(241, 95, 49, 0.05);
@@ -571,16 +608,16 @@ const saveCalibration = () => {
   left: 50%;
   transform: translate(-50%, -50%);
 }
-
 .fullscreen-controls {
     position: fixed;
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    max-width: 42rem;
-    padding: 1rem;
-    padding-left: 1.5rem;
-    margin-bottom: 1rem;
+    max-width: 30rem;
+    width: 100%; /* Добавлено для предсказуемости */
+    padding: 1rem 1.5rem;
+    padding-right: 1rem;
+    margin-bottom: 1.1rem;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -588,32 +625,79 @@ const saveCalibration = () => {
     background-color: rgba(19, 28, 38, 0.5);
     border-radius: 9999px;
     backdrop-filter: blur(0.25rem);
+    box-sizing: border-box; /* Важно для корректного расчета ширины */
 }
 
-.size-tool-select {
+/* --- [ОБНОВЛЕННЫЕ СТИЛИ] для кастомного выпадающего списка --- */
+.custom-select-button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   width: 100%;
-  padding: 0.5rem 1rem;
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 9999px;
-  background-color: rgba(19, 28, 38, 0.8);
+  padding: 0.625rem 0.9rem;
+  border: 1px solid #F15F31; 
+  border-radius: 99rem;
+  background-color: #131C26;
   color: white;
-  font-family: 'Gilroy-SemiBold', sans-serif;
-  font-size: 0.875rem;
+  font-family: 'Gilroy-Medium', sans-serif;
+  font-size: 1rem;
   cursor: pointer;
   transition: border-color 0.2s;
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
-  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238F8F8F' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
-  background-position: right 0.75rem center;
-  background-repeat: no-repeat;
-  background-size: 1.25em 1.25em;
-  padding-right: 2.5rem;
+  text-align: left;
 }
-.size-tool-select:focus {
+.custom-select-button:focus, .custom-select-button:focus-visible {
   outline: none;
   border-color: #F15F31;
 }
+.custom-select-arrow {
+  width: 1.25em;
+  height: 1.25em;
+  color: #8F8F8F;
+  transition: transform 0.3s ease-out;
+  flex-shrink: 0; /* Предотвращаем сжатие стрелки */
+}
+.custom-select-arrow.is-open {
+  transform: rotate(180deg);
+}
+.custom-select-options {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background-color: #131C26;
+  border-radius: 0.375rem; 
+  list-style: none;
+  padding: 0.25rem;
+  margin: 0;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+.custom-select-option {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.625rem 0.75rem;
+  /* --- ИЗМЕНЕНИЕ: Возвращаем стандартный размер шрифта --- */
+  font-size: 1rem;
+  color: white;
+  cursor: pointer;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s, color 0.2s;
+  font-family: 'Gilroy-Medium', sans-serif;
+}
+.custom-select-option:hover {
+  background-color: #F15F31;
+  color: white;
+}
+.fade-fast-enter-active, .fade-fast-leave-active {
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  transform-origin: bottom;
+}
+.fade-fast-enter-from, .fade-fast-leave-to {
+  opacity: 0;
+  transform: scaleY(0.95);
+}
+/* --- КОНЕЦ СТИЛЕЙ --- */
 
 .calibration-area {
   width: 100%;
