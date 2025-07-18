@@ -27,7 +27,7 @@ const navLinks = [
   },
   { name: 'Акции', path: '/promotions', preview: null },
   { name: 'Подготовка', path: '/preparation', preview: null },
-  { name: 'Проекты', id: 'project-dev', path: '/gallery', preview: previewGallery, inDevelopment: true },
+  { name: 'Дизайн-проекты', id: 'project-dev', path: '/gallery', preview: previewGallery, inDevelopment: true },
   { name: 'Магазин', id: 'shop-dev', path: '/shop', preview: previewShop, inDevelopment: true },
 ];
 
