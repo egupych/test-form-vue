@@ -37,7 +37,7 @@ const { services } = storeToRefs(servicesStore);
   <HeroSection />
 
   <main>
-    <div class="max-w-6xl mx-auto py-10 md:py-25">
+    <div class="max-w-6xl mx-auto py-10 md:py-25 px-4">
 
       <section>
         <SectionHeader class="gap-container text-center">

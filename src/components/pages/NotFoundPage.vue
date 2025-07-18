@@ -3,7 +3,7 @@ import BaseButton from '@/components/ui/BaseButton.vue';
 </script>
 
 <template>
-  <main class="py-10 md:py-25"> <div class="max-w-6xl mx-auto">
+  <main class="py-10 md:py-25"> <div class="max-w-6xl mx-auto px-4">
       <div class="flex flex-col items-center justify-center text-center" style="min-height: calc(100vh - 25rem);">
         <h1 class="font-bold text-panda-orange mb-4" style="font-size: 10rem; line-height: 1;">404</h1>
         <h2 class="text-h3-panda font-semibold text-panda-black mb-2">Страница не найдена</h2>

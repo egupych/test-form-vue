@@ -13,6 +13,9 @@ export default {
       bold: ['Gilroy-Bold', 'sans-serif'],
     },
     extend: {
+      screens: {
+        'lg-custom': '1300px',
+      },
       spacing: {
         '15': '3.75rem', // 60px
         '25': '6.25rem', // 100px

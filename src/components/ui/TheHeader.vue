@@ -53,9 +53,18 @@ const handleMobileLinkClick = () => {
   isMobileMenuOpen.value = false;
 };
 
+// --- [ИЗМЕНЕНИЕ] Логика для предотвращения "прыжка" контента ---
 watch(isMobileMenuOpen, (isOpen) => {
-  document.body.style.overflow = isOpen ? 'hidden' : '';
+  if (isOpen) {
+    const scrollbarWidth = window.innerWidth - document.documentElement.clientWidth;
+    document.body.style.paddingRight = `${scrollbarWidth}px`;
+    document.body.style.overflow = 'hidden';
+  } else {
+    document.body.style.paddingRight = '';
+    document.body.style.overflow = '';
+  }
 });
+// --- [КОНЕЦ ИЗМЕНЕНИЯ] ---
 
 const activePreviewLink = ref(null);
 const previewStyle = ref({});
@@ -92,13 +101,13 @@ const cancelHidePreviewTimer = () => {
 
 <template>
   <div>
-    <header data-main-header class="site-header">
+    <header class="site-header">
       <div class="max-w-6xl mx-auto flex items-center justify-between w-full">
         <router-link to="/" class="cursor-pointer flex-none z-50">
           <img src="@/assets/images/layout/red-panda-logo-black.svg" alt="Логотип Red Panda" class="h-12 pr-2">
         </router-link>
-
-        <nav class="mx-auto hidden md:block">
+        
+        <nav class="mx-auto hidden lg-custom:block">
           <ul class="flex items-center space-x-8 text-header-panda">
               <li
                 v-for="link in navLinks"
@@ -150,7 +159,7 @@ const cancelHidePreviewTimer = () => {
         </nav>
 
         <div class="flex items-center flex-none gap-4">
-          <div class="hidden md:flex items-center gap-4">
+          <div class="hidden lg-custom:flex items-center gap-4">
             <WeatherWidget />
             <BaseButton v-if="!user" to="/auth" variant="stroke">
               Войти
@@ -181,8 +190,8 @@ const cancelHidePreviewTimer = () => {
               </transition>
             </div>
           </div>
-
-          <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="flex md:hidden z-50 burger-button" :class="{ 'is-active': isMobileMenuOpen }">
+          
+          <button @click="isMobileMenuOpen = !isMobileMenuOpen" class="flex lg-custom:hidden z-50 burger-button" :class="{ 'is-active': isMobileMenuOpen }">
             <span class="line"></span>
             <span class="line"></span>
             <span class="line"></span>
@@ -293,11 +302,14 @@ const cancelHidePreviewTimer = () => {
   z-index: 1040;
 }
 
+/* --- [ИЗМЕНЕНИЕ] Стили для фона меню --- */
 .mobile-menu-backdrop {
   position: fixed;
   inset: 0;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgba(19, 28, 38, 0.8);
+  backdrop-filter: blur(0.3125rem);
 }
+/* --- [КОНЕЦ ИЗМЕНЕНИЯ] --- */
 
 .mobile-menu-panel {
   position: fixed;

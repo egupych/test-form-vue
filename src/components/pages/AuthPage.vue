@@ -64,7 +64,7 @@ const handleGoogleSignIn = async () => {
 
 <template>
   <main class="py-10 md:py-25">
-    <div class="max-w-md mx-auto">
+    <div class="max-w-md mx-auto px-4">
       <div class="bg-white p-8 rounded-3xl shadow-lg">
         
         <h2 class="text-h3-panda font-bold text-center mb-2">Вход или регистрация</h2>
