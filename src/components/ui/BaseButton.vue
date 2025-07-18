@@ -27,7 +27,7 @@ const componentType = computed(() => {
   return 'button';
 });
 
-const baseClasses = 'px-5 py-2.5 rounded-full inline-flex items-center justify-center gap-2 text-center transition-colors duration-200 ease-in-out cursor-pointer';
+const baseClasses = 'px-5 py-2.5 rounded-full inline-flex items-center justify-center gap-0 text-center transition-colors duration-200 ease-in-out cursor-pointer';
 
 const variantClasses = computed(() => {
   // ИЗМЕНЕНИЕ: Если кнопка отключена, применяем стили для неактивного состояния

@@ -1,7 +1,7 @@
 <script setup>
 // Этот скрипт управляет логикой страницы "Подготовка к печати".
 // Вся логика предпросмотра реальных размеров теперь вынесена в единый
-// инструмент, который открывается в модальном окне.
+// инструмент, который открывается в полноэкранном режиме, стилизованном под просмотрщик изображений.
 
 import { ref, onMounted, computed } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
@@ -60,7 +60,7 @@ const cardFormats = ref([
 // --- Логика инструмента "Проверка размера" ---
 
 const isSizeToolVisible = ref(false);
-const toolStep = ref(1); // 1: калибровка, 2: предпросмотр
+const toolStep = ref(1); // 1: Калибровка, 2: Предпросмотр, 3: Приветствие для уже откалиброванных
 const userPxPerMm = ref(null);
 const selectedFormatId = ref(null);
 
@@ -91,10 +91,30 @@ const selectedFormatData = computed(() => {
 
 const previewBoxStyle = computed(() => {
   if (!selectedFormatData.value || !userPxPerMm.value) return {};
-  const [width, height] = selectedFormatData.value.dimensions.replace(' мм', '').split('×');
+
+  const [w, h] = selectedFormatData.value.dimensions.replace(' мм', '').split('×');
+  const width = Number(w);
+  const height = Number(h);
+
+  const landscapeWidth = Math.max(width, height);
+  const landscapeHeight = Math.min(width, height);
+
+  const idealWidth = landscapeWidth * userPxPerMm.value;
+  const idealHeight = landscapeHeight * userPxPerMm.value;
+  
+  // Определяем максимально доступное место под превью, оставляя отступы по краям
+  const maxPreviewWidth = window.innerWidth * 0.9; 
+  // Учитываем высоту нижней панели управления (примерно 150px)
+  const maxPreviewHeight = (window.innerHeight - 150) * 0.9;
+
+  const widthScale = maxPreviewWidth / idealWidth;
+  const heightScale = maxPreviewHeight / idealHeight;
+  
+  const scale = Math.min(1.0, widthScale, heightScale);
+
   return {
-    width: `${Number(width) * userPxPerMm.value}px`,
-    height: `${Number(height) * userPxPerMm.value}px`,
+    width: `${idealWidth * scale}px`,
+    height: `${idealHeight * scale}px`,
   };
 });
 
@@ -107,15 +127,24 @@ onMounted(() => {
 
 const openSizeTool = () => {
   if (userPxPerMm.value) {
-    toolStep.value = 2;
-    if (availableFormats.value.length > 0) {
-      selectedFormatId.value = availableFormats.value.find(f => f.name === 'A4')?.name || availableFormats.value[0].name;
-    }
+    toolStep.value = 3;
   } else {
     toolStep.value = 1;
     calibrationWidthPx.value = initialCardWidthPx;
   }
   isSizeToolVisible.value = true;
+};
+
+const startPreview = () => {
+  toolStep.value = 2;
+  if (!selectedFormatId.value && availableFormats.value.length > 0) {
+    selectedFormatId.value = availableFormats.value.find(f => f.name === 'A4')?.name || availableFormats.value[0].name;
+  }
+};
+
+const startRecalibration = () => {
+  toolStep.value = 1;
+  calibrationWidthPx.value = initialCardWidthPx;
 };
 
 const closeSizeTool = () => {
@@ -126,10 +155,7 @@ const saveCalibration = () => {
   const calculatedPxPerMm = calibrationWidthPx.value / creditCardWidthMm;
   userPxPerMm.value = calculatedPxPerMm;
   localStorage.setItem('screenPxPerMm', calculatedPxPerMm.toString());
-  toolStep.value = 2;
-  if (availableFormats.value.length > 0) {
-      selectedFormatId.value = availableFormats.value.find(f => f.name === 'A4')?.name || availableFormats.value[0].name;
-  }
+  startPreview();
 };
 </script>
 
@@ -193,21 +219,21 @@ const saveCalibration = () => {
 
       <section class="gap-page">
         <SectionHeader class="gap-container">Размеры</SectionHeader>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
+            
+            <div>
+                <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Реальный размер</h3>
+                <div class="bg-white p-4 rounded-lg flex flex-col gap-4 h-full">
+                    <p class="text-body-panda text-dark-gray">
+                      Запустите наш инструмент проверки размера. Для точной работы может потребоваться быстрая калибровка экрана по банковской карте.
+                    </p>
+                    <BaseButton @click="openSizeTool" variant="outline-gray" class="w-full mt-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"></path></svg>
+                        Проверить реальный размер
+                    </BaseButton>
+                </div>
+            </div>
 
-        <div class="calibration-prompt">
-          <div class="calibration-prompt__info">
-            <h4 class="calibration-prompt__title">Хотите увидеть реальный размер?</h4>
-            <p class="calibration-prompt__text">
-              Запустите наш инструмент проверки размера. Для точной работы может потребоваться быстрая калибровка экрана по банковской карте.
-            </p>
-          </div>
-          <BaseButton @click="openSizeTool" variant="outline-gray">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="mr-2"><path d="M21.25 21.25L16.05 16.05M16.05 16.05C17.222 14.8779 18 13.2619 18 11.5C18 7.91015 15.0899 5 11.5 5C7.91015 5 5 7.91015 5 11.5C5 15.0899 7.91015 18 11.5 18C13.2619 18 14.8779 17.222 16.05 16.05Z"></path><path d="M11.5 8V15M8 11.5H15"></path></svg>
-            Проверить реальный размер
-          </BaseButton>
-        </div>
-
-        <div class="grid grid-cols-2 md:grid-cols-3 gap-12 items-start mt-10">
             <div>
               <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Стандартные DIN-форматы</h3>
               <div class="bg-white p-4 rounded-lg">
@@ -308,49 +334,51 @@ const saveCalibration = () => {
   </Teleport>
   
   <Teleport to="body">
-    <transition name="popup">
+    <transition name="popup-fullscreen">
       <div v-if="isSizeToolVisible" class="popup-overlay" @click.self="closeSizeTool">
-        <div class="popup-container !max-w-2xl">
-            <button @click="closeSizeTool" class="popup-close-button">&times;</button>
-            
-            <div v-if="toolStep === 1" class="p-8 md:p-12 flex flex-col items-center gap-6 text-center">
-              <h3 class="text-h4-panda font-semibold text-panda-black">Калибровка экрана</h3>
-              <p class="text-dark-gray">Приложите банковскую карту к экрану и двигайте ползунок, пока оранжевый прямоугольник не совпадет с ее размером.</p>
-              <div class="calibration-area">
-                <div 
-                  class="calibration-card"
-                  :style="{ 
-                    width: `${calibrationWidthPx}px`, 
-                    height: `${(calibrationWidthPx / creditCardWidthMm) * creditCardHeightMm}px` 
-                  }"
-                ></div>
-              </div>
-              <input type="range" v-model="calibrationWidthPx" min="250" max="500" step="0.1" class="w-full">
-              <div class="flex items-center gap-4 mt-4">
-                <BaseButton @click="closeSizeTool" variant="gray">Отмена</BaseButton>
-                <BaseButton @click="saveCalibration" variant="fill-black">Сохранить и продолжить</BaseButton>
-              </div>
+        <button @click="closeSizeTool" class="fullscreen-close-button">&times;</button>
+        
+        <div v-if="toolStep === 3" class="fullscreen-step-content">
+            <h3 class="fullscreen-title">Проверка реального размера</h3>
+            <p class="fullscreen-text">Откалибруйте экран перед началом просмотра</p>
+            <div class="flex items-center gap-2 mt-2">
+                <BaseButton @click="startRecalibration" variant="gray">Откалибровать</BaseButton>
+                <BaseButton @click="startPreview" variant="fill-white">Начать просмотр</BaseButton>
             </div>
+        </div>
 
-            <div v-if="toolStep === 2" class="p-8 md:p-12 flex flex-col gap-6">
-              <h3 class="text-h4-panda font-semibold text-panda-black text-center">Проверка реального размера</h3>
-              <div class="flex flex-col sm:flex-row gap-4 items-center">
-                <label for="format-select" class="font-semibold whitespace-nowrap">Выберите формат:</label>
-                <select id="format-select" v-model="selectedFormatId" class="size-tool-select">
-                  <option v-for="format in availableFormats" :key="format.name" :value="format.name">
-                    {{ format.name }} ({{ format.dimensions }})
-                  </option>
-                </select>
-              </div>
+        <div v-if="toolStep === 1" class="fullscreen-step-content">
+          <h3 class="fullscreen-title">Калибровка экрана</h3>
+          <p class="fullscreen-text">Приложите банковскую карту к экрану и двигайте ползунок, пока оранжевый прямоугольник не совпадет с ее размером.</p>
+          <div class="calibration-area">
+            <div 
+              class="calibration-card"
+              :style="{ 
+                width: `${calibrationWidthPx}px`, 
+                height: `${(calibrationWidthPx / creditCardWidthMm) * creditCardHeightMm}px` 
+              }"
+            ></div>
+          </div>
+          <input type="range" v-model="calibrationWidthPx" min="250" max="500" step="0.1" class="w-full max-w-sm">
+          <div class="flex items-center gap-2 mt-4">
+            <BaseButton @click="closeSizeTool" variant="gray">Отмена</BaseButton>
+            <BaseButton @click="saveCalibration" variant="fill-white">Сохранить и продолжить</BaseButton>
+          </div>
+        </div>
 
-              <div class="size-tool-preview-area">
-                <p v-if="!selectedFormatData" class="m-auto text-dark-gray">Выберите формат для предпросмотра</p>
-                <div v-else class="preview-box" :style="previewBoxStyle"></div>
-              </div>
-              
-              <div class="flex items-center justify-center gap-4 mt-4">
-                  <BaseButton @click="toolStep = 1" variant="gray" size="sm">Откалибровать заново</BaseButton>
-              </div>
+        <div v-if="toolStep === 2" class="w-full h-full flex flex-col">
+            <div v-if="!selectedFormatData" class="m-auto text-white text-xl">Выберите формат для предпросмотра</div>
+            <div v-else class="preview-box" :style="previewBoxStyle"></div>
+          
+            <div class="fullscreen-controls">
+                <div class="flex flex-col sm:flex-row gap-4 items-center w-full max-w-md">
+                    <label for="format-select" class="font-semibold whitespace-nowrap text-white">Выберите формат</label>
+                    <select id="format-select" v-model="selectedFormatId" class="size-tool-select">
+                        <option v-for="format in availableFormats" :key="format.name" :value="format.name">
+                        {{ format.name }} ({{ format.dimensions }})
+                        </option>
+                    </select>
+                </div>
             </div>
         </div>
       </div>
@@ -369,41 +397,31 @@ const saveCalibration = () => {
   width: 100%;
   height: 100%;
   background-color: rgba(19, 28, 38, 0.8);
-  backdrop-filter: blur(0.3125rem); /* 5px -> 0.3125rem */
+  backdrop-filter: blur(0.5rem);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 2000;
   padding: 1rem;
 }
 
 .popup-container {
   position: relative;
   background: white;
-  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); /* 10px 30px -> 0.625rem 1.875rem */
+  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2);
   width: 100%;
-  max-width: 71.25rem; /* 1140px -> 71.25rem */
+  max-width: 71.25rem;
   transform: scale(1);
   transition: transform 0.3s ease;
   overflow-y: auto;
   max-height: 95vh;
-  border-radius: 1rem; /* 16px */
-}
-
-.popup-container > :deep(.form-wrapper) {
-  padding: 4rem !important;
-}
-
-@media (min-width: 768px) {
-  .popup-container > :deep(.form-wrapper) {
-    padding: 7rem !important;
-  }
+  border-radius: 1rem;
 }
 
 .popup-close-button {
   position: absolute;
-  top: 0.9375rem; /* 15px -> 0.9375rem */
-  right: 1.375rem; /* 22px -> 1.375rem */
+  top: 0.9375rem;
+  right: 1.375rem;
   background: none;
   border: none;
   font-size: 2.5rem;
@@ -420,20 +438,21 @@ const saveCalibration = () => {
 
 .popup-enter-active,
 .popup-leave-active {
-  transition: opacity 0.3s ease, transform 0.3s ease;
+  transition: opacity 0.3s ease;
 }
+
 .popup-enter-from,
 .popup-leave-to {
   opacity: 0;
-  transform: scale(0.95);
 }
 
+/* --- Стили для кнопки скачивания шаблона --- */
 .button {
-  --width: 6.25rem; /* 100px -> 6.25rem */
-  --height: 2.1875rem; /* 35px -> 2.1875rem */
-  --tooltip-height: 2.1875rem; /* 35px -> 2.1875rem */
-  --tooltip-width: 5.625rem; /* 90px -> 5.625rem */
-  --gap-between-tooltip-to-button: 0.75rem; /* 12px -> 0.75rem */
+  --width: 6.25rem;
+  --height: 2.1875rem;
+  --tooltip-height: 2.1875rem;
+  --tooltip-width: 5.625rem;
+  --gap-between-tooltip-to-button: 0.75rem;
   --button-color: #131C26;
   --tooltip-color: #E3E3E3;
   width: var(--width);
@@ -446,11 +465,7 @@ const saveCalibration = () => {
   cursor: pointer;
   transition: background-color 0.2s ease;
 }
-
-.group:hover .button {
-  background: #F15F31;
-}
-
+.group:hover .button { background: #F15F31; }
 .button::before {
   position: absolute;
   content: attr(data-tooltip);
@@ -465,17 +480,11 @@ const saveCalibration = () => {
   left: calc(50% - var(--tooltip-width) / 2);
   opacity: 0;
   visibility: hidden;
-  transform: translateY(0.5rem); /* 8px -> 0.5rem */
+  transform: translateY(0.5rem);
   transition: all 0.25s ease;
   pointer-events: none;
 }
-
-.text {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
+.text { display: flex; align-items: center; justify-content: center; }
 .button-wrapper,.text,.icon {
   overflow: hidden;
   position: absolute;
@@ -484,15 +493,8 @@ const saveCalibration = () => {
   left: 0;
   color: #F7F7F7;
 }
-
-.text {
-  top: 0
-}
-
-.text,.icon {
-  transition: top 0.5s;
-}
-
+.text { top: 0 }
+.text,.icon { transition: top 0.5s; }
 .icon {
   color: #F7F7F7;
   top: 100%;
@@ -500,85 +502,125 @@ const saveCalibration = () => {
   align-items: center;
   justify-content: center;
 }
+.icon svg { width: 1.5rem; height: 1.5rem; }
+.group:hover .button .text { top: -100%; }
+.group:hover .button .icon { top: 0; }
+.group:hover .button:before { opacity: 1; visibility: visible; transform: translateY(0); }
 
-.icon svg {
-  width: 1.5rem; /* 24px -> 1.5rem */
-  height: 1.5rem; /* 24px -> 1.5rem */
+/* --- Стили для полноэкранного инструмента, адаптированные под ImageViewer --- */
+.popup-fullscreen-enter-active,
+.popup-fullscreen-leave-active {
+  transition: opacity 0.3s ease;
 }
-
-.group:hover .button .text {
-  top: -100%;
-}
-
-.group:hover .button .icon {
-  top: 0;
-}
-
-.group:hover .button:before {
-  opacity: 1;
-  visibility: visible;
-  transform: translateY(0);
+.popup-fullscreen-enter-from,
+.popup-fullscreen-leave-to {
+  opacity: 0;
 }
 
-.calibration-prompt {
-  background-color: #F7F7F7;
-  border-radius: 1rem; /* 16px */
-  padding: 1.5rem; /* 24px */
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 1.5rem;
-}
-.calibration-prompt__title {
-  font-size: 1.125rem; /* 18px */
-  font-weight: 600;
-  color: #131C26;
-  margin-bottom: 0.25rem;
-}
-.calibration-prompt__text {
-  font-size: 0.875rem; /* 14px */
+.fullscreen-close-button {
+  position: fixed;
+  top: 1rem;
+  right: 1.5rem;
+  background: none;
+  border: none;
+  font-size: 3rem;
+  font-weight: 300;
+  line-height: 1;
   color: #8F8F8F;
-  max-width: 25rem; /* 400px */
+  cursor: pointer;
+  transition: color 0.2s ease, transform 0.2s ease;
+  z-index: 2010;
+}
+.fullscreen-close-button:hover {
+  color: white;
+  transform: scale(1.1);
+}
+
+.fullscreen-step-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.7rem;
+  text-align: center;
+  color: var(--panda-black, #131C26);
+  background-color: white;
+  padding: 2rem;
+  border-radius: 1rem;
+}
+.fullscreen-title {
+  font-family: 'Gilroy-SemiBold', sans-serif;
+  font-size: 1.5rem;
+
+
+}
+.fullscreen-text {
+  font-size: 1rem;
+  max-width: 32rem;
+  color: var(--panda-gray, #8F8F8F);
+
+
+}
+
+.preview-box {
+  border: 2px dashed rgba(241, 95, 49, 0.8);
+  background-color: rgba(241, 95, 49, 0.05);
+  flex-shrink: 0;
+  transition: width 0.2s ease, height 0.2s ease;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.fullscreen-controls {
+    position: fixed;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 42rem;
+    padding: 1rem;
+    padding-left: 1.5rem;
+    margin-bottom: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    background-color: rgba(19, 28, 38, 0.5);
+    border-radius: 9999px;
+    backdrop-filter: blur(0.25rem);
 }
 
 .size-tool-select {
   width: 100%;
-  padding: 0.75rem 1rem;
-  border: 1px solid #E3E3E3;
-  border-radius: 0.5rem;
-  background-color: #fff;
-  font-size: 1rem;
+  padding: 0.5rem 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 9999px;
+  background-color: rgba(19, 28, 38, 0.8);
+  color: white;
+  font-family: 'Gilroy-SemiBold', sans-serif;
+  font-size: 0.875rem;
   cursor: pointer;
   transition: border-color 0.2s;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%238F8F8F' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+  background-position: right 0.75rem center;
+  background-repeat: no-repeat;
+  background-size: 1.25em 1.25em;
+  padding-right: 2.5rem;
 }
 .size-tool-select:focus {
   outline: none;
   border-color: #F15F31;
 }
 
-.size-tool-preview-area {
-  margin-top: 1rem;
-  width: 100%;
-  min-height: 25rem; /* 400px */
-  background-color: #F7F7F7;
-  border-radius: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  overflow: auto;
-  padding: 2rem;
-}
-
-.preview-box {
-  border: 2px dashed #F15F31;
-  background-color: rgba(241, 95, 49, 0.05);
-  flex-shrink: 0; /* Чтобы блок не сжимался, если не помещается */
-}
-
 .calibration-area {
   width: 100%;
-  padding: 2rem 0;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  padding-top: 1rem;
+  padding-bottom: 2rem;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -593,40 +635,28 @@ const saveCalibration = () => {
 }
 
 input[type="range"] {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 100%;
-  height: 0.5rem; /* 8px */
-  background: #E3E3E3;
-  border-radius: 0.3125rem; /* 5px */
-  outline: none;
-  opacity: 0.7;
-  transition: opacity .2s;
+  -webkit-appearance: none; appearance: none;
+  width: 100%; height: 0.5rem; background: #E3E3E3;
+  border-radius: 0.3125rem; outline: none; transition: opacity .2s;
 }
-
-input[type="range"]:hover {
-  opacity: 1;
-}
-
+input[type="range"]:hover { opacity: 1; }
 input[type="range"]::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 1.5rem; /* 24px */
-  height: 1.5rem; /* 24px */
-  background: #F15F31;
-  cursor: pointer;
-  border-radius: 50%;
-  border: 4px solid #fff;
+  -webkit-appearance: none; appearance: none;
+  width: 1.5rem; height: 1.5rem; background: #F15F31;
+  cursor: pointer; border-radius: 50%; border: 4px solid #fff;
+  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+input[type="range"]::-moz-range-thumb {
+  width: 1.5rem; height: 1.5rem; background: #F15F31;
+  cursor: pointer; border-radius: 50%; border: 4px solid #fff;
   box-shadow: 0 0 5px rgba(0,0,0,0.2);
 }
 
-input[type="range"]::-moz-range-thumb {
-  width: 1.5rem; /* 24px */
-  height: 1.5rem; /* 24px */
-  background: #F15F31;
-  cursor: pointer;
-  border-radius: 50%;
-  border: 4px solid #fff;
-  box-shadow: 0 0 5px rgba(0,0,0,0.2);
+:deep(.base-button[variant="fill-white"]) {
+    background-color: white;
+    color: #131C26;
+}
+:deep(.base-button[variant="fill-white"]:hover) {
+    background-color: #f0f0f0;
 }
 </style>
