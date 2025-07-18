@@ -205,7 +205,7 @@ const cancelHidePreviewTimer = () => {
         <div v-if="isMobileMenuOpen" class="mobile-menu-container" @keydown.esc="isMobileMenuOpen = false">
           <div class="mobile-menu-backdrop" @click="isMobileMenuOpen = false"></div>
           <nav class="mobile-menu-panel">
-            <div class="p-6 border-b border-gray flex justify-between items-center">
+            <div class="px-6 py-4 border-b border-gray flex justify-between items-center">
                 <h2 class="text-h5-panda font-bold">Меню</h2>
                 <button @click="isMobileMenuOpen = false" class="mobile-menu-close-button">&times;</button>
             </div>
@@ -272,7 +272,7 @@ const cancelHidePreviewTimer = () => {
   background: transparent;
   border: none;
   cursor: pointer;
-  padding: 0;
+  margin-right: 0.44rem;
   z-index: 1050;
 }
 .burger-button .line {
@@ -327,7 +327,7 @@ const cancelHidePreviewTimer = () => {
 .mobile-menu-close-button {
     background: none;
     border: none;
-    font-size: 2rem;
+    font-size: 3rem;
     line-height: 1;
     color: #8F8F8F;
     cursor: pointer;
@@ -352,7 +352,7 @@ const cancelHidePreviewTimer = () => {
 }
 .mobile-menu-enter-from .mobile-menu-panel,
 .mobile-menu-leave-to .mobile-menu-panel {
-    transform: translateX(100%);
+    transform: translateX(0%);
 }
 
 .mobile-menu-link {
