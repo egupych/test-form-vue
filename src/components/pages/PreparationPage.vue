@@ -246,7 +246,7 @@ const saveCalibration = () => {
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
             
             <div>
-                <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Реальный размер</h3>
+                <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Реальный размер</h3>
                 <div class="bg-white p-4 rounded-lg flex flex-col gap-4 h-full">
                     <p class="text-body-panda text-dark-gray">
                       Для точной работы потребуется быстрая калибровка экрана по банковской карте, карты имеют единый размер по стандарту ISO 7810.
@@ -259,7 +259,7 @@ const saveCalibration = () => {
             </div>
 
             <div>
-              <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Стандартные DIN-форматы</h3>
+              <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Стандартные DIN-форматы</h3>
               <div class="bg-white p-4 rounded-lg">
                 <div v-for="(format, index) in dinFormats" :key="format.name" class="flex justify-between items-center py-3" :class="{ 'border-b border-light-gray': index < dinFormats.length - 1 }">
                   <div class="text-body-panda text-panda-black">
@@ -271,7 +271,7 @@ const saveCalibration = () => {
             </div>
             
             <div>
-              <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Визитки</h3>
+              <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Визитки</h3>
                <div class="bg-white p-4 rounded-lg">
                 <div v-for="(format, index) in cardFormats" :key="format.name" class="flex justify-between items-center py-3" :class="{ 'border-b border-light-gray': index < cardFormats.length - 1 }">
                   <div class="text-body-panda text-panda-black font-bold">{{ format.name }}</div>
@@ -286,25 +286,25 @@ const saveCalibration = () => {
         <SectionHeader class="gap-container">Требования к макетам</SectionHeader>
         <div class="space-y-10">
           <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Формат файла</h3>
+            <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Формат файла</h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
               Макет желательно присылать в PDF. Если конвертации в PDF нет, допускается присылать макет в программах, где он был разработан (AI, CDR, PSD). Если макет был разработан в онлайн-редакторах (Figma, Canva), рекомендуется прикладывать ссылку для возможной корректировки.
             </p>
           </div>
           <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Отступы</h3>
+            <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Отступы</h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
               Необходимо во всех дизайн-макетах оставлять отступы с фоном по периметру по 3 мм для обреза. Например, если вы делаете визитку размером 90x50 мм, то размер макета с вылетами должен быть 96x56 мм. Отступ содержимого (текста, изображений) от края реза должен составлять от 5 мм.
             </p>
           </div>
           <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Цвета</h3>
+            <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Цвета</h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
               Желательно отправлять файлы на печать в цветовой модели CMYK. Если вы работаете в программе, где нет цветовой модели CMYK, то старайтесь использовать цвета из палитры PANTONE. В таком случае, при работе в цветовой модели RGB (Figma, Canva), при использовании цветов PANTONE вы будете видеть макет почти таким же, каким он получится после печати.
             </p>
           </div>
           <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Шрифты</h3>
+            <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Шрифты</h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
               Шрифты необходимо перевести в кривые.
               <br>Corel Draw: Ctrl+Q | Illustrator/Figma: Ctrl+Shift+O.
@@ -312,14 +312,14 @@ const saveCalibration = () => {
             </p>
           </div>
           <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Графические элементы</h3>
+            <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Графические элементы</h3>
             <div class="space-y-3 text-dark-gray text-body-panda max-w-4xl">
               <p>Вектор — лучший выбор. Для четкой печати желательно использовать логотипы и иконки в векторном формате (SVG, AI, EPS, CDR). Векторные изображения печатаются без искажений и потери качества.</p>
               <p>1 мм при 300 DPI = 12 пикселей. Если вы делаете дизайн в программе, которая выдает размер только в пикселях (Figma, Canva), то нужно учитывать, что для 1 мм физического размера (при качественной печати 300 DPI) необходимо 12 пикселей.</p>
             </div>
           </div>
           <div>
-            <h3 class="font-semibold text-panda-black text-h5-panda mb-4">Эффекты и прочее</h3>
+            <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Эффекты и прочее</h3>
             <div class="space-y-3 text-dark-gray text-body-panda max-w-4xl">
                 <p>Тени, градиенты, прозрачность должны быть растрированы.</p>
                 <p>Линии должны иметь видимую толщину, от 0.2 pt.</p>
