@@ -2,9 +2,9 @@
 // Этот скрипт управляет логикой страницы "Подготовка к печати".
 // Вся логика предпросмотра реальных размеров теперь вынесена в единый
 // инструмент, который открывается в полноэкранном режиме, стилизованном под просмотрщик изображений.
-// ИЗМЕНЕНИЕ: Логика была упрощена, чтобы всегда начинать с калибровки.
+// ИЗМЕНЕНИЕ: Логика полностью переработана для корректной работы с масштабом браузера, используя window.devicePixelRatio.
 
-import { ref, onMounted, computed, nextTick, watch } from 'vue';
+import { ref, onMounted, onUnmounted, computed, nextTick, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import CalculationForm from '@/components/ui/CalculationForm.vue';
@@ -61,8 +61,24 @@ const cardFormats = ref([
 
 const isSizeToolVisible = ref(false);
 const toolStep = ref(1); // 1: Калибровка, 2: Предпросмотр
-const userPxPerMm = ref(null);
+// ИЗМЕНЕНО: userDevicePxPerMm хранит физическую плотность пикселей экрана
+const userDevicePxPerMm = ref(null); 
 const selectedFormatId = ref(null);
+const controlsRef = ref(null);
+const controlsHeight = ref(120); 
+const previewScale = ref(1);
+
+// НОВОЕ: Реактивные переменные для отслеживания размеров окна и масштаба
+const devicePixelRatio = ref(window.devicePixelRatio);
+const windowWidth = ref(window.innerWidth);
+const windowHeight = ref(window.innerHeight);
+
+// НОВОЕ: Функция для обновления метрик окна
+const updateWindowMetrics = () => {
+  devicePixelRatio.value = window.devicePixelRatio;
+  windowWidth.value = window.innerWidth;
+  windowHeight.value = window.innerHeight;
+};
 
 // --- Логика для кастомного выпадающего списка ---
 const isFormatDropdownOpen = ref(false);
@@ -73,12 +89,9 @@ const selectFormat = (formatName) => {
   isFormatDropdownOpen.value = false;
 };
 
-// Закрытие списка по клику вне его области
 watch(isFormatDropdownOpen, (isOpen) => {
   if (isOpen) {
-    nextTick(() => {
-      document.addEventListener('click', handleClickOutside);
-    });
+    nextTick(() => { document.addEventListener('click', handleClickOutside); });
   } else {
     document.removeEventListener('click', handleClickOutside);
   }
@@ -89,7 +102,6 @@ const handleClickOutside = (event) => {
     isFormatDropdownOpen.value = false;
   }
 };
-
 
 const creditCardWidthMm = 85.6;
 const creditCardHeightMm = 53.98;
@@ -116,41 +128,62 @@ const selectedFormatData = computed(() => {
   return availableFormats.value.find(f => f.name === selectedFormatId.value);
 });
 
+// ИЗМЕНЕНО: Логика расчета размера полностью переработана с учетом devicePixelRatio
 const previewBoxStyle = computed(() => {
-  if (!selectedFormatData.value || !userPxPerMm.value) return {};
+  if (!selectedFormatData.value || !userDevicePxPerMm.value) return {};
 
   const [w, h] = selectedFormatData.value.dimensions.replace(' мм', '').split('×');
-  const width = Number(w);
-  const height = Number(h);
+  const widthMm = Number(w);
+  const heightMm = Number(h);
 
-  const landscapeWidth = Math.max(width, height);
-  const landscapeHeight = Math.min(width, height);
+  const landscapeWidthMm = Math.max(widthMm, heightMm);
+  const landscapeHeightMm = Math.min(widthMm, heightMm);
 
-  const idealWidth = landscapeWidth * userPxPerMm.value;
-  const idealHeight = landscapeHeight * userPxPerMm.value;
+  // Рассчитываем идеальный размер в CSS-пикселях для текущего масштаба браузера
+  const idealWidthCss = (landscapeWidthMm * userDevicePxPerMm.value) / devicePixelRatio.value;
+  const idealHeightCss = (landscapeHeightMm * userDevicePxPerMm.value) / devicePixelRatio.value;
   
-  const maxPreviewWidth = window.innerWidth * 0.9; 
-  const maxPreviewHeight = (window.innerHeight - 150) * 0.9;
+  // Рассчитываем доступное пространство, используя реактивные переменные
+  const maxPreviewWidth = windowWidth.value * 0.9; 
+  const maxPreviewHeight = (windowHeight.value - controlsHeight.value - 60) * 0.9; 
 
-  const widthScale = maxPreviewWidth / idealWidth;
-  const heightScale = maxPreviewHeight / idealHeight;
+  const widthScale = maxPreviewWidth / idealWidthCss;
+  const heightScale = maxPreviewHeight / idealHeightCss;
   
   const scale = Math.min(1.0, widthScale, heightScale);
 
+  previewScale.value = scale;
+
   return {
-    width: `${idealWidth * scale}px`,
-    height: `${idealHeight * scale}px`,
+    width: `${idealWidthCss * scale}px`,
+    height: `${idealHeightCss * scale}px`,
   };
 });
 
+// НОВОЕ: Добавляем и убираем слушатель события resize
 onMounted(() => {
-  const savedPxPerMm = localStorage.getItem('screenPxPerMm');
+  const savedPxPerMm = localStorage.getItem('screenDevicePxPerMm');
   if (savedPxPerMm) {
-    userPxPerMm.value = parseFloat(savedPxPerMm);
+    userDevicePxPerMm.value = parseFloat(savedPxPerMm);
+  }
+  window.addEventListener('resize', updateWindowMetrics);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateWindowMetrics);
+});
+
+
+watch(toolStep, (step) => {
+  if (step === 2) {
+    nextTick(() => {
+      if (controlsRef.value) {
+        controlsHeight.value = controlsRef.value.offsetHeight;
+      }
+    });
   }
 });
 
-// ИЗМЕНЕНО: Функция всегда открывает шаг калибровки
 const openSizeTool = () => {
   toolStep.value = 1;
   calibrationWidthPx.value = initialCardWidthPx;
@@ -168,10 +201,12 @@ const closeSizeTool = () => {
   isSizeToolVisible.value = false;
 };
 
+// ИЗМЕНЕНО: Сохранение калибровки теперь не зависит от масштаба
 const saveCalibration = () => {
-  const calculatedPxPerMm = calibrationWidthPx.value / creditCardWidthMm;
-  userPxPerMm.value = calculatedPxPerMm;
-  localStorage.setItem('screenPxPerMm', calculatedPxPerMm.toString());
+  // Рассчитываем реальную плотность физических пикселей экрана
+  const calculatedDevicePxPerMm = (calibrationWidthPx.value * window.devicePixelRatio) / creditCardWidthMm;
+  userDevicePxPerMm.value = calculatedDevicePxPerMm;
+  localStorage.setItem('screenDevicePxPerMm', calculatedDevicePxPerMm.toString());
   startPreview();
 };
 </script>
@@ -238,7 +273,7 @@ const saveCalibration = () => {
         <SectionHeader class="gap-container">Размеры</SectionHeader>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
             
-            <div>
+            <div class="size-check-section">
                 <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Реальный размер</h3>
                 <div class="bg-white p-4 rounded-lg flex flex-col gap-4 h-full">
                     <p class="text-body-panda text-dark-gray">
@@ -375,10 +410,18 @@ const saveCalibration = () => {
         </div>
 
         <div v-if="toolStep === 2" class="w-full h-full flex flex-col">
+          
+            <div class="preview-scale-info">
+              <transition name="fade-fast" mode="out-in">
+                <div v-if="previewScale > 0.98">Реальный размер</div>
+                <div v-else>Масштаб: {{ (previewScale * 100).toFixed(0) }}%</div>
+              </transition>
+            </div>
+
             <div v-if="!selectedFormatData" class="m-auto text-white text-xl">Выберите формат для предпросмотра</div>
             <div v-else class="preview-box" :style="previewBoxStyle"></div>
           
-            <div class="fullscreen-controls">
+            <div ref="controlsRef" class="fullscreen-controls">
                 <div class="flex flex-col sm:flex-row gap-4 items-center w-full">
                     <label class="font-semibold whitespace-nowrap text-white">Выберите формат</label>
                     
@@ -582,6 +625,23 @@ const saveCalibration = () => {
   max-width: 32rem;
   color: var(--panda-gray, #8F8F8F);
 }
+
+.preview-scale-info {
+    position: absolute;
+    top: 2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: #a0aec0; /* gray-500 */
+    background-color: rgba(19, 28, 38, 0.5);
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.875rem;
+    z-index: 2005;
+    pointer-events: none;
+    white-space: nowrap;
+}
+
+
 .preview-box {
   border: 2px dashed rgba(241, 95, 49, 0.8);
   background-color: rgba(241, 95, 49, 0.05);
@@ -598,7 +658,7 @@ const saveCalibration = () => {
     left: 50%;
     transform: translateX(-50%);
     max-width: 30rem;
-    width: 100%; /* Добавлено для предсказуемости */
+    width: 100%;
     padding: 1rem 1.5rem;
     padding-right: 1rem;
     margin-bottom: 1.1rem;
@@ -609,7 +669,7 @@ const saveCalibration = () => {
     background-color: rgba(19, 28, 38, 0.5);
     border-radius: 9999px;
     backdrop-filter: blur(0.25rem);
-    box-sizing: border-box; /* Важно для корректного расчета ширины */
+    box-sizing: border-box;
 }
 
 /* --- [ОБНОВЛЕННЫЕ СТИЛИ] для кастомного выпадающего списка --- */
@@ -638,7 +698,7 @@ const saveCalibration = () => {
   height: 1.25em;
   color: #8F8F8F;
   transition: transform 0.3s ease-out;
-  flex-shrink: 0; /* Предотвращаем сжатие стрелки */
+  flex-shrink: 0;
 }
 .custom-select-arrow.is-open {
   transform: rotate(180deg);
@@ -661,7 +721,6 @@ const saveCalibration = () => {
   justify-content: space-between;
   align-items: center;
   padding: 0.625rem 0.75rem;
-  /* --- ИЗМЕНЕНИЕ: Возвращаем стандартный размер шрифта --- */
   font-size: 1rem;
   color: white;
   cursor: pointer;
@@ -677,10 +736,16 @@ const saveCalibration = () => {
   transition: opacity 0.15s ease, transform 0.15s ease;
   transform-origin: bottom;
 }
-.fade-fast-enter-from, .fade-fast-leave-to {
+.fade-fast-leave-to {
   opacity: 0;
   transform: scaleY(0.95);
 }
+.fade-fast-enter-from {
+  opacity: 0;
+  transform: scaleY(0.95)
+}
+
+
 /* --- КОНЕЦ СТИЛЕЙ --- */
 
 .calibration-area {
@@ -727,4 +792,11 @@ input[type="range"]::-moz-range-thumb {
 :deep(.base-button[variant="fill-white"]:hover) {
     background-color: #f0f0f0;
 }
+
+@media (max-width: 95.3rem) {
+  .size-check-section {
+    display: none;
+  }
+}
+
 </style>
