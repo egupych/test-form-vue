@@ -3,7 +3,6 @@ import { useSmoothScroll } from '@/composables/useSmoothScroll.js';
 import FloatingActionButton from '@/components/ui/FloatingActionButton.vue';
 import TheHeader from '@/components/ui/TheHeader.vue';
 import TheFooter from '@/components/ui/TheFooter.vue';
-// 1. Импортируем компонент уведомлений
 import TheNotification from '@/components/ui/TheNotification.vue';
 
 useSmoothScroll();
@@ -14,7 +13,13 @@ useSmoothScroll();
     <TheHeader />
 
     <main class="main-content">
-      <router-view />
+      <router-view v-slot="{ Component, route }">
+        <transition :name="route.meta.transition || 'slide-left'" mode="out-in">
+          <div :key="route.path" class="page-wrapper">
+            <component :is="Component" />
+          </div>
+        </transition>
+      </router-view>
     </main>
 
     <TheFooter />
@@ -32,7 +37,47 @@ useSmoothScroll();
   background-color: #F7F7F7;
   padding-top: 6rem;
 }
+
 .main-content {
+  position: relative;
   flex-grow: 1;
+  display: grid;
+  overflow: hidden;
+}
+
+.page-wrapper {
+  grid-area: 1 / 1;
+  width: 100%;
+}
+
+/*
+  Возвращаем тот самый стиль анимации, который тебе понравился.
+  Продолжительность transition — 0.2s.
+*/
+.slide-left-enter-active,
+.slide-left-leave-active,
+.slide-right-enter-active,
+.slide-right-leave-active {
+  transition: transform 0.2s ease-in-out, opacity 0.2s ease-in-out;
+}
+
+/* Анимация "ВПЕРЁД" (slide-left) */
+.slide-left-enter-from {
+  opacity: 0;
+  transform: translateX(2rem);
+}
+.slide-left-leave-to {
+  opacity: 0;
+  transform: translateX(-2rem);
+}
+
+/* Анимация "НАЗАД" (slide-right) */
+.slide-right-enter-from {
+  opacity: 0;
+  transform: translateX(-2rem);
+}
+.slide-right-leave-to {
+  opacity: 0;
+  transform: translateX(2rem);
 }
 </style>
