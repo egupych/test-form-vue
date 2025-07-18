@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed } from 'vue';
+import { ref, computed, onBeforeUpdate } from 'vue';
 import { useServicesStore } from '@/stores/services.js';
 import { storeToRefs } from 'pinia';
 import { useServiceImages } from '@/composables/useServiceImages.js';
@@ -25,6 +25,7 @@ const sortedServices = computed(() => {
     return [...services.value].sort((a, b) => a.name.localeCompare(b.name, 'ru'));
 });
 
+// --- ЛОГИКА ПРЕДПРОСМОТРА (без изменений) ---
 const handleMouseEnter = (service, event) => {
     hoveredLetter.value = null;
     if (service && !service.isPlaceholder && !isPreviewLoading.value) {
@@ -101,6 +102,60 @@ const previewStyle = computed(() => {
         height: `${previewHeight}px`,
     };
 });
+
+
+// --- НОВАЯ ЛОГИКА ДЛЯ ПРОКРУТКИ ---
+
+// Map для хранения ссылок на DOM-элементы первых ячеек для каждой буквы
+const firstCellRefs = new Map();
+
+/**
+ * Эта функция вызывается для каждой ячейки при отрисовке компонента.
+ * Она сохраняет в `firstCellRefs` ссылку только на первую встретившуюся ячейку для каждой буквы.
+ * @param {object} service - Объект услуги.
+ * @param {Element} el - DOM-элемент ячейки.
+ */
+const setCellRef = (service, el) => {
+  if (service && el && service.name) {
+    const firstLetter = service.name.charAt(0).toUpperCase();
+    if (!firstCellRefs.has(firstLetter)) {
+      firstCellRefs.set(firstLetter, el);
+    }
+  }
+};
+
+// Перед каждым обновлением компонента очищаем карту ссылок,
+// чтобы она всегда была актуальной.
+onBeforeUpdate(() => {
+  firstCellRefs.clear();
+});
+
+/**
+ * Функция плавной прокрутки к нужной ячейке.
+ * @param {string} letter - Буква, к которой нужно прокрутить.
+ */
+const scrollToLetter = (letter) => {
+  const targetElement = firstCellRefs.get(letter);
+  if (targetElement) {
+    // Высота шапки в rem (из App.vue) + небольшой дополнительный отступ.
+    const headerHeightRem = 6; 
+    const extraOffsetPx = 20; // 20px дополнительного отступа сверху
+
+    // Переводим rem в пиксели
+    const rootFontSize = parseFloat(getComputedStyle(document.documentElement).fontSize);
+    const headerOffset = (headerHeightRem * rootFontSize) + extraOffsetPx;
+
+    // Вычисляем позицию элемента относительно верха страницы
+    const elementPosition = targetElement.getBoundingClientRect().top;
+    const offsetPosition = elementPosition + window.scrollY - headerOffset;
+
+    // Выполняем плавную прокрутку
+    window.scrollTo({
+      top: offsetPosition,
+      behavior: 'smooth'
+    });
+  }
+};
 </script>
 
 <template>
@@ -115,6 +170,7 @@ const previewStyle = computed(() => {
         :key="letter"
         class="alphabet-letter-wrapper"
         @mouseenter="handleLetterEnter(letter)"
+        @click="scrollToLetter(letter)"
       >
         <span class="alphabet-letter">
           {{ letter }}
@@ -132,6 +188,7 @@ const previewStyle = computed(() => {
             }"
             @mouseenter="handleMouseEnter(service, $event)"
             @mouseleave="resetPreview"
+            :ref="el => setCellRef(service, el)"
         >
             <router-link
               v-if="!service.isPlaceholder"
@@ -224,11 +281,10 @@ const previewStyle = computed(() => {
 
 
 .alphabet-bar {
-  /* ИЗМЕНЕНИЕ ЗДЕСЬ: убрали фиксированную высоту, чтобы контейнер мог расти */
-  min-height: 3.75rem; /* Задаем минимальную высоту для сохранения отступа */
-  display: flex; /* Tailwind класс flex уже есть, но для наглядности */
+  min-height: 3.75rem;
+  display: flex;
   align-items: center;
-  flex-wrap: wrap; /* Tailwind класс flex-wrap теперь в шаблоне */
+  flex-wrap: wrap;
   justify-content: center;
 }
 .alphabet-letter-wrapper {

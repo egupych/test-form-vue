@@ -92,7 +92,7 @@ const cancelHidePreviewTimer = () => {
 
 <template>
   <div>
-    <header class="site-header">
+    <header data-main-header class="site-header">
       <div class="max-w-6xl mx-auto flex items-center justify-between w-full">
         <router-link to="/" class="cursor-pointer flex-none z-50">
           <img src="@/assets/images/layout/red-panda-logo-black.svg" alt="Логотип Red Panda" class="h-12 pr-2">
