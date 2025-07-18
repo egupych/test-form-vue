@@ -272,7 +272,7 @@ const cancelHidePreviewTimer = () => {
   background: transparent;
   border: none;
   cursor: pointer;
-  margin-right: 0.44rem;
+
   z-index: 1050;
 }
 .burger-button .line {
