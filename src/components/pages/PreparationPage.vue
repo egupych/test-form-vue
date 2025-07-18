@@ -2,6 +2,7 @@
 // Этот скрипт управляет логикой страницы "Подготовка к печати".
 // Вся логика предпросмотра реальных размеров теперь вынесена в единый
 // инструмент, который открывается в полноэкранном режиме, стилизованном под просмотрщик изображений.
+// ИЗМЕНЕНИЕ: Логика была упрощена, чтобы всегда начинать с калибровки.
 
 import { ref, onMounted, computed, nextTick, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
@@ -59,7 +60,7 @@ const cardFormats = ref([
 // --- Логика инструмента "Проверка размера" ---
 
 const isSizeToolVisible = ref(false);
-const toolStep = ref(1); // 1: Калибровка, 2: Предпросмотр, 3: Приветствие для уже откалиброванных
+const toolStep = ref(1); // 1: Калибровка, 2: Предпросмотр
 const userPxPerMm = ref(null);
 const selectedFormatId = ref(null);
 
@@ -149,13 +150,10 @@ onMounted(() => {
   }
 });
 
+// ИЗМЕНЕНО: Функция всегда открывает шаг калибровки
 const openSizeTool = () => {
-  if (userPxPerMm.value) {
-    toolStep.value = 3;
-  } else {
-    toolStep.value = 1;
-    calibrationWidthPx.value = initialCardWidthPx;
-  }
+  toolStep.value = 1;
+  calibrationWidthPx.value = initialCardWidthPx;
   isSizeToolVisible.value = true;
 };
 
@@ -164,11 +162,6 @@ const startPreview = () => {
   if (!selectedFormatId.value && availableFormats.value.length > 0) {
     selectedFormatId.value = availableFormats.value.find(f => f.name === 'A4')?.name || availableFormats.value[0].name;
   }
-};
-
-const startRecalibration = () => {
-  toolStep.value = 1;
-  calibrationWidthPx.value = initialCardWidthPx;
 };
 
 const closeSizeTool = () => {
@@ -362,15 +355,6 @@ const saveCalibration = () => {
       <div v-if="isSizeToolVisible" class="popup-overlay" @click.self="closeSizeTool">
         <button @click="closeSizeTool" class="fullscreen-close-button">&times;</button>
         
-        <div v-if="toolStep === 3" class="fullscreen-step-content">
-            <h3 class="fullscreen-title">Проверка реального размера</h3>
-            <p class="fullscreen-text">Откалибруйте экран перед началом просмотра</p>
-            <div class="flex items-center gap-2 mt-2">
-                <BaseButton @click="startRecalibration" variant="gray">Откалибровать</BaseButton>
-                <BaseButton @click="startPreview" variant="fill-white">Начать просмотр</BaseButton>
-            </div>
-        </div>
-
         <div v-if="toolStep === 1" class="fullscreen-step-content">
           <h3 class="fullscreen-title">Калибровка экрана</h3>
           <p class="fullscreen-text">Приложите банковскую карту к экрану и двигайте ползунок, пока оранжевый прямоугольник не совпадет с ее размером.</p>
