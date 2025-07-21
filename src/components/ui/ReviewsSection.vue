@@ -105,7 +105,7 @@ const nextReview = () => {
 
 <style scoped>
 .reviews-slider {
- min-height: 25rem; /* Увеличим высоту под новую структуру */
+ min-height: 20rem; /* Увеличим высоту под новую структуру */
  display: flex;
  align-items: center; /* Вертикальное выравнивание по центру */
  justify-content: center; /* Горизонтальное выравнивание по центру, если нужно */

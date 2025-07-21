@@ -177,3 +177,17 @@ img { /* запрет на выделение картинок на сайте *
   -ms-user-select: none;      /* Internet Explorer/Edge */
   user-select: none;          /* Standard */
 }
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    /* "Закрашиваем" фон белой внутренней тенью. Это самый надежный способ. */
+    box-shadow: inset 0 0 0 50px theme('colors.panda-white');
+    
+    /* Устанавливаем цвет текста. Используем !important, чтобы перебить стили браузера. */
+    -webkit-text-fill-color: theme('colors.panda-black') !important;
+    
+    /* Добавляем плавный переход, чтобы избежать "моргания" цвета */
+    transition: background-color 5000s ease-in-out 0s;
+}
