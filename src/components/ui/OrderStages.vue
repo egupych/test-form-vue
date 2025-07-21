@@ -61,7 +61,7 @@ onMounted(() => {
         
         <div>
           <h2 class="text-h2-panda font-bold text-panda-black">Стадии заказа</h2>
-          <p class="text-h5-panda text-dark-gray mt-2">Постарались организовать всё быстро и удобно</p>
+          <p class="text-h5-panda text-dark-gray mt-2">Всё быстро и удобно</p>
         </div>
 
         <div class="w-full mt-8 lg:mt-0">
