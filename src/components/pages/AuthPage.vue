@@ -87,7 +87,7 @@ const handleGoogleSignIn = async () => {
                     class="
                         block w-full px-1 pb-2 pt-5 
                         text-base text-panda-black 
-                        bg-transparent rounded-lg border-b border-gray 
+                        bg-transparent border-b border-gray 
                         appearance-none focus:outline-none focus:ring-0 
                         peer z-10
                     "
