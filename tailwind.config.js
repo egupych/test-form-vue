@@ -29,6 +29,7 @@ export default {
         'gray': '#E3E3E3',
         'dark-gray': '#8F8F8F',
         'panda-black-overlay': 'rgba(19, 28, 38, 0.5)', // 50% прозрачности от panda-black
+        'panda-black-overlay-hover': 'rgba(19, 28, 38, 0.65)'
       },
       fontSize: {
         'h1-panda': ['4rem', { lineHeight: '110%' }],

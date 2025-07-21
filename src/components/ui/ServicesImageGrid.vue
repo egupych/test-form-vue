@@ -118,8 +118,8 @@ const services = ref([
   grid-template-columns: repeat(4, 1fr);
   grid-auto-flow: dense;
   gap: 0;
-  border-top: 0.0625rem solid #e5e7eb;
-  border-left: 0.0625rem solid #e5e7eb;
+  border-top: 0.0625rem solid #E3E3E3;
+  border-left: 0.0625rem solid #E3E3E3;
 }
 
 .grid-item {
@@ -130,8 +130,8 @@ const services = ref([
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s ease-out;
-  border-right: 0.0625rem solid #e5e7eb;
-  border-bottom: 0.0625rem solid #e5e7eb;
+  border-right: 0.0625rem solid #E3E3E3;
+  border-bottom: 0.0625rem solid #E3E3E3;
   min-width: 0;
   overflow: hidden;
 }

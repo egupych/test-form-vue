@@ -285,7 +285,7 @@ onUnmounted(() => {
   .time-periods-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.25rem; }
   .time-period { display: flex; flex-direction: column; align-items: center; gap: 0.25rem; padding: 0.25rem; border-radius: 0.25rem; cursor: pointer; transition: background-color 0.2s; }
   .time-period:hover { background-color: rgba(0,0,0,0.05); }
-  .period-name { font-family: 'Gilroy-Medium', sans-serif; font-size: 0.8125rem; color: #555; }
+  .period-name { font-family: 'Gilroy-Medium', sans-serif; font-size: 0.8125rem; color: #8F8F8F; }
   .period-icon { width: 2rem; height: 2rem; }
   .period-temp { font-family: 'Gilroy-SemiBold', sans-serif; font-size: 0.9375rem; }
 
@@ -294,7 +294,7 @@ onUnmounted(() => {
   }
   .time-period.active-period .period-name,
   .time-period.active-period .period-temp {
-    color: #D94D1A; 
+    color: #F15F31; 
   }
 
   .hourly-forecast {
@@ -317,7 +317,7 @@ onUnmounted(() => {
   .hour-time {
     font-family: 'Gilroy-Medium', sans-serif;
     font-size: 0.8125rem;
-    color: #666;
+    color: #8F8F8F;
   }
   .hour-icon {
     width: 1.75rem;
@@ -333,7 +333,7 @@ onUnmounted(() => {
   }
   .hour-item.active-hour .hour-time,
   .hour-item.active-hour .hour-temp {
-    color: #D94D1A; 
+    color: #F15F31; 
   }
   
   .expand-enter-active, .expand-leave-active { transition: all 0.3s ease-out; }

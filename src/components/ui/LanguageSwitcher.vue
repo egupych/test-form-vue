@@ -29,7 +29,7 @@ const otherLocales = availableLocales.filter(l => l !== locale.value);
   <div class="relative">
     <button
       @click="isDropdownOpen = !isDropdownOpen"
-      class="flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold transition-colors duration-200 ease-in-out text-header-panda hover:bg-gray-200"
+      class="flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold transition-colors duration-200 ease-in-out text-header-panda hover:bg-gray"
     >
       {{ locale.toUpperCase() }}
     </button>
@@ -37,13 +37,13 @@ const otherLocales = availableLocales.filter(l => l !== locale.value);
     <transition name="slide-down">
       <div
         v-if="isDropdownOpen"
-        class="absolute top-full right-0 mt-2 w-24 bg-white rounded-lg shadow-lg py-1 z-20"
+        class="absolute top-full right-0 mt-2 w-24 bg-panda-white rounded-lg shadow-lg py-1 z-20"
       >
         <button
           v-for="otherLocale in otherLocales"
           :key="otherLocale"
           @click="switchLanguage(otherLocale)"
-          class="w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-100"
+          class="w-full text-left px-4 py-2 text-sm text-panda-black hover:bg-light-gray"
         >
           {{ otherLocale.toUpperCase() }}
         </button>

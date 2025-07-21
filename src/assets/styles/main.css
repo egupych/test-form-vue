@@ -95,7 +95,7 @@ html.lenis {
   height: var(--tooltip-height);
   background-color: var(--tooltip-color);
   font-size: 0.8125rem;
-  color: #111;
+  color: #131C26;
   border-radius: .25em;
   line-height: var(--tooltip-height);
   /* Позиционируем подсказку снизу */

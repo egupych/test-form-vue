@@ -66,12 +66,12 @@ const notificationStore = useNotificationStore();
   justify-content: center;
 }
 .icon-success {
-  background-color: #e8f5e9; /* Светло-зеленый фон */
-  color: #4caf50; /* Зеленый цвет иконки */
+  background-color: white; 
+  color: #89C869; /* Зеленый цвет иконки */
 }
 .icon-error {
-  background-color: #ffebee; /* Светло-красный фон */
-  color: #f44336; /* Красный цвет иконки */
+  background-color: white; 
+  color: #F15F31; /* Красный цвет иконки */
 }
 
 .message-text {

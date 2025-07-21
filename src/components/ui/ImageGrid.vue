@@ -35,7 +35,7 @@ const handleImageClick = (image, index) => {
   position: relative;
   cursor: pointer;
   overflow: hidden;
-  background-color: #f0f0f0;
+  background-color: #F7F7F7;
   aspect-ratio: 1 / 1;
 }
 .grid-image {

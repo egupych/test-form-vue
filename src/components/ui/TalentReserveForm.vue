@@ -233,7 +233,7 @@ const submitApplication = () => {
   align-items: center;
   justify-content: space-between;
   padding: 0.5rem 0.75rem;
-  background-color: #f0f0f0;
+  background-color: #F7F7F7;
   border-radius: 0.5rem;
   margin-bottom: 0.5rem;
 }
