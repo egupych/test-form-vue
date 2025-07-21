@@ -147,7 +147,7 @@ const closeViewer = () => {
   position: relative;
   overflow: hidden;
   border-radius: 0.5rem;
-  background-color: #F7F7F7;
+  background-color: theme('colors.light-gray'); /* Используем цвет из палитры */
   cursor: pointer;
 }
 
@@ -177,7 +177,8 @@ const closeViewer = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  /* ИЗМЕНЕНИЕ: Используем новый цвет из палитры Tailwind */
+  background-color: theme('colors.panda-black-overlay'); 
   color: white;
   display: flex;
   align-items: center;
@@ -187,7 +188,8 @@ const closeViewer = () => {
 }
 
 .gallery-item:hover .overlay {
-  background-color: rgba(0, 0, 0, 0.65);
+  /* При наведении можно сделать оверлей чуть темнее, если нужно */
+  background-color: rgba(19, 28, 38, 0.65); 
 }
 
 .overlay + .gallery-image {

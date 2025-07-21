@@ -78,13 +78,43 @@ const handleGoogleSignIn = async () => {
         </div>
         
         <form v-else @submit.prevent="handleSendLink" class="space-y-6">
-            <div class="form-group">
-                <div class="form-control">
-                <input type="email" placeholder="Email" required v-model.trim="email">
-                <span class="input-border"></span>
-                </div>
+            <div class="relative form-control">
+                <input 
+                    type="email" 
+                    id="email"
+                    required 
+                    v-model.trim="email"
+                    class="
+                        block w-full px-1 pb-2 pt-5 
+                        text-base text-panda-black 
+                        bg-transparent rounded-lg border-b border-gray 
+                        appearance-none focus:outline-none focus:ring-0 
+                        peer z-10
+                    "
+                    placeholder=" " 
+                />
+                <label 
+                    for="email" 
+                    class="
+                        absolute text-base text-dark-gray 
+                        duration-300 transform -translate-y-4 scale-75 top-4 z-0 
+                        origin-[0] peer-placeholder-shown:scale-100 
+                        peer-placeholder-shown:translate-y-0 
+                        peer-focus:scale-75 peer-focus:-translate-y-4
+                        peer-focus:text-panda-orange
+                    "
+                >
+                    Email
+                </label>
+                <span 
+                    class="
+                        absolute bottom-0 left-0 h-0.5 bg-panda-orange 
+                        w-0 transition-all duration-300 peer-focus:w-full
+                    "
+                ></span>
             </div>
-            <div v-if="authError" class="error-message text-center">
+
+            <div v-if="authError" class="text-panda-orange text-center text-sm">
                 {{ authError }}
             </div>
             <BaseButton type="submit" :disabled="isSubmitting" class="w-full">
@@ -110,45 +140,5 @@ const handleGoogleSignIn = async () => {
 </template>
 
 <style scoped>
-/* Стили остаются такими же, как и были, но с rem вместо px */
-.form-group .error-message {
-  color: #F15F31;
-  font-size: 0.875rem; /* 14px -> 0.875rem */
-  margin-top: 0.25rem; /* 4px -> 0.25rem */
-  min-height: 1.25rem; /* 20px -> 1.25rem */
-}
-input {
-  font-family: 'Gilroy-Medium', sans-serif;
-  font-size: 1rem; /* 16px -> 1rem */
-  width: 100%;
-  border: none;
-  border-bottom: 0.0625rem solid #E3E3E3; /* 1px -> 0.0625rem */
-  padding: 0.625rem 0.25rem; /* 10px 4px -> 0.625rem 0.25rem */
-  color: #131C26;
-  background-color: transparent;
-  transition: background-color 0.2s ease;
-  position: relative;
-  z-index: 1;
-}
-input::placeholder { color: #8F8F8F; }
-input:focus { outline: none; }
-input:hover {
-  background-color: rgba(227, 227, 227, 0.2);
-}
-.form-control {
-  position: relative;
-}
-.input-border {
-  position: absolute;
-  background: #F15F31;
-  width: 0%;
-  height: 0.125rem; /* 2px -> 0.125rem */
-  bottom: 0;
-  left: 0;
-  transition: width 0.3s ease-in-out;
-  z-index: 2;
-}
-input:focus ~ .input-border {
-  width: 100%;
-}
+/* Этот блок пуст, так как все стили теперь в классах Tailwind. */
 </style>
