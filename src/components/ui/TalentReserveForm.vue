@@ -58,7 +58,6 @@ const handleFileUpload = (event) => {
   target.value = '';
 };
 
-// ИЗМЕНЕНИЕ ЗДЕСЬ
 const removeFile = (index) => {
   if (hoveredFileUrl.value) {
     URL.revokeObjectURL(hoveredFileUrl.value);
@@ -130,26 +129,33 @@ const submitApplication = () => {
       </div>
       <div class="form-body">
           <form @submit.prevent="submitApplication" novalidate class="flex flex-col h-full">
-              <div class="flex flex-col gap-2">
+              <div class="flex flex-col gap-5">
                 <div class="form-group">
-                  <div class="form-control">
-                    <input type="text" placeholder="Желаемая вакансия" v-model.trim="formData.desiredPosition">
+                  <div class="relative">
+                    <input type="text" id="desiredPosition" v-model.trim="formData.desiredPosition" class="form-input peer" placeholder=" " />
+                    <label for="desiredPosition" class="form-label">Желаемая вакансия</label>
                     <span class="input-border"></span>
                   </div>
                 </div>
                 <div class="form-group">
-                  <div class="form-control">
-                    <input type="text" placeholder="Ваше имя" required v-model.trim="formData.name" @input="validateField('name')">
-                    <span class="input-border"></span>
+                  <div class="relative">
+                    <input type="text" id="talentName" required v-model.trim="formData.name" @input="validateField('name')" class="form-input peer" :class="{'border-panda-orange': errors.name}" placeholder=" " />
+                    <label for="talentName" class="form-label" :class="{'!text-panda-orange': errors.name}">
+                        <span v-if="errors.name">{{ errors.name }}</span>
+                        <span v-else>Ваше имя</span>
+                    </label>
+                    <span class="input-border" :class="{'bg-panda-orange w-full': errors.name}"></span>
                   </div>
-                  <div class="error-message" v-if="errors.name">{{ errors.name }}</div>
                 </div>
                 <div class="form-group">
-                  <div class="form-control">
-                    <input type="tel" placeholder="Телефон" required v-model="formData.phone" @input="formatPhoneInput">
-                    <span class="input-border"></span>
+                  <div class="relative">
+                    <input type="tel" id="talentPhone" required v-model="formData.phone" @input="formatPhoneInput" class="form-input peer" :class="{'border-panda-orange': errors.phone}" placeholder=" " />
+                    <label for="talentPhone" class="form-label" :class="{'!text-panda-orange': errors.phone}">
+                        <span v-if="errors.phone">{{ errors.phone }}</span>
+                        <span v-else>Телефон</span>
+                    </label>
+                    <span class="input-border" :class="{'bg-panda-orange w-full': errors.phone}"></span>
                   </div>
-                  <div class="error-message" v-if="errors.phone">{{ errors.phone }}</div>
                 </div>
               </div>
 
@@ -195,165 +201,34 @@ const submitApplication = () => {
 </template>
 
 <style scoped>
-/* Стили в этом файле полностью идентичны тем, что были ранее, и уже используют rem */
-.file-preview-window {
-  position: fixed;
-  z-index: 9999;
-  width: 15.625rem;
-  height: auto;
-  background-color: #fff;
-  border-radius: 0.5rem;
-  box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2);
-  pointer-events: none;
-  overflow: hidden;
+/* Общие стили для полей ввода */
+.form-input {
+  @apply block w-full px-1 pb-2 pt-5 text-base text-panda-black bg-transparent border-b border-gray appearance-none focus:outline-none focus:ring-0 z-10;
 }
-.file-preview-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;
-}
-.preview-enter-active,
-.preview-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
-}
-.preview-enter-from,
-.preview-leave-to {
-  opacity: 0;
-  transform: scale(0.95);
-}
-
-.file-list {
-  margin-bottom: 0.75rem;
-  max-height: 7.8125rem;
-  overflow-y: auto;
-  padding-right: 0.25rem;
-}
-.file-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0.5rem 0.75rem;
-  background-color: #F7F7F7;
-  border-radius: 0.5rem;
-  margin-bottom: 0.5rem;
-}
-.file-name {
-  font-size: 0.875rem;
-  color: #131C26;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  padding-right: 0.5rem;
-}
-.remove-file-button {
-  background: none;
-  border: none;
-  color: #8F8F8F;
-  cursor: pointer;
-  font-size: 1.25rem;
-  line-height: 1;
-  padding: 0 0.25rem;
-  transition: color 0.2s;
-}
-.remove-file-button:hover {
-  color: #F15F31;
-}
-.upload-button {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 1rem;
-  border: 0.125rem dashed #E3E3E3;
-  background-color: #F7F7F7;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  font-family: 'Gilroy-SemiBold', sans-serif;
-  color: #8F8F8F;
-  border-radius: 1rem;
-}
-.upload-button:hover {
-  border-color: #F15F31;
-  color: #F15F31;
-  background-color: #fff;
-}
-.upload-icon {
-  width: 1.5rem;
-  height: 1.5rem;
-  margin-right: 0.5rem;
-}
-.upload-text {
-  font-size: 1rem;
-}
-.upload-caption {
-  font-size: 0.75rem;
-  color: #8F8F8F;
-  margin-top: 0.5rem;
-  text-align: center;
-}
-.form-wrapper {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 2.5rem;
-}
-
-@media (min-width: 64rem) {
-  .form-wrapper {
-    grid-template-columns: 1fr 1fr;
-    gap: 3.75rem;
-  }
-}
-
-.form-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1.25rem;
-}
-.form-body {
-  width: 100%;
-}
-.form-group .error-message {
-  color: #F15F31;
-  font-size: 0.75rem;
-  margin-top: 0.25rem;
-  min-height: 1.25rem;
-}
-input, textarea {
-  font-family: 'Gilroy-Medium', sans-serif;
-  font-size: 1rem;
-  width: 100%;
-  border: none;
-  border-bottom: 0.0625rem solid #E3E3E3;
-  padding: 0.625rem 0.25rem;
-  color: #131C26;
-  background-color: transparent;
-  transition: background-color 0.2s ease;
-  position: relative;
-  z-index: 1;
-}
-input::placeholder, textarea::placeholder { color: #8F8F8F; }
-input:focus, textarea:focus { outline: none; }
-input:hover, textarea:hover {
-  background-color: rgba(227, 227, 227, 0.2);
-}
-.form-control {
-  position: relative;
+.form-label {
+  @apply absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4;
 }
 .input-border {
-  position: absolute;
-  background: #F15F31;
-  width: 0%;
-  height: 0.125rem;
-  bottom: 0;
-  left: 0;
-  transition: width 0.3s ease-in-out;
-  z-index: 2;
+  @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full;
 }
-.form-control-textarea .input-border {
-  bottom: 0.5rem;
-}
-input:focus ~ .input-border,
-textarea:focus ~ .input-border {
-  width: 100%;
-}
+
+/* Старые стили, которые все еще нужны */
+.file-preview-window { position: fixed; z-index: 9999; width: 15.625rem; height: auto; background-color: #fff; border-radius: 0.5rem; box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); pointer-events: none; overflow: hidden; }
+.file-preview-image { width: 100%; height: 100%; object-fit: contain; }
+.preview-enter-active, .preview-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
+.preview-enter-from, .preview-leave-to { opacity: 0; transform: scale(0.95); }
+.file-list { margin-bottom: 0.75rem; max-height: 7.8125rem; overflow-y: auto; padding-right: 0.25rem; }
+.file-item { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background-color: #f0f0f0; border-radius: 0.5rem; margin-bottom: 0.5rem; }
+.file-name { font-size: 0.875rem; color: #131C26; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 0.5rem; }
+.remove-file-button { background: none; border: none; color: #8F8F8F; cursor: pointer; font-size: 1.25rem; line-height: 1; padding: 0 0.25rem; transition: color 0.2s; }
+.remove-file-button:hover { color: #F15F31; }
+.upload-button { display: flex; align-items: center; justify-content: center; width: 100%; padding: 1rem; border: 0.125rem dashed #E3E3E3; background-color: #F7F7F7; cursor: pointer; transition: all 0.3s ease; font-family: 'Gilroy-SemiBold', sans-serif; color: #8F8F8F; border-radius: 1rem; }
+.upload-button:hover { border-color: #F15F31; color: #F15F31; background-color: #fff; }
+.upload-icon { width: 1.5rem; height: 1.5rem; margin-right: 0.5rem; }
+.upload-text { font-size: 1rem; }
+.upload-caption { font-size: 0.75rem; color: #8F8F8F; margin-top: 0.5rem; text-align: center; }
+.form-wrapper { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+@media (min-width: 64rem) { .form-wrapper { grid-template-columns: 1fr 1fr; gap: 3.75rem; } }
+.form-info { display: flex; flex-direction: column; gap: 1.25rem; }
+.form-body { width: 100%; }
 </style>

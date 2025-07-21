@@ -36,14 +36,11 @@ const handleFileUpload = (event) => {
   target.value = '';
 };
 
-// ИЗМЕНЕНИЕ ЗДЕСЬ
 const removeFile = (index) => {
-  // Принудительно закрываем окно предпросмотра, если оно открыто
   if (hoveredFileUrl.value) {
     URL.revokeObjectURL(hoveredFileUrl.value);
     hoveredFileUrl.value = null;
   }
-  // Удаляем файл из списка
   files.value.splice(index, 1);
 };
 
@@ -83,6 +80,7 @@ const handleSubmit = async () => {
     }
 };
 </script>
+
 <template>
   <div class="form-wrapper bg-panda-white p-6 md:p-25">
     <div class="form-info">
@@ -129,49 +127,77 @@ const handleSubmit = async () => {
       </div>
     </div>
     <div class="form-body">
-      <form @submit.prevent="handleSubmit" novalidate class="flex flex-col gap-2">
+      <form @submit.prevent="handleSubmit" novalidate class="flex flex-col gap-1">
+        
         <div class="form-group">
-          <div class="form-control">
-            <input type="text" placeholder="Ваше имя" required v-model.trim="formData.name" @input="validateField('name')" >
-            <span class="input-border"></span>
-          </div>
-          <div class="error-message" v-if="errors.name">{{ errors.name }}</div>
-        </div>
-        <div class="form-group">
-          <div class="form-control">
-            <input type="tel" placeholder="Телефон" required v-model="formData.phone" @input="formatPhoneInput">
-            <span class="input-border"></span>
-          </div>
-          <div class="error-message" v-if="errors.phone">{{ errors.phone }}</div>
-        </div>
-        <div class="form-group">
-          <div class="form-control">
-            <input type="email" placeholder="@email" required v-model.trim="formData.email" @input="validateField('email')">
-            <span class="input-border"></span>
-          </div>
-          <div class="error-message" v-if="errors.email">{{ errors.email }}</div>
-        </div>
-        <div class="form-group">
-          <div class="form-control">
-            <input type="text" placeholder="Компания" v-model.trim="formData.company">
-            <span class="input-border"></span>
-          </div>
-        </div>
-        <div class="form-group">
-          <div class="form-control form-control-textarea">
-            <textarea placeholder="Опишите задачу" required v-model.trim="formData.task" @input="validateField('task')"></textarea>
-            <span class="input-border"></span>
-          </div>
-          <div class="error-message" v-if="errors.task">{{ errors.task }}</div>
-        </div>
-        <div class="form-group">
-          <div class="form-control">
-            <input type="text" placeholder="Промокод" v-model.trim="formData.promo">
-            <span class="input-border"></span>
+          <div class="relative">
+            <input 
+              type="text" id="name" required v-model.trim="formData.name" @input="validateField('name')" 
+              class="form-input peer" :class="{'border-panda-orange': errors.name}" placeholder=" " />
+            <label for="name" class="form-label" :class="{'!text-panda-orange': errors.name}">
+              <span v-if="errors.name">{{ errors.name }}</span>
+              <span v-else>Ваше имя</span>
+            </label>
+            <span class="input-border" :class="{'bg-panda-orange w-full': errors.name}"></span>
           </div>
         </div>
         
-        <BaseButton type="submit" :disabled="isSubmitting || !isFormValid" class="mt-9" variant="fill-orange">
+        <div class="form-group">
+          <div class="relative">
+            <input 
+              type="tel" id="phone" required v-model="formData.phone" @input="formatPhoneInput" 
+              class="form-input peer" :class="{'border-panda-orange': errors.phone}" placeholder=" " />
+            <label for="phone" class="form-label" :class="{'!text-panda-orange': errors.phone}">
+              <span v-if="errors.phone">{{ errors.phone }}</span>
+              <span v-else>Телефон</span>
+            </label>
+            <span class="input-border" :class="{'bg-panda-orange w-full': errors.phone}"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="relative">
+            <input 
+              type="email" id="email" required v-model.trim="formData.email" @input="validateField('email')" 
+              class="form-input peer" :class="{'border-panda-orange': errors.email}" placeholder=" " />
+            <label for="email" class="form-label" :class="{'!text-panda-orange': errors.email}">
+              <span v-if="errors.email">{{ errors.email }}</span>
+              <span v-else>Email</span>
+            </label>
+            <span class="input-border" :class="{'bg-panda-orange w-full': errors.email}"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="relative">
+            <input type="text" id="company" v-model.trim="formData.company" class="form-input peer" placeholder=" " />
+            <label for="company" class="form-label">Компания</label>
+            <span class="input-border"></span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="relative">
+            <textarea 
+              id="task" required v-model.trim="formData.task" @input="validateField('task')" 
+              class="form-input peer min-h-[6.25rem] resize-y" :class="{'border-panda-orange': errors.task}" placeholder=" "></textarea>
+            <label for="task" class="form-label" :class="{'!text-panda-orange': errors.task}">
+              <span v-if="errors.task">{{ errors.task }}</span>
+              <span v-else>Опишите задачу</span>
+            </label>
+            <span class="input-border" :class="{'bg-panda-orange w-full': errors.task}"></span>
+          </div>
+        </div>
+        
+        <div class="form-group">
+          <div class="relative">
+            <input type="text" id="promo" v-model.trim="formData.promo" class="form-input peer" placeholder=" " />
+            <label for="promo" class="form-label">Промокод</label>
+            <span class="input-border"></span>
+          </div>
+        </div>
+
+        <BaseButton type="submit" :disabled="isSubmitting || !isFormValid" class="mt-4" variant="fill-orange">
           <div v-if="isSubmitting" class="flex items-center justify-center">
             <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -193,8 +219,20 @@ const handleSubmit = async () => {
     </transition>
   </Teleport>
 </template>
+
 <style scoped>
-/* Стили в этом файле полностью идентичны тем, что были ранее, и уже используют rem */
+/* Общие стили для полей ввода */
+.form-input {
+  @apply block w-full px-1 pb-2 pt-5 text-base text-panda-black bg-transparent border-b border-gray appearance-none focus:outline-none focus:ring-0 z-10;
+}
+.form-label {
+  @apply absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4;
+}
+.input-border {
+  @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full;
+}
+
+/* Старые стили, которые все еще нужны */
 .file-preview-window { position: fixed; z-index: 9999; width: 15.625rem; height: auto; background-color: #fff; border-radius: 0.5rem; box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); pointer-events: none; overflow: hidden; transform-origin: top left; }
 .file-preview-image { width: 100%; height: 100%; object-fit: contain; }
 .preview-enter-active, .preview-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
@@ -219,18 +257,8 @@ const handleSubmit = async () => {
 .upload-icon { width: 1.5rem; height: 1.5rem; margin-right: 0.5rem; }
 .upload-text { font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .upload-caption { font-size: 0.8125rem; color: #8F8F8F; margin-top: 0.5rem; text-align: center; }
-.form-wrapper { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
+.form-wrapper { display: grid; grid-template-columns: 1fr; gap: 22.5rem; }
 @media (min-width: 48rem) { .form-wrapper { grid-template-columns: 1fr 1fr; gap: 3.75rem; } }
 .form-info { display: flex; flex-direction: column; gap: 1.25rem; max-width: 28.125rem; }
 .form-body { width: 100%; }
-.form-group .error-message { color: #F15F31; font-size: 0.8125rem; margin-top: 0.25rem; padding-left: 0.25rem; min-height: 1.25rem; }
-input, textarea { font-family: 'Gilroy-Medium', sans-serif; font-size: 1rem; width: 100%; border: none; border-bottom: 0.0625rem solid #E3E3E3; padding: 0.625rem 0.25rem; color: #131C26; background-color: transparent; transition: background-color 0.2s ease, border-color 0.3s ease; position: relative; z-index: 1; }
-input::placeholder, textarea::placeholder { color: #8F8F8F; }
-input:focus, textarea:focus { outline: none; }
-textarea { resize: vertical; min-height: 6.25rem; }
-input:hover, textarea:hover { background-color: rgba(227, 227, 227, 0.2); }
-.form-control { position: relative; }
-.input-border { position: absolute; background: #F15F31; width: 0%; height: 0.125rem; bottom: 0; left: 0; transition: width 0.3s ease-in-out; z-index: 2; }
-.form-control-textarea .input-border { bottom: 0; }
-input:focus ~ .input-border, textarea:focus ~ .input-border { width: 100%; }
 </style>
