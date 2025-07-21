@@ -38,7 +38,7 @@ const closePopup = () => {
           >
             <div class="flex-grow">
               <div class="flex justify-between items-start">
-                <h3 class="text-h4-panda font-bold text-gray-900 leading-tight">{{ vacancy.title }}</h3>
+                <h3 class="text-h4-panda font-bold text-panda-black leading-tight">{{ vacancy.title }}</h3>
                 <div class="flex gap-2 ml-4 flex-shrink-0">
                   <span v-for="tag in vacancy.tags" :key="tag" class="rounded-full py-2 px-4 text-sm font-medium text-dark-gray border whitespace-nowrap">{{ tag }}</span>
                 </div>
