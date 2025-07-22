@@ -1,5 +1,5 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
 // --- [Без изменений] ---
 import whatsappIcon from '@/assets/images/layout/whatsapp.svg';
@@ -9,13 +9,21 @@ import plusIcon from '@/assets/images/layout/plus.svg';
 import closeIcon from '@/assets/images/layout/close.svg';
 
 const isOpen = ref(false);
-
-// --- [ИЗМЕНЕНО] ---
-// 1. Добавлена переменная для хранения таймера
 const closeTimer = ref(null);
 
-// 2. Функция для открытия меню по наведению (для ПК)
-// Она также отменяет запланированное закрытие
+// --- [НОВОЕ] ---
+// 1. Добавлена переменная для определения сенсорного устройства
+const isTouchDevice = ref(false);
+
+// 2. При монтировании компонента определяем, поддерживает ли устройство сенсорный ввод
+onMounted(() => {
+  isTouchDevice.value = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+});
+
+// --- [ИЗМЕНЕНО] ---
+// 3. Функции для ПК теперь вызываются через обертки, которые проверяют тип устройства
+
+// Логика открытия меню по наведению (для ПК)
 const openMenu = () => {
   if (closeTimer.value) {
     clearTimeout(closeTimer.value);
@@ -24,14 +32,31 @@ const openMenu = () => {
   isOpen.value = true;
 };
 
-// 3. Функция для планирования закрытия меню с задержкой (для ПК)
+// Логика закрытия меню с задержкой (для ПК)
 const scheduleClose = () => {
   closeTimer.value = setTimeout(() => {
     isOpen.value = false;
   }, 300);
 };
 
-// 4. Функция для переключения по клику (основной способ для мобильных)
+// 4. Обертка для события mouseenter
+// Вызывает openMenu только на не-сенсорных устройствах
+const handleMouseEnter = () => {
+  if (!isTouchDevice.value) {
+    openMenu();
+  }
+};
+
+// 5. Обертка для события mouseleave
+// Вызывает scheduleClose только на не-сенсорных устройствах
+const handleMouseLeave = () => {
+  if (!isTouchDevice.value) {
+    scheduleClose();
+  }
+};
+
+// Функция для переключения по клику (работает и на ПК, и на мобильных)
+// Ее логика была корректной, так как отмена таймера важна для ПК
 const toggleMenu = () => {
   // Если меню открывается по клику, отменяем любой таймер закрытия
   if (!isOpen.value) {
@@ -72,9 +97,7 @@ const mainIconClose = closeIcon;
 
 <template>
   <div 
-    @mouseenter="openMenu"
-    @mouseleave="scheduleClose"
-    class="fixed bottom-6 right-6 z-[999] flex flex-col items-center gap-3"
+    @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" class="fixed bottom-6 right-6 z-[999] flex flex-col items-center gap-3"
   >
     
     <transition-group
@@ -162,10 +185,8 @@ const mainIconClose = closeIcon;
   border: none;
   color: white;
   cursor: pointer;
-  transition: all 0.2s ease; /* Изменено на all для плавного изменения размера */
+  transition: all 0.2s ease;
 }
-/* --- [ИЗМЕНЕНО] --- */
-/* 8. Добавлены стили для иконки в главной кнопке */
 .fab-main-icon {
   width: 1.25rem; /* 20px */
   height: 1.25rem; /* 20px */
