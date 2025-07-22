@@ -2,7 +2,7 @@
   <main class="py-10 md:py-25 px-4 md:px-0">
     <div class="max-w-6xl mx-auto">
       <article class="news-layout">
-        <h1 class="news-title text-h2-panda font-bold text-panda-black">{{ news.title }}</h1>
+        <h1 class="news-title text-h3-panda font-bold text-panda-black">{{ news.title }}</h1>
         <p class="news-description text-body-panda text-dark-gray leading-relaxed">{{ news.description }}</p>
         <time :datetime="news.date" class="news-date block text-sm text-dark-gray uppercase font-semibold tracking-wider">
           {{ formatDate(news.date) }}
