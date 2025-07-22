@@ -15,7 +15,7 @@ const historyEvents = ref([
 ]);
 
 // --- [НОВОЕ] Логика для отображения 5 дат из 10 ---
-const DATES_TO_SHOW = 6;
+const DATES_TO_SHOW = 5;
 const currentStartIndex = ref(0); // Индекс первого видимого элемента
 
 // Этот computed всегда будет содержать 5 событий для отображения
