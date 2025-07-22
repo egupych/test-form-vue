@@ -49,9 +49,9 @@ const closePopup = () => {
         <SectionHeader class="gap-container">Акции</SectionHeader>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div v-for="promo in promotions" :key="promo.id" class="bg-light-gray overflow-hidden p-6 text-center">
-                <img :src="promo.image" :alt="promo.title" class="w-full h-auto object-cover mb-4">
-                <h2 class="font-semibold text-panda-black text-h4-panda mb-2">{{ promo.title }}</h2>
+            <div v-for="promo in promotions" :key="promo.id" class="bg-light-gray overflow-hidden p-6 text-center promo-card">
+                <img :src="promo.image" :alt="promo.title" class="w-full h-auto object-cover mb-5 promo-image">
+                <h2 class="font-semibold text-panda-black text-h4-panda mb-1">{{ promo.title }}</h2>
                 <p class="text-body-panda text-dark-gray mb-4">{{ promo.description }}</p>
                 <BaseButton @click="openPopup(promo.promo)" :variant="promo.buttonVariant">
                   Воспользоваться
@@ -74,16 +74,26 @@ const closePopup = () => {
 </template>
 
 <style scoped>
+/* --- НАЧАЛО ИЗМЕНЕНИЙ --- */
+.promo-image {
+  /* Плавный переход для анимации. cubic-bezier делает анимацию более "живой" */
+  transition: transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.promo-card:hover .promo-image {
+  /* При наведении на карточку, изображение поворачивается и немного увеличивается */
+  transform: rotate(2deg) scale(1.03);
+}
+/* --- КОНЕЦ ИЗМЕНЕНИЙ --- */
+
 .popup-overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
-  /* --- ИЗМЕНЕНИЯ ЗДЕСЬ --- */
   background-color: rgba(19, 28, 38, 0.8); /* Цвет как на главной для единообразия */
   backdrop-filter: blur(0.3125rem);            /* 5px -> 0.3125rem. Эффект размытия фона */
-  /* --- КОНЕЦ ИЗМЕНЕНИЙ --- */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -94,7 +104,6 @@ const closePopup = () => {
 .popup-container {
   position: relative;
   background: white;
-  /* border-radius: 16px; - убрали скругление */
   box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); /* 10px 30px -> 0.625rem 1.875rem */
   width: 100%; /* Ширина будет зависеть от контента */
   max-width: 71.25rem; /* 1140px -> 71.25rem. Ограничим максимальную ширину */
