@@ -1,4 +1,13 @@
 <script setup>
+// Этот скрипт управляет логикой формы для расчёта стоимости.
+// Он включает в себя:
+// - Сбор данных из полей ввода (имя, телефон, email и т.д.).
+// - Валидацию полей с помощью композибл функции useFormValidation.
+// - Обработку загрузки нескольких файлов с проверкой их количества и общего размера.
+// - Предпросмотр изображений при наведении на имя файла.
+// - Автоматическое заполнение полей данными авторизованного пользователя.
+// - Отправку данных формы, включая файлы и выбранные референсы, на сервер.
+
 import { reactive, ref, computed, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import { useAuth } from '@/composables/useAuth.js';
@@ -82,7 +91,7 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="form-wrapper bg-panda-white p-6 md:p-25">
+  <div class="form-wrapper bg-panda-white p-10 md:p-16">
     <div class="form-info">
       <h2 class="text-h2-panda font-bold">Расчёт<br>стоимости</h2>
       <p class="text-h5-panda font-semibold">С вами свяжется наш менеджер<br>в ближайшее время. Спасибо, что<br>обратились в наше печатное агентство!</p>
@@ -257,8 +266,8 @@ const handleSubmit = async () => {
 .upload-icon { width: 1.5rem; height: 1.5rem; margin-right: 0.5rem; }
 .upload-text { font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .upload-caption { font-size: 0.8125rem; color: #8F8F8F; margin-top: 0.5rem; text-align: center; }
-.form-wrapper { display: grid; grid-template-columns: 1fr; gap: 22.5rem; }
+.form-wrapper { display: grid; grid-template-columns: 1fr; gap: 2.5rem; }
 @media (min-width: 48rem) { .form-wrapper { grid-template-columns: 1fr 1fr; gap: 3.75rem; } }
-.form-info { display: flex; flex-direction: column; gap: 1.25rem; max-width: 28.125rem; }
+.form-info { display: flex; flex-direction: column; gap: 1.25rem; }
 .form-body { width: 100%; }
 </style>

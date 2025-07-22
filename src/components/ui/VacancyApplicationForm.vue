@@ -1,4 +1,12 @@
 <script setup>
+// Этот скрипт управляет логикой формы отклика на вакансию.
+// Он выполняет следующие функции:
+// - Принимает название вакансии через props.
+// - Собирает данные из полей (имя, телефон).
+// - Использует композибл useFormValidation для валидации полей.
+// - Обрабатывает загрузку одного файла (резюме) с проверкой формата и размера.
+// - Отправляет данные формы (в данный момент имитирует отправку через console.log и показывает уведомление).
+
 import { ref, reactive, watch, computed } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import { useNotificationStore } from '@/stores/notifications.js';

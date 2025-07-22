@@ -1,4 +1,12 @@
 <script setup>
+// Этот скрипт предназначен для формы "Кадровый резерв".
+// Его основные задачи:
+// - Получение начальной желаемой должности через props.
+// - Сбор данных от пользователя (должность, имя, телефон).
+// - Валидация обязательных полей с помощью useFormValidation.
+// - Загрузка файла резюме с предпросмотром для изображений.
+// - Обработка отправки формы: показ уведомления и очистка полей.
+
 import { ref, reactive, watch, computed } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
@@ -108,7 +116,7 @@ const submitApplication = () => {
         Кадровый резерв
     </SectionHeader>
 
-    <div class="form-wrapper bg-white p-10 md:p-16 lg:p-25">
+    <div class="form-wrapper bg-white p-10 md:p-16">
       <div class="form-info">
         <h3 class="text-h2-panda font-bold">Нет подходящей вакансии?</h3>
         <p class="text-h5-panda font-semibold">Оставьте заявку! Мы постоянно растём и ищем талантливых людей. Ваше резюме попадёт в нашу базу, и как только появится подходящая позиция, мы с вами свяжемся.</p>
