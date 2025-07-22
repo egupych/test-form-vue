@@ -159,7 +159,7 @@ const cancelHidePreviewTimer = () => {
         </nav>
 
         <div class="flex items-center flex-none gap-4">
-          <div class="hidden lg-custom:flex items-center gap-4">
+          <div class="hidden lg-custom:flex items-center gap-3">
             <WeatherWidget />
             <BaseButton v-if="!user" to="/auth" variant="stroke">
               Войти
