@@ -158,10 +158,12 @@ const closeVideoPopup = () => {
     align-items: center;
     justify-content: center;
     /* [ИЗМЕНЕНИЕ] Уменьшаем отступ между элементами до 1rem */
-    gap: 1rem; 
+    gap: 4rem; 
     /* [КОНЕЦ ИЗМЕНЕНИЯ] */
     position: static;
     aspect-ratio: auto;
+    padding-left: 1rem;
+    padding-right: 1rem;
   }
   .hero-text-logo, .hero-cta, .hero-video-orb {
     position: static;
@@ -230,4 +232,6 @@ const closeVideoPopup = () => {
 }
 .video-close-button:hover { color: white; }
 video { outline: none; }
+
+
 </style>
