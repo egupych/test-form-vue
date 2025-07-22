@@ -275,7 +275,7 @@ const saveCalibration = () => {
             
             <div class="size-check-section">
                 <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Реальный размер</h3>
-                <div class="bg-white p-4 rounded-lg flex flex-col gap-4 h-full">
+                <div class="bg-white p-4  flex flex-col gap-4 h-full">
                     <p class="text-body-panda text-dark-gray">
                       Для точной работы потребуется быстрая калибровка экрана по банковской карте, карты имеют единый размер по стандарту ISO 7810.
                     </p>
@@ -288,7 +288,7 @@ const saveCalibration = () => {
 
             <div>
               <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Стандартные DIN-форматы</h3>
-              <div class="bg-white p-4 rounded-lg">
+              <div class="bg-white p-4">
                 <div v-for="(format, index) in dinFormats" :key="format.name" class="flex justify-between items-center py-3" :class="{ 'border-b border-light-gray': index < dinFormats.length - 1 }">
                   <div class="text-body-panda text-panda-black">
                     <span class="font-bold">{{ format.name }}</span>
@@ -300,7 +300,7 @@ const saveCalibration = () => {
             
             <div>
               <h3 class="font-semibold text-panda-black text-h5-panda mb-3">Визитки</h3>
-               <div class="bg-white p-4 rounded-lg">
+               <div class="bg-white p-4 ">
                 <div v-for="(format, index) in cardFormats" :key="format.name" class="flex justify-between items-center py-3" :class="{ 'border-b border-light-gray': index < cardFormats.length - 1 }">
                   <div class="text-body-panda text-panda-black font-bold">{{ format.name }}</div>
                   <div class="font-mono text-dark-gray">{{ format.dimensions }}</div>
@@ -484,7 +484,7 @@ const saveCalibration = () => {
   transition: transform 0.3s ease;
   overflow-y: auto;
   max-height: 95vh;
-  border-radius: 1rem;
+
 }
 
 .popup-close-button {
