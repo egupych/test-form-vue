@@ -88,7 +88,6 @@ const noResultsFound = computed(() => {
   border: 0.0625rem solid #E3E3E3;
   transition: box-shadow 0.2s ease-in-out;
   position: relative;
-  z-index: 10;
 }
 .search-container:focus-within {
   box-shadow: 0 0.25rem 0.9375rem rgba(0, 0, 0, 0.05);
