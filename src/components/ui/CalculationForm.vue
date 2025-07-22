@@ -91,7 +91,7 @@ const handleSubmit = async () => {
 </script>
 
 <template>
-  <div class="form-wrapper bg-panda-white p-10 md:p-16">
+  <div class="form-wrapper bg-panda-white p-4 md:p-16">
     <div class="form-info">
       <h2 class="text-h2-panda font-bold">Расчёт<br>стоимости</h2>
       <p class="text-h5-panda font-semibold">С вами свяжется наш менеджер<br>в ближайшее время. Спасибо, что<br>обратились в наше печатное агентство!</p>

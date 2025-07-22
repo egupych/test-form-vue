@@ -1,3 +1,4 @@
+// Файл: VacancyApplicationForm.vue
 <script setup>
 // Этот скрипт управляет логикой формы отклика на вакансию.
 // Он выполняет следующие функции:
@@ -91,7 +92,7 @@ const handleSubmit = () => {
 </script>
 
 <template>
-  <div class="form-wrapper bg-white p-10 md:p-16">
+  <div class="form-wrapper bg-white p-4 md:p-16">
       <div class="form-info">
         <h3 class="text-h2-panda font-bold">Отклик на вакансию</h3>
         <p class="text-h5-panda font-semibold">

@@ -97,7 +97,7 @@ const mainIconClose = closeIcon;
 
 <template>
   <div 
-    @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" class="fixed bottom-6 right-6 z-[999] flex flex-col items-center gap-3"
+    @mouseenter="handleMouseEnter" @mouseleave="handleMouseLeave" class="fixed bottom-4 right-4 z-[999] flex flex-col items-center gap-3"
   >
     
     <transition-group

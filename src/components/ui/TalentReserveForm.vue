@@ -1,3 +1,4 @@
+// Файл: TalentReserveForm.vue
 <script setup>
 // Этот скрипт предназначен для формы "Кадровый резерв".
 // Его основные задачи:
@@ -116,7 +117,7 @@ const submitApplication = () => {
         Кадровый резерв
     </SectionHeader>
 
-    <div class="form-wrapper bg-white p-10 md:p-16">
+    <div class="form-wrapper bg-white p-4 md:p-16">
       <div class="form-info">
         <h3 class="text-h2-panda font-bold">Нет подходящей вакансии?</h3>
         <p class="text-h5-panda font-semibold">Оставьте заявку! Мы постоянно растём и ищем талантливых людей. Ваше резюме попадёт в нашу базу, и как только появится подходящая позиция, мы с вами свяжемся.</p>
