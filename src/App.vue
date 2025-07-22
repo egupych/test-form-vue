@@ -4,13 +4,25 @@ import FloatingActionButton from '@/components/ui/FloatingActionButton.vue';
 import TheHeader from '@/components/ui/TheHeader.vue';
 import TheFooter from '@/components/ui/TheFooter.vue';
 import TheNotification from '@/components/ui/TheNotification.vue';
+// 1. ИМПОРТИРУЕМ НАШ НОВЫЙ КОМПОНЕНТ
+import RunningTextLine from '@/components/ui/RunningTextLine.vue';
 
 useSmoothScroll();
+
+// 2. СОЗДАЕМ МАССИВ С ТЕКСТОМ ДЛЯ БЕГУЩЕЙ СТРОКИ
+const marqueeItems = [
+  'По техническим причинам 29 июля мы работаем с 11:00',
+  'По техническим причинам 29 июля мы работаем с 11:00',
+  'По техническим причинам 29 июля мы работаем с 11:00'
+];
+
 </script>
 
 <template>
   <div class="site-container">
     <TheHeader />
+
+    <!-- <RunningTextLine :items="marqueeItems" /> бегущая строка-->
 
     <main class="main-content">
       <router-view v-slot="{ Component, route }">
@@ -35,7 +47,7 @@ useSmoothScroll();
   flex-direction: column;
   min-height: 100vh;
   background-color: #F7F7F7;
-  padding-top: 6rem;
+  padding-top: 6rem; /* Оставляем отступ для фиксированной шапки */
 }
 
 .main-content {
