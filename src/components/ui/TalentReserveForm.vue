@@ -129,7 +129,7 @@ const submitApplication = () => {
       </div>
       <div class="form-body">
           <form @submit.prevent="submitApplication" novalidate class="flex flex-col h-full">
-              <div class="flex flex-col gap-5">
+              <div class="flex flex-col gap-2">
                 <div class="form-group">
                   <div class="relative">
                     <input type="text" id="desiredPosition" v-model.trim="formData.desiredPosition" class="form-input peer" placeholder=" " />
@@ -203,7 +203,7 @@ const submitApplication = () => {
 <style scoped>
 /* Общие стили для полей ввода */
 .form-input {
-  @apply block w-full px-1 pb-2 pt-5 text-base text-panda-black bg-transparent border-b border-gray appearance-none focus:outline-none focus:ring-0 z-10;
+  @apply block w-full pb-1 pt-4 text-base text-panda-black bg-transparent border-b border-gray appearance-none focus:outline-none focus:ring-0 z-10;
 }
 .form-label {
   @apply pointer-events-none absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4;
