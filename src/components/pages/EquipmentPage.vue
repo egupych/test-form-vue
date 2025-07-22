@@ -4,7 +4,7 @@ import SectionHeader from '@/components/ui/SectionHeader.vue';
 </script>
 
 <template>
-  <main class="py-10 md:py-25">
+  <main class="py-10 md:py-25 px-4 md:px-0">
     <div class="max-w-6xl mx-auto">
       
       <SectionHeader class="gap-container">
