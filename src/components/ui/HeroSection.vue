@@ -1,4 +1,10 @@
 <script setup>
+// --- НАЧАЛО ОПИСАНИЯ КОДА ---
+// Этот компонент представляет собой "главный экран" или "hero" секцию на главной странице.
+// Он включает в себя большой текстовый логотип, призыв к действию (CTA) с кнопкой, открывающей
+// попап с формой расчёта, и анимированный видео-элемент в виде круга, который при клике
+// открывает видео в полноэкранном попапе. Компонент полностью адаптивен.
+// --- КОНЕЦ ОПИСАНИЯ КОДА ---
 import { ref, nextTick } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import CalculationForm from '@/components/ui/CalculationForm.vue';
@@ -124,13 +130,12 @@ const closeVideoPopup = () => {
   pointer-events: none;
 }
 
-/* ИЗМЕНЕНИЕ: Выравнивание по левому краю */
 .hero-cta {
   position: absolute;
   top: 0;
   right: 0;
   z-index: 20;
-  text-align: left; /* <-- ИЗМЕНЕНО */
+  text-align: left;
 }
 
 /* Блок с видео */
@@ -152,7 +157,9 @@ const closeVideoPopup = () => {
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: 2rem;
+    /* [ИЗМЕНЕНИЕ] Уменьшаем отступ между элементами до 1rem */
+    gap: 1rem; 
+    /* [КОНЕЦ ИЗМЕНЕНИЯ] */
     position: static;
     aspect-ratio: auto;
   }
@@ -163,12 +170,15 @@ const closeVideoPopup = () => {
     margin: 0;
     padding: 0;
   }
-  .hero-text-logo { order: 2; width: 100%; }
-  /* ИЗМЕНЕНИЕ: Выравнивание по центру на мобильных */
-  .hero-cta { order: 1; text-align: center; }
+  
+  /* [ИЗМЕНЕНИЕ] Меняем порядок и центрируем элементы */
+  .hero-text-logo { order: 1; width: 100%; }
+  .hero-cta { order: 2; text-align: center; }
   .hero-cta p { margin-left: auto; margin-right: auto; }
 
-  .hero-video-orb { order: 3; width: 12rem; height: 12rem; }
+  /* Скрываем видео-блок и центрируем лого */
+  .hero-video-orb { order: 3; display: none; }
+  /* [КОНЕЦ ИЗМЕНЕНИЯ] */
 }
 
 
