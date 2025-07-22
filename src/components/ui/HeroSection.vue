@@ -48,9 +48,9 @@ const closeVideoPopup = () => {
         />
 
         <div class="hero-cta">
-          <h2 class="text-h4-panda font-semibold text-panda-black">Современная полиграфия<br>для вашего бизнеса</h2>
+          <h2 class="text-h4-panda font-semibold text-panda-black">Современная полиграфия для вашего бизнеса</h2>
           <p class="text-body-panda text-dark-gray mt-2 mb-4 max-w-md">
-              Введите ваш номер телефона, и мы свяжемся с вами <br>для консультации и расчёта стоимости вашего заказа.
+              Введите ваш номер телефона, и мы свяжемся с вами для консультации и расчёта стоимости вашего заказа.
           </p>
           <BaseButton @click="openCalcPopup" variant="fill-orange">
             Рассчитать стоимость
