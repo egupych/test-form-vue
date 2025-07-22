@@ -63,7 +63,7 @@ const handleSubscription = async () => {
     <div class="max-w-6xl mx-auto px-4 md:px-0 py-16">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-y-10 md:gap-x-8 items-start">
         
-        <div class="flex flex-col h-full">
+        <div class="flex flex-col md:h-full">
           <div>
             <div class="hidden md:block">
               <div class="flex items-center space-x-3">
@@ -75,7 +75,7 @@ const handleSubscription = async () => {
             </div>
           </div>
           
-          <form class="flex flex-col flex-grow gap-2 mt-1" @submit.prevent="handleSubscription" novalidate>
+          <form class="flex flex-col md:flex-grow gap-2 mt-1" @submit.prevent="handleSubscription" novalidate>
             <div>
               <div class="relative">
                   <input
@@ -142,7 +142,7 @@ const handleSubscription = async () => {
               </div>
             </div>
 
-            <div class="mt-auto">
+            <div class="mt-6 md:mt-auto">
               <button
                   type="submit"
                   :disabled="subscription.isSubmitting"
@@ -169,7 +169,7 @@ const handleSubscription = async () => {
           </div>
         </div>
         
-        <div class="flex flex-col items-start text-left space-y-8 mt-8 md:mt-0 md:col-span-2 lg:col-span-1 lg:items-end lg:text-right">
+        <div class="flex flex-col items-start text-left space-y-8 md:mt-0 md:col-span-2 lg:col-span-1 lg:items-end lg:text-right">
           <div class="hidden md:flex justify-end w-full space-x-8">
             <div class="text-center">
                 <img src="@/assets/images/layout/QR-instagram.svg" alt="QR Code redpandakz" class="w-28 h-28 rounded-md p-1">
@@ -177,7 +177,7 @@ const handleSubscription = async () => {
             </div>
           </div>
 
-          <div class="flex flex-row lg:flex-col gap-2 lg:gap-2">
+          <div class="flex flex-row lg:flex-col gap-2 lg:gap-2 lg:items-end">
             <a href="https://wa.me/77007257799" class="px-5 py-1.5 text-center bg-gray-700 text-light-gray text-sm font-semibold border border-dark-gray rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">Whatsapp</a>
             <a href="https://www.instagram.com/redpandakz/" class="px-5 py-1.5 text-center bg-gray-700 text-light-gray text-sm font-semibold border border-dark-gray rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">Instagram</a>
             <a href="https://2gis.kz/astana/firm/70000001067520759" class="px-5 py-1.5 bg-gray-700 text-center text-light-gray text-sm font-semibold border border-dark-gray rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors">2GIS</a>
