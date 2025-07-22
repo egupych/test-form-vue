@@ -1,5 +1,5 @@
 <template>
-  <main class="py-10 md:py-25">
+  <main class="py-10 md:py-25 px-4 md:px-0">
     <div class="max-w-6xl mx-auto">
       <article class="news-layout">
         <h1 class="news-title text-h2-panda font-bold text-panda-black">{{ news.title }}</h1>
