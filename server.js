@@ -20,10 +20,31 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// --- НАЧАЛО ИЗМЕНЕНИЯ: Функция транслитерации ---
+function transliterate(text) {
+  const
+    rus = "А-а-Б-б-В-в-Г-г-Д-д-Е-е-Ё-ё-Ж-ж-З-з-И-и-Й-й-К-к-Л-л-М-м-Н-н-О-о-П-п-Р-р-С-с-Т-т-У-у-Ф-ф-Х-х-Ц-ц-Ч-ч-Ш-ш-Щ-щ-Ъ-ъ-Ы-ы-Ь-ь-Э-э-Ю-ю-Я-я".split("-"),
+    eng = "A-a-B-b-V-v-G-g-D-d-E-e-E-e-ZH-zh-Z-z-I-i-Y-y-K-k-L-l-M-m-N-n-O-o-P-p-R-r-S-s-T-t-U-u-F-f-H-h-TS-ts-CH-ch-SH-sh-SCH-sch-'-'-Y-y-'-'-E-e-YU-yu-YA-ya".split("-");
+  let newText = '';
+  for (let i = 0; i < text.length; i++) {
+    let char = text.charAt(i);
+    let index = rus.indexOf(char);
+    if (index >= 0) {
+      newText += eng[index];
+    } else {
+      newText += char;
+    }
+  }
+  // Заменяем пробелы и прочие нежелательные символы на дефис
+  return newText.replace(/[\s\W]+/g, '-').replace(/--+/g, '-');
+}
+// --- КОНЕЦ ИЗМЕНЕНИЯ ---
+
+
 // --- Конфигурация Multer для основной формы ---
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_MIMETYPES = [
-    'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg',
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp',
     'application/pdf', 'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
     'application/vnd.ms-excel',
@@ -32,17 +53,23 @@ const ALLOWED_MIMETYPES = [
     'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
     'application/zip', 'application/x-rar-compressed', 'application/x-7z-compressed',
     'application/postscript', // .ai, .eps
-    'image/vnd.adobe.photoshop' // .psd
+    'image/vnd.adobe.photoshop', // .psd
+    'image/svg+xml' // .svg
 ];
 
 const mainFormUpload = multer({
     dest: 'uploads/',
     limits: { fileSize: MAX_FILE_SIZE },
     fileFilter: (req, file, cb) => {
-        if (req.path === '/api/submit-form' && !ALLOWED_MIMETYPES.includes(file.mimetype)) {
-            return cb(new Error('Недопустимый тип файла для макета!'), false);
+        const allowedExtensions = ['.jpg', '.jpeg', '.png', '.gif', '.webp', '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.zip', '.rar', '.7z', '.ai', '.eps', '.psd', '.svg', '.fig'];
+        const fileExtension = path.extname(file.originalname).toLowerCase();
+
+        if (ALLOWED_MIMETYPES.includes(file.mimetype) || allowedExtensions.includes(fileExtension)) {
+            cb(null, true);
+        } else {
+            const allowedExtensionsString = '.jpg, .png, .pdf, .docx, .ai, .psd, .svg, .fig, .zip, .rar';
+            return cb(new Error(`Недопустимый тип файла. Разрешены: ${allowedExtensionsString}`), false);
         }
-        cb(null, true);
     }
 });
 
@@ -62,13 +89,13 @@ const resumeUpload = multer({
         if (ALLOWED_RESUME_MIMETYPES.includes(file.mimetype)) {
             cb(null, true);
         } else {
-            cb(new Error('Недопустимый тип файла для резюме! Разрешены .pdf, .doc, .docx, .jpg, .png'), false);
+            cb(new Error('Недопустимый тип файла для резюме! Разрешены: .pdf, .doc, .docx, .jpg, .png'), false);
         }
     }
 });
 
 const requiredEnv = [
-    'PORT', 'EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_SECURE', 'EMAIL_USER', 'EMAIL_PASS', 'EMAIL_RECEIVER',
+    'PORT', 'APP_BASE_URL', 'EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_SECURE', 'EMAIL_USER', 'EMAIL_PASS', 'EMAIL_RECEIVER',
     'EMAIL_HR_RECEIVER', 'FIREBASE_PROJECT_ID', 'GOOGLE_APPLICATION_CREDENTIALS'
 ];
 for (const envVar of requiredEnv) {
@@ -151,78 +178,114 @@ app.post(
 
         const { name, phone, email, company, task, promo } = req.body;
         const files = req.files;
-        
-        // --- ИЗМЕНЕНИЕ: Гарантируем, что `references` всегда является массивом ---
         const references = Array.isArray(req.body.references) ? req.body.references : (req.body.references ? [req.body.references] : []);
 
+        const mailOptions = {
+            from: `"Форма с сайта RedPanda" <${process.env.EMAIL_USER}>`,
+            to: process.env.EMAIL_RECEIVER,
+            subject: `Новая заявка с сайта от ${name}`,
+            attachments: []
+        };
+
+        // --- НАЧАЛО ИЗМЕНЕНИЙ: Логика скачивания и встраивания референсов ---
         let referencesHtml = '';
         if (references && references.length > 0) {
+            const baseUrl = process.env.APP_BASE_URL;
+            
+            const referenceAttachments = await Promise.all(
+                references.map(async (url, index) => {
+                    try {
+                        const absoluteUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
+                        const response = await fetch(absoluteUrl);
+                        if (!response.ok) return null;
+
+                        const contentType = response.headers.get('content-type');
+                        const arrayBuffer = await response.arrayBuffer();
+                        const buffer = Buffer.from(arrayBuffer);
+                        const cid = `reference-${index}@redpanda.kz`;
+                        
+                        return {
+                            filename: path.basename(url),
+                            content: buffer,
+                            contentType: contentType, // Добавляем Content-Type
+                            cid: cid,
+                        };
+                    } catch (e) {
+                        console.error(`Не удалось скачать референс: ${url}`, e);
+                        return null;
+                    }
+                })
+            );
+            
+            const validAttachments = referenceAttachments.filter(Boolean);
+            if(validAttachments.length > 0) {
+                mailOptions.attachments.push(...validAttachments);
+            }
+
             referencesHtml = `
                 <hr>
                 <h3>Выбранные референсы:</h3>
                 <div style="display: flex; flex-wrap: wrap; gap: 10px;">
-                    ${references.map(url => `
-                        <a href="${url}" target="_blank" style="display: block; width: 100px; height: 100px; border-radius: 8px; overflow: hidden;">
-                            <img src="${url}" alt="Референс" style="width: 100%; height: 100%; object-fit: cover;">
-                        </a>
+                    ${validAttachments.map(att => `
+                        <img src="cid:${att.cid}" alt="Референс" style="width: 100px; height: 100px; object-fit: cover; border-radius: 8px;">
                     `).join('')}
                 </div>
             `;
         }
-
+        
+        // --- НАЧАЛО ИЗМЕНЕНИЙ: Транслитерация имен файлов ---
         let filesHtml = '';
+        const transliteratedFileNames = [];
         if (files && files.length > 0) {
              filesHtml = `
                 <hr>
                 <h3>Прикрепленные файлы (${files.length} шт.):</h3>
                 <ul>
-                    ${files.map(file => `<li>${file.originalname}</li>`).join('')}
+                    ${files.map(file => {
+                        const originalName = file.originalname;
+                        const extension = path.extname(originalName);
+                        const baseName = path.basename(originalName, extension);
+                        const transliteratedName = transliterate(baseName) + extension;
+                        transliteratedFileNames.push(transliteratedName);
+                        return `<li>${originalName} (отправлен как ${transliteratedName})</li>`;
+                     }).join('')}
                 </ul>
             `;
+            
+            mailOptions.attachments.push(...files.map((file, index) => ({
+                filename: transliteratedFileNames[index], // Используем новое имя
+                path: file.path
+            })));
         }
+        // --- КОНЕЦ ИЗМЕНЕНИЙ ---
         
         const newSubmission = {
             name, phone, email,
-            company: company || 'Не указана',
-            task,
+            company: company || 'Не указана', task,
             promo: promo || 'Не указан',
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
-            ip: req.ip,
-            userAgent: req.headers['user-agent'],
-            fileNames: files && files.length > 0 ? files.map(f => f.originalname) : [],
+            ip: req.ip, userAgent: req.headers['user-agent'],
+            fileNames: files && files.length > 0 ? transliteratedFileNames : [], // Сохраняем транслитерированные имена
             references: references || []
         };
 
         try {
-            const mailOptions = {
-                from: `"Форма с сайта RedPanda" <${process.env.EMAIL_USER}>`,
-                to: process.env.EMAIL_RECEIVER,
-                subject: `Новая заявка с сайта от ${name}`,
-                html: `
-                    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
-                        <h2>Новая заявка на расчёт стоимости</h2>
-                        <p><strong>Имя:</strong> ${name}</p>
-                        <p><strong>Телефон:</strong> ${phone}</p>
-                        <p><strong>Email:</strong> ${email}</p>
-                        <p><strong>Компания:</strong> ${newSubmission.company}</p>
-                        <p><strong>Промокод:</strong> ${newSubmission.promo}</p>
-                        <hr>
-                        <h3>Задача:</h3>
-                        <p>${task}</p>
-                        ${filesHtml}
-                        ${referencesHtml}
-                    </div>
-                `,
-                attachments: []
-            };
-
-            if (files && files.length > 0) {
-                mailOptions.attachments = files.map(file => ({
-                    filename: file.originalname,
-                    path: file.path
-                }));
-            }
-
+            mailOptions.html = `
+                <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                    <h2>Новая заявка на расчёт стоимости</h2>
+                    <p><strong>Имя:</strong> ${name}</p>
+                    <p><strong>Телефон:</strong> ${phone}</p>
+                    <p><strong>Email:</strong> ${email}</p>
+                    <p><strong>Компания:</strong> ${newSubmission.company}</p>
+                    <p><strong>Промокод:</strong> ${newSubmission.promo}</p>
+                    <hr>
+                    <h3>Задача:</h3>
+                    <p>${task}</p>
+                    ${filesHtml}
+                    ${referencesHtml}
+                </div>
+            `;
+            
             await transporter.sendMail(mailOptions);
             await db.collection('submissions').add(newSubmission);
 
@@ -252,13 +315,24 @@ app.post(
             return res.status(400).json({ success: false, message: 'Ошибка валидации', errors: errors.array() });
         }
         if (!req.file) { return res.status(400).json({ success: false, message: 'Файл резюме не был загружен.' }); }
+        
         const { name, phone, desiredPosition } = req.body;
         const resumeFile = req.file;
+
+        // --- НАЧАЛО ИЗМЕНЕНИЯ: Транслитерация имени файла резюме ---
+        const originalName = resumeFile.originalname;
+        const extension = path.extname(originalName);
+        const baseName = path.basename(originalName, extension);
+        const transliteratedName = transliterate(baseName) + extension;
+        // --- КОНЕЦ ИЗМЕНЕНИЯ ---
+
         const newApplication = {
             name, phone, desiredPosition: desiredPosition || 'Кадровый резерв',
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
-            ip: req.ip, userAgent: req.headers['user-agent'], resumeFileName: resumeFile.originalname,
+            ip: req.ip, userAgent: req.headers['user-agent'], 
+            resumeFileName: transliteratedName, // Сохраняем транслитерированное имя
         };
+
         try {
             const mailOptions = {
                 from: `"Отклик на вакансию" <${process.env.EMAIL_USER}>`,
@@ -269,8 +343,11 @@ app.post(
                          <p><strong>Кандидат:</strong> ${name}</p>
                          <p><strong>Телефон:</strong> ${phone}</p>
                          <p><strong>Желаемая должность:</strong> ${newApplication.desiredPosition}</p>
-                         <hr><p>Резюме кандидата прикреплено к этому письму.</p></div>`,
-                attachments: [{ filename: resumeFile.originalname, path: resumeFile.path }]
+                         <hr><p>Резюме кандидата прикреплено к этому письму (файл: ${transliteratedName}).</p></div>`,
+                attachments: [{ 
+                    filename: transliteratedName, // Используем новое имя
+                    path: resumeFile.path 
+                }]
             };
             await transporter.sendMail(mailOptions);
             await db.collection('applications').add(newApplication);
