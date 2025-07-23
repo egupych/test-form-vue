@@ -7,6 +7,7 @@
 // - Предпросмотр изображений при наведении на имя файла.
 // - Автоматическое заполнение полей данными авторизованного пользователя.
 // - Отправку данных формы, включая файлы и выбранные референсы, на сервер.
+// - ИСПОЛЬЗУЕТ ГЛОБАЛЬНОЕ ХРАНИЛИЩЕ ДЛЯ ФАЙЛОВ, ЧТОБЫ ОНИ НЕ ПРОПАДАЛИ.
 
 import { reactive, ref, computed, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
@@ -14,20 +15,26 @@ import { useAuth } from '@/composables/useAuth.js';
 import { useReferencesStore } from '@/stores/references.js';
 import { useNotificationStore } from '@/stores/notifications.js';
 import { useFormValidation } from '@/composables/useFormValidation.js';
+// --- ИЗМЕНЕНИЕ: Импортируем новое хранилище ---
+import { useFormStateStore } from '@/stores/formState.js';
 
 const props = defineProps({ promoCode: { type: String, default: '' } });
 const { user } = useAuth();
 const referencesStore = useReferencesStore();
 const notificationStore = useNotificationStore();
+// --- ИЗМЕНЕНИЕ: Инициализируем новое хранилище ---
+const formStateStore = useFormStateStore();
 
 const formData = reactive({ name: '', phone: '', email: '', company: '', task: '', promo: '' });
 const validationFields = ['name', 'phone', 'email', 'task'];
 const { errors, validateField, validateForm, formatPhoneInput } = useFormValidation(formData, validationFields);
 
 const isSubmitting = ref(false);
-const files = ref([]);
 const hoveredFileUrl = ref(null);
 const previewStyle = ref({});
+
+// --- ИЗМЕНЕНИЕ: Теперь `files` это computed-свойство, которое читает данные из хранилища ---
+const files = computed(() => formStateStore.calculationFormFiles);
 
 const handleFileMouseEnter = (event, file) => { if (file.type.startsWith('image/')) { const rect = event.currentTarget.getBoundingClientRect(); hoveredFileUrl.value = URL.createObjectURL(file); previewStyle.value = { top: `${rect.top}px`, left: `${rect.right + 15}px` }; } };
 const handleFileMouseLeave = () => { if (hoveredFileUrl.value) { URL.revokeObjectURL(hoveredFileUrl.value); hoveredFileUrl.value = null; } };
@@ -41,7 +48,9 @@ const handleFileUpload = (event) => {
   const currentSize = files.value.reduce((acc, file) => acc + file.size, 0);
   const newSize = newFiles.reduce((acc, file) => acc + file.size, 0);
   if (currentSize + newSize > MAX_TOTAL_SIZE) { notificationStore.showNotification(`Общий размер файлов не должен превышать 100 МБ.`, 'error'); target.value = ''; return; }
-  files.value.push(...newFiles);
+  
+  // --- ИЗМЕНЕНИЕ: Используем действие из хранилища для добавления файлов ---
+  formStateStore.addCalculationFiles(newFiles);
   target.value = '';
 };
 
@@ -50,7 +59,8 @@ const removeFile = (index) => {
     URL.revokeObjectURL(hoveredFileUrl.value);
     hoveredFileUrl.value = null;
   }
-  files.value.splice(index, 1);
+  // --- ИЗМЕНЕНИЕ: Используем действие из хранилища для удаления файла ---
+  formStateStore.removeCalculationFile(index);
 };
 
 watch(() => props.promoCode, (newPromo) => { if (newPromo) formData.promo = newPromo; }, { immediate: true });
@@ -70,8 +80,13 @@ const handleSubmit = async () => {
     isSubmitting.value = true;
     const data = new FormData();
     for (const key in formData) { data.append(key, formData[key]); }
-    if (files.value.length > 0) { files.value.forEach(file => { data.append('files[]', file); }); }
-    if (referencesStore.items.length > 0) { referencesStore.items.forEach((refUrl) => { data.append('references[]', refUrl); }); }
+    
+    if (files.value.length > 0) {
+        files.value.forEach(file => { data.append('files', file); });
+    }
+    if (referencesStore.items.length > 0) {
+        referencesStore.items.forEach((refUrl) => { data.append('references', refUrl); });
+    }
 
     try {
         const response = await fetch('/api/submit-form', { method: 'POST', body: data });
@@ -79,7 +94,8 @@ const handleSubmit = async () => {
         if (!response.ok) throw new Error(result.message || 'Ошибка сервера');
         notificationStore.showNotification(result.message, 'success');
         Object.keys(formData).forEach(key => formData[key] = '');
-        files.value = [];
+        // --- ИЗМЕНЕНИЕ: Очищаем файлы в хранилище ---
+        formStateStore.clearCalculationFiles();
         referencesStore.clearReferences();
     } catch (error) {
         console.error('Ошибка отправки формы:', error);
@@ -230,18 +246,10 @@ const handleSubmit = async () => {
 </template>
 
 <style scoped>
-/* Общие стили для полей ввода */
-.form-input {
-  @apply block w-full pb-1 pt-4 text-base text-panda-black bg-transparent border-b border-gray appearance-none focus:outline-none focus:ring-0 z-10;
-}
-.form-label { 
-  @apply pointer-events-none absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4;
-}
-.input-border {
-  @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full;
-}
-
-/* Старые стили, которые все еще нужны */
+/* Стили остаются без изменений */
+.form-input { @apply block w-full pb-1 pt-4 text-base text-panda-black bg-transparent border-b border-gray appearance-none focus:outline-none focus:ring-0 z-10; }
+.form-label { @apply pointer-events-none absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4; }
+.input-border { @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full; }
 .file-preview-window { position: fixed; z-index: 9999; width: 15.625rem; height: auto; background-color: #fff; border-radius: 0.5rem; box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); pointer-events: none; overflow: hidden; transform-origin: top left; }
 .file-preview-image { width: 100%; height: 100%; object-fit: contain; }
 .preview-enter-active, .preview-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }
@@ -261,7 +269,7 @@ const handleSubmit = async () => {
 .file-name { font-size: 0.875rem; color: #131C26; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 0.625rem; }
 .remove-file-button { background: none; border: none; color: #8F8F8F; cursor: pointer; font-size: 1.25rem; line-height: 1; padding: 0 0.25rem; transition: color 0.2s; margin-left: 0.5rem; flex-shrink: 0; }
 .remove-file-button:hover { color: #F15F31; }
-.upload-button { display: flex; align-items: center; justify-content: center; width: 100%; padding: 1rem; border: 0.125rem dashed #E3E3E3; background-color: #F7F7F7; cursor: pointer; transition: all 0.3s ease; font-family: 'Gilroy-Semibold', sans-serif; color: #8F8F8F; border-radius: 1rem; }
+.upload-button { display: flex; align-items: center; justify-content: center; width: 100%; padding: 1rem; border: 0.125rem dashed #E3E3E3; background-color: #F7F7F7; cursor: pointer; transition: all 0.3s ease; font-family: 'Gilroy-SemiBold', sans-serif; color: #8F8F8F; border-radius: 1rem; }
 .upload-button:hover { border-color: #F15F31; color: #F15F31; background-color: #fff; }
 .upload-icon { width: 1.5rem; height: 1.5rem; margin-right: 0.5rem; }
 .upload-text { font-size: 1rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

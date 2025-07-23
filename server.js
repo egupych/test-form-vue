@@ -23,7 +23,7 @@ const __dirname = path.dirname(__filename);
 // --- Конфигурация Multer для основной формы ---
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_MIMETYPES = [
-    'image/jpeg', 'image/png', 'image/gif', 'image/webp',
+    'image/jpeg', 'image/png', 'image/gif', 'image/webp', 'image/svg',
     'application/pdf', 'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
     'application/vnd.ms-excel',
@@ -39,21 +39,20 @@ const mainFormUpload = multer({
     dest: 'uploads/',
     limits: { fileSize: MAX_FILE_SIZE },
     fileFilter: (req, file, cb) => {
-        if (ALLOWED_MIMETYPES.includes(file.mimetype)) {
-            cb(null, true);
-        } else {
-            cb(new Error('Недопустимый тип файла для макета!'), false);
+        if (req.path === '/api/submit-form' && !ALLOWED_MIMETYPES.includes(file.mimetype)) {
+            return cb(new Error('Недопустимый тип файла для макета!'), false);
         }
+        cb(null, true);
     }
 });
 
-// --- НОВАЯ КОНФИГУРАЦИЯ MULTER ДЛЯ РЕЗЮМЕ ---
+// --- Конфигурация Multer для резюме ---
 const MAX_RESUME_SIZE = 15 * 1024 * 1024; // 15 MB
 const ALLOWED_RESUME_MIMETYPES = [
     'application/pdf',
     'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-    'image/jpeg', 'image/png' // Также разрешим изображения для резюме
+    'image/jpeg', 'image/png'
 ];
 
 const resumeUpload = multer({
@@ -67,10 +66,7 @@ const resumeUpload = multer({
         }
     }
 });
-// --- КОНЕЦ НОВОЙ КОНФИГУРАЦИИ ---
 
-
-// --- Проверка переменных окружения (добавлена EMAIL_HR_RECEIVER) ---
 const requiredEnv = [
     'PORT', 'EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_SECURE', 'EMAIL_USER', 'EMAIL_PASS', 'EMAIL_RECEIVER',
     'EMAIL_HR_RECEIVER', 'FIREBASE_PROJECT_ID', 'GOOGLE_APPLICATION_CREDENTIALS'
@@ -135,7 +131,6 @@ app.use('/api/', limiter);
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// --- Обработчик основной формы (без изменений) ---
 app.post(
     '/api/submit-form',
     mainFormUpload.array('files', 10),
@@ -156,7 +151,36 @@ app.post(
 
         const { name, phone, email, company, task, promo } = req.body;
         const files = req.files;
+        
+        // --- ИЗМЕНЕНИЕ: Гарантируем, что `references` всегда является массивом ---
+        const references = Array.isArray(req.body.references) ? req.body.references : (req.body.references ? [req.body.references] : []);
 
+        let referencesHtml = '';
+        if (references && references.length > 0) {
+            referencesHtml = `
+                <hr>
+                <h3>Выбранные референсы:</h3>
+                <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                    ${references.map(url => `
+                        <a href="${url}" target="_blank" style="display: block; width: 100px; height: 100px; border-radius: 8px; overflow: hidden;">
+                            <img src="${url}" alt="Референс" style="width: 100%; height: 100%; object-fit: cover;">
+                        </a>
+                    `).join('')}
+                </div>
+            `;
+        }
+
+        let filesHtml = '';
+        if (files && files.length > 0) {
+             filesHtml = `
+                <hr>
+                <h3>Прикрепленные файлы (${files.length} шт.):</h3>
+                <ul>
+                    ${files.map(file => `<li>${file.originalname}</li>`).join('')}
+                </ul>
+            `;
+        }
+        
         const newSubmission = {
             name, phone, email,
             company: company || 'Не указана',
@@ -165,7 +189,8 @@ app.post(
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
             ip: req.ip,
             userAgent: req.headers['user-agent'],
-            fileNames: files && files.length > 0 ? files.map(f => f.originalname) : ['Нет файлов']
+            fileNames: files && files.length > 0 ? files.map(f => f.originalname) : [],
+            references: references || []
         };
 
         try {
@@ -173,7 +198,21 @@ app.post(
                 from: `"Форма с сайта RedPanda" <${process.env.EMAIL_USER}>`,
                 to: process.env.EMAIL_RECEIVER,
                 subject: `Новая заявка с сайта от ${name}`,
-                html: `<div style="font-family: Arial, sans-serif; line-height: 1.6;"><h2>Новая заявка на расчёт стоимости</h2><p><strong>Имя:</strong> ${name}</p><p><strong>Телефон:</strong> ${phone}</p><p><strong>Email:</strong> ${email}</p><p><strong>Компания:</strong> ${newSubmission.company}</p><p><strong>Промокод:</strong> ${newSubmission.promo}</p><hr><h3>Задача:</h3><p>${task}</p></div>`,
+                html: `
+                    <div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                        <h2>Новая заявка на расчёт стоимости</h2>
+                        <p><strong>Имя:</strong> ${name}</p>
+                        <p><strong>Телефон:</strong> ${phone}</p>
+                        <p><strong>Email:</strong> ${email}</p>
+                        <p><strong>Компания:</strong> ${newSubmission.company}</p>
+                        <p><strong>Промокод:</strong> ${newSubmission.promo}</p>
+                        <hr>
+                        <h3>Задача:</h3>
+                        <p>${task}</p>
+                        ${filesHtml}
+                        ${referencesHtml}
+                    </div>
+                `,
                 attachments: []
             };
 
@@ -199,10 +238,9 @@ app.post(
     }
 );
 
-// --- НОВЫЙ ОБРАБОТЧИК ДЛЯ ВАКАНСИЙ ---
 app.post(
     '/api/submit-application',
-    resumeUpload.single('resume'), // Принимаем один файл с именем 'resume'
+    resumeUpload.single('resume'),
     [
         body('name').trim().notEmpty().withMessage('Имя не может быть пустым'),
         body('phone').trim().notEmpty().withMessage('Телефон не может быть пустым'),
@@ -210,29 +248,17 @@ app.post(
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            if (req.file) {
-                fs.unlinkSync(req.file.path);
-            }
+            if (req.file) { fs.unlinkSync(req.file.path); }
             return res.status(400).json({ success: false, message: 'Ошибка валидации', errors: errors.array() });
         }
-
-        if (!req.file) {
-            return res.status(400).json({ success: false, message: 'Файл резюме не был загружен.' });
-        }
-
+        if (!req.file) { return res.status(400).json({ success: false, message: 'Файл резюме не был загружен.' }); }
         const { name, phone, desiredPosition } = req.body;
         const resumeFile = req.file;
-
         const newApplication = {
-            name,
-            phone,
-            desiredPosition: desiredPosition || 'Кадровый резерв',
+            name, phone, desiredPosition: desiredPosition || 'Кадровый резерв',
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
-            ip: req.ip,
-            userAgent: req.headers['user-agent'],
-            resumeFileName: resumeFile.originalname,
+            ip: req.ip, userAgent: req.headers['user-agent'], resumeFileName: resumeFile.originalname,
         };
-
         try {
             const mailOptions = {
                 from: `"Отклик на вакансию" <${process.env.EMAIL_USER}>`,
@@ -243,57 +269,33 @@ app.post(
                          <p><strong>Кандидат:</strong> ${name}</p>
                          <p><strong>Телефон:</strong> ${phone}</p>
                          <p><strong>Желаемая должность:</strong> ${newApplication.desiredPosition}</p>
-                         <hr>
-                         <p>Резюме кандидата прикреплено к этому письму.</p>
-                       </div>`,
-                attachments: [{
-                    filename: resumeFile.originalname,
-                    path: resumeFile.path
-                }]
+                         <hr><p>Резюме кандидата прикреплено к этому письму.</p></div>`,
+                attachments: [{ filename: resumeFile.originalname, path: resumeFile.path }]
             };
-
             await transporter.sendMail(mailOptions);
             await db.collection('applications').add(newApplication);
-
             res.status(200).json({ success: true, message: `Спасибо за отклик, ${name}! Мы свяжемся с вами.` });
         } catch (error) {
             console.error('ОШИБКА ПРИ ОБРАБОТКЕ ОТКЛИКА:', error);
             res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера.' });
         } finally {
-            fs.unlinkSync(resumeFile.path); // Удаляем файл после отправки
+            fs.unlinkSync(resumeFile.path);
         }
     }
 );
-// --- КОНЕЦ НОВОГО ОБРАБОТЧИКА ---
 
-
-// --- Обработчик подписки (без изменений) ---
 app.post(
     '/api/subscribe',
-    [
-        body('email').trim().isEmail().withMessage('Некорректный email адрес.')
-    ],
+    [ body('email').trim().isEmail().withMessage('Некорректный email адрес.') ],
     async (req, res) => {
         const errors = validationResult(req);
-        if (!errors.isEmpty()) {
-            return res.status(400).json({ success: false, message: errors.array()[0].msg });
-        }
-
+        if (!errors.isEmpty()) { return res.status(400).json({ success: false, message: errors.array()[0].msg }); }
         const { email, sphere } = req.body;
         const subscribersRef = db.collection('subscribers');
-
         try {
             const snapshot = await subscribersRef.where('email', '==', email).get();
-            if (!snapshot.empty) {
-                return res.status(409).json({ success: false, message: 'Вы уже подписаны на нашу рассылку!' });
-            }
-
-            await subscribersRef.add({
-                email: email,
-                sphere: sphere || 'Не указана',
-                subscribedAt: admin.firestore.FieldValue.serverTimestamp()
-            });
-
+            if (!snapshot.empty) { return res.status(409).json({ success: false, message: 'Вы уже подписаны на нашу рассылку!' }); }
+            await subscribersRef.add({ email: email, sphere: sphere || 'Не указана', subscribedAt: admin.firestore.FieldValue.serverTimestamp() });
             res.status(200).json({ success: true, message: 'Спасибо за подписку!' });
         } catch (error) {
             console.error('ОШИБКА ПРИ ПОДПИСКЕ:', error);
@@ -302,7 +304,6 @@ app.post(
     }
 );
 
-// --- Обработчик ошибок Multer (без изменений) ---
 app.use((error, req, res, next) => {
     if (error instanceof multer.MulterError) {
         if (error.code === 'LIMIT_FILE_SIZE') {
