@@ -20,27 +20,6 @@ import fs from 'fs';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// --- НАЧАЛО ИЗМЕНЕНИЯ: Функция транслитерации ---
-function transliterate(text) {
-  const
-    rus = "А-а-Б-б-В-в-Г-г-Д-д-Е-е-Ё-ё-Ж-ж-З-з-И-и-Й-й-К-к-Л-л-М-м-Н-н-О-о-П-п-Р-р-С-с-Т-т-У-у-Ф-ф-Х-х-Ц-ц-Ч-ч-Ш-ш-Щ-щ-Ъ-ъ-Ы-ы-Ь-ь-Э-э-Ю-ю-Я-я".split("-"),
-    eng = "A-a-B-b-V-v-G-g-D-d-E-e-E-e-ZH-zh-Z-z-I-i-Y-y-K-k-L-l-M-m-N-n-O-o-P-p-R-r-S-s-T-t-U-u-F-f-H-h-TS-ts-CH-ch-SH-sh-SCH-sch-'-'-Y-y-'-'-E-e-YU-yu-YA-ya".split("-");
-  let newText = '';
-  for (let i = 0; i < text.length; i++) {
-    let char = text.charAt(i);
-    let index = rus.indexOf(char);
-    if (index >= 0) {
-      newText += eng[index];
-    } else {
-      newText += char;
-    }
-  }
-  // Заменяем пробелы и прочие нежелательные символы на дефис
-  return newText.replace(/[\s\W]+/g, '-').replace(/--+/g, '-');
-}
-// --- КОНЕЦ ИЗМЕНЕНИЯ ---
-
-
 // --- Конфигурация Multer для основной формы ---
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_MIMETYPES = [
@@ -186,8 +165,8 @@ app.post(
             subject: `Новая заявка с сайта от ${name}`,
             attachments: []
         };
-
-        // --- НАЧАЛО ИЗМЕНЕНИЙ: Логика скачивания и встраивания референсов ---
+        
+        // --- НАЧАЛО ИЗМЕНЕНИЙ: Полностью переработанная логика для референсов ---
         let referencesHtml = '';
         if (references && references.length > 0) {
             const baseUrl = process.env.APP_BASE_URL;
@@ -197,18 +176,23 @@ app.post(
                     try {
                         const absoluteUrl = url.startsWith('http') ? url : `${baseUrl}${url}`;
                         const response = await fetch(absoluteUrl);
-                        if (!response.ok) return null;
-
+                        
+                        // Проверяем, что ответ успешный и что это изображение
                         const contentType = response.headers.get('content-type');
+                        if (!response.ok || !contentType || !contentType.startsWith('image')) {
+                           console.error(`Не удалось скачать референс (не изображение): ${absoluteUrl}`);
+                           return null;
+                        }
+
                         const arrayBuffer = await response.arrayBuffer();
                         const buffer = Buffer.from(arrayBuffer);
                         const cid = `reference-${index}@redpanda.kz`;
                         
                         return {
-                            filename: path.basename(url),
-                            content: buffer,
-                            contentType: contentType, // Добавляем Content-Type
-                            cid: cid,
+                            filename: path.basename(url), // Добавляем имя файла
+                            content: buffer,              // Отправляем как буфер
+                            contentType: contentType,     // Указываем тип контента
+                            cid: cid,                     // Указываем Content-ID
                         };
                     } catch (e) {
                         console.error(`Не удалось скачать референс: ${url}`, e);
@@ -233,27 +217,22 @@ app.post(
             `;
         }
         
-        // --- НАЧАЛО ИЗМЕНЕНИЙ: Транслитерация имен файлов ---
         let filesHtml = '';
-        const transliteratedFileNames = [];
         if (files && files.length > 0) {
              filesHtml = `
                 <hr>
                 <h3>Прикрепленные файлы (${files.length} шт.):</h3>
                 <ul>
                     ${files.map(file => {
-                        const originalName = file.originalname;
-                        const extension = path.extname(originalName);
-                        const baseName = path.basename(originalName, extension);
-                        const transliteratedName = transliterate(baseName) + extension;
-                        transliteratedFileNames.push(transliteratedName);
-                        return `<li>${originalName} (отправлен как ${transliteratedName})</li>`;
+                        // --- ИЗМЕНЕНИЕ: Убираем транслитерацию, исправляем кодировку ---
+                        const decodedOriginalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+                        return `<li>${decodedOriginalName}</li>`;
                      }).join('')}
                 </ul>
             `;
             
-            mailOptions.attachments.push(...files.map((file, index) => ({
-                filename: transliteratedFileNames[index], // Используем новое имя
+            mailOptions.attachments.push(...files.map(file => ({
+                filename: Buffer.from(file.originalname, 'latin1').toString('utf8'), // Также исправляем имя в самом вложении
                 path: file.path
             })));
         }
@@ -265,7 +244,7 @@ app.post(
             promo: promo || 'Не указан',
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
             ip: req.ip, userAgent: req.headers['user-agent'],
-            fileNames: files && files.length > 0 ? transliteratedFileNames : [], // Сохраняем транслитерированные имена
+            fileNames: files && files.length > 0 ? files.map(f => Buffer.from(f.originalname, 'latin1').toString('utf8')) : [],
             references: references || []
         };
 
@@ -319,18 +298,14 @@ app.post(
         const { name, phone, desiredPosition } = req.body;
         const resumeFile = req.file;
 
-        // --- НАЧАЛО ИЗМЕНЕНИЯ: Транслитерация имени файла резюме ---
-        const originalName = resumeFile.originalname;
-        const extension = path.extname(originalName);
-        const baseName = path.basename(originalName, extension);
-        const transliteratedName = transliterate(baseName) + extension;
-        // --- КОНЕЦ ИЗМЕНЕНИЯ ---
+        // --- ИЗМЕНЕНИЕ: Исправляем кодировку ---
+        const decodedOriginalName = Buffer.from(resumeFile.originalname, 'latin1').toString('utf8');
 
         const newApplication = {
             name, phone, desiredPosition: desiredPosition || 'Кадровый резерв',
             timestamp: admin.firestore.FieldValue.serverTimestamp(),
             ip: req.ip, userAgent: req.headers['user-agent'], 
-            resumeFileName: transliteratedName, // Сохраняем транслитерированное имя
+            resumeFileName: decodedOriginalName,
         };
 
         try {
@@ -343,9 +318,9 @@ app.post(
                          <p><strong>Кандидат:</strong> ${name}</p>
                          <p><strong>Телефон:</strong> ${phone}</p>
                          <p><strong>Желаемая должность:</strong> ${newApplication.desiredPosition}</p>
-                         <hr><p>Резюме кандидата прикреплено к этому письму (файл: ${transliteratedName}).</p></div>`,
+                         <hr><p>Резюме кандидата прикреплено к этому письму (файл: ${decodedOriginalName}).</p></div>`,
                 attachments: [{ 
-                    filename: transliteratedName, // Используем новое имя
+                    filename: decodedOriginalName,
                     path: resumeFile.path 
                 }]
             };
