@@ -1,12 +1,12 @@
-// Файл: TalentReserveForm.vue
 <script setup>
+// Файл: TalentReserveForm.vue
 // Этот скрипт предназначен для формы "Кадровый резерв".
 // Его основные задачи:
 // - Получение начальной желаемой должности через props.
 // - Сбор данных от пользователя (должность, имя, телефон).
 // - Валидация обязательных полей с помощью useFormValidation.
 // - Загрузка файла резюме с предпросмотром для изображений.
-// - Обработка отправки формы: показ уведомления и очистка полей.
+// - Отправка данных на бэкенд-сервер по адресу /api/submit-application.
 
 import { ref, reactive, watch, computed } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
@@ -37,7 +37,7 @@ const previewStyle = ref({});
 
 watch(() => props.initialPosition, (newVal) => {
   formData.desiredPosition = newVal;
-});
+}, { immediate: true });
 
 const isFormValid = computed(() => {
     const allFieldsFilled = validationFields.every(field => !!formData[field]);
@@ -93,21 +93,44 @@ const handleFileMouseLeave = () => {
   }
 };
 
-const submitApplication = () => {
-  if (!validateForm(validationFields)) {
-    notificationStore.showNotification('Пожалуйста, заполните имя и телефон.', 'error');
+// --- ИЗМЕНЕННАЯ ФУНКЦИЯ ОТПРАВКИ ---
+const submitApplication = async () => {
+  if (!validateForm(validationFields) || files.value.length === 0) {
+    notificationStore.showNotification('Пожалуйста, заполните имя, телефон и прикрепите резюме.', 'error');
     return;
   }
-  if (files.value.length === 0) {
-    notificationStore.showNotification('Пожалуйста, прикрепите ваше резюме.', 'error');
-    return;
+
+  isSubmitting.value = true;
+  const data = new FormData();
+  data.append('name', formData.name);
+  data.append('phone', formData.phone);
+  data.append('desiredPosition', formData.desiredPosition || 'Кадровый резерв');
+  data.append('resume', files.value[0]);
+
+  try {
+    const response = await fetch('/api/submit-application', {
+      method: 'POST',
+      body: data
+    });
+    const result = await response.json();
+
+    if (!response.ok) {
+      throw new Error(result.message || 'Ошибка на стороне сервера.');
+    }
+
+    notificationStore.showNotification(result.message, 'success');
+    // Очистка формы
+    formData.desiredPosition = '';
+    formData.name = '';
+    formData.phone = '';
+    files.value = [];
+
+  } catch (error) {
+    console.error('Ошибка отправки отклика:', error);
+    notificationStore.showNotification(error.message || 'Не удалось отправить отклик.', 'error');
+  } finally {
+    isSubmitting.value = false;
   }
-  notificationStore.showNotification(`Спасибо за отклик, ${formData.name}! Мы свяжемся с вами.`, 'success');
-  
-  formData.desiredPosition = '';
-  formData.name = '';
-  formData.phone = '';
-  files.value = [];
 };
 </script>
 
@@ -170,9 +193,9 @@ const submitApplication = () => {
 
               <div class="mt-auto pt-8">
                 <div v-if="files.length > 0" class="file-list">
-                  <div 
-                    v-for="(file, index) in files" 
-                    :key="file.name + index" 
+                  <div
+                    v-for="(file, index) in files"
+                    :key="file.name + index"
                     class="file-item"
                     @mouseenter="handleFileMouseEnter($event, file)"
                     @mouseleave="handleFileMouseLeave"
@@ -210,18 +233,10 @@ const submitApplication = () => {
 </template>
 
 <style scoped>
-/* Общие стили для полей ввода */
-.form-input {
-  @apply block w-full pb-1 pt-4 text-base text-panda-black bg-transparent border-b border-gray appearance-none focus:outline-none focus:ring-0 z-10;
-}
-.form-label {
-  @apply pointer-events-none absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4;
-}
-.input-border {
-  @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full;
-}
-
-/* Старые стили, которые все еще нужны */
+/* Стили остаются без изменений */
+.form-input { @apply block w-full pb-1 pt-4 text-base text-panda-black bg-transparent border-b border-gray appearance-none focus:outline-none focus:ring-0 z-10; }
+.form-label { @apply pointer-events-none absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4; }
+.input-border { @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full; }
 .file-preview-window { position: fixed; z-index: 9999; width: 15.625rem; height: auto; background-color: #fff; border-radius: 0.5rem; box-shadow: 0 0.625rem 1.875rem rgba(0, 0, 0, 0.2); pointer-events: none; overflow: hidden; }
 .file-preview-image { width: 100%; height: 100%; object-fit: contain; }
 .preview-enter-active, .preview-leave-active { transition: opacity 0.2s ease, transform 0.2s ease; }

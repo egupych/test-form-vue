@@ -1,4 +1,8 @@
-// egupych/test-form-vue/test-form-vue-e89867af06c86f9f3bb70c52bd333eef7bd73db6/server.js
+// Код server.js
+// Этот файл настраивает и запускает бэкенд-сервер с помощью Express.
+// Он обрабатывает API-запросы от Vue-приложения, такие как отправка форм и подписка на рассылку.
+// Сервер использует multer для загрузки файлов, nodemailer для отправки писем и Firebase Admin SDK для работы с базой данных Firestore.
+// Также включены базовые меры безопасности: helmet, CORS и ограничение частоты запросов.
 
 import express from 'express';
 import cors from 'cors';
@@ -11,16 +15,16 @@ import admin from 'firebase-admin';
 import { fileURLToPath } from 'url';
 import 'dotenv/config';
 import multer from 'multer';
-import fs from 'fs'; // <-- ДОБАВЛЕНО: модуль для работы с файлами
+import fs from 'fs';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// --- ИЗМЕНЕНИЕ: Улучшенная конфигурация Multer ---
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB на один файл
+// --- Конфигурация Multer для основной формы ---
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_MIMETYPES = [
     'image/jpeg', 'image/png', 'image/gif', 'image/webp',
-    'application/pdf', 'application/msword', 
+    'application/pdf', 'application/msword',
     'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
     'application/vnd.ms-excel',
     'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
@@ -31,24 +35,45 @@ const ALLOWED_MIMETYPES = [
     'image/vnd.adobe.photoshop' // .psd
 ];
 
-const upload = multer({
+const mainFormUpload = multer({
     dest: 'uploads/',
-    limits: {
-        fileSize: MAX_FILE_SIZE 
-    },
+    limits: { fileSize: MAX_FILE_SIZE },
     fileFilter: (req, file, cb) => {
         if (ALLOWED_MIMETYPES.includes(file.mimetype)) {
             cb(null, true);
         } else {
-            cb(new Error('Недопустимый тип файла!'), false);
+            cb(new Error('Недопустимый тип файла для макета!'), false);
         }
     }
 });
-// --- КОНЕЦ ИЗМЕНЕНИЙ MULTER ---
 
+// --- НОВАЯ КОНФИГУРАЦИЯ MULTER ДЛЯ РЕЗЮМЕ ---
+const MAX_RESUME_SIZE = 15 * 1024 * 1024; // 15 MB
+const ALLOWED_RESUME_MIMETYPES = [
+    'application/pdf',
+    'application/msword',
+    'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
+    'image/jpeg', 'image/png' // Также разрешим изображения для резюме
+];
+
+const resumeUpload = multer({
+    dest: 'uploads/',
+    limits: { fileSize: MAX_RESUME_SIZE },
+    fileFilter: (req, file, cb) => {
+        if (ALLOWED_RESUME_MIMETYPES.includes(file.mimetype)) {
+            cb(null, true);
+        } else {
+            cb(new Error('Недопустимый тип файла для резюме! Разрешены .pdf, .doc, .docx, .jpg, .png'), false);
+        }
+    }
+});
+// --- КОНЕЦ НОВОЙ КОНФИГУРАЦИИ ---
+
+
+// --- Проверка переменных окружения (добавлена EMAIL_HR_RECEIVER) ---
 const requiredEnv = [
     'PORT', 'EMAIL_HOST', 'EMAIL_PORT', 'EMAIL_SECURE', 'EMAIL_USER', 'EMAIL_PASS', 'EMAIL_RECEIVER',
-    'FIREBASE_PROJECT_ID', 'GOOGLE_APPLICATION_CREDENTIALS'
+    'EMAIL_HR_RECEIVER', 'FIREBASE_PROJECT_ID', 'GOOGLE_APPLICATION_CREDENTIALS'
 ];
 for (const envVar of requiredEnv) {
     if (!process.env[envVar]) {
@@ -90,8 +115,7 @@ transporter.verify((error) => {
 app.use(express.json());
 app.use(helmet());
 
-// --- ИЗМЕНЕНИЕ: Более строгая политика CORS для продакшена ---
-const whitelist = ['http://localhost:5173', 'https://redpanda.web.app/']; // Замените на ваш домен
+const whitelist = ['http://localhost:5173', 'https://redpanda.web.app/'];
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin || whitelist.indexOf(origin) !== -1) {
@@ -102,7 +126,6 @@ const corsOptions = {
   }
 }
 app.use(cors(corsOptions));
-// --- КОНЕЦ ИЗМЕНЕНИЙ CORS ---
 
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000,
@@ -112,10 +135,10 @@ app.use('/api/', limiter);
 
 app.use(express.static(path.join(__dirname, 'dist')));
 
-// --- ИЗМЕНЕНИЕ: Обработчик теперь для нескольких файлов ---
+// --- Обработчик основной формы (без изменений) ---
 app.post(
     '/api/submit-form',
-    upload.array('files', 10), // Принимаем до 10 файлов
+    mainFormUpload.array('files', 10),
     [
         body('name').trim().notEmpty().withMessage('Имя не может быть пустым'),
         body('phone').trim().notEmpty().withMessage('Телефон не может быть пустым'),
@@ -125,7 +148,6 @@ app.post(
     async (req, res) => {
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
-            // Если есть ошибки валидации, удаляем загруженные файлы
             if (req.files) {
                 req.files.forEach(file => fs.unlinkSync(file.path));
             }
@@ -133,19 +155,19 @@ app.post(
         }
 
         const { name, phone, email, company, task, promo } = req.body;
-        const files = req.files; // Теперь это массив
+        const files = req.files;
 
-        const newSubmission = { 
-            name, phone, email, 
-            company: company || 'Не указана', 
-            task, 
-            promo: promo || 'Не указан', 
-            timestamp: admin.firestore.FieldValue.serverTimestamp(), 
-            ip: req.ip, 
+        const newSubmission = {
+            name, phone, email,
+            company: company || 'Не указана',
+            task,
+            promo: promo || 'Не указан',
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            ip: req.ip,
             userAgent: req.headers['user-agent'],
             fileNames: files && files.length > 0 ? files.map(f => f.originalname) : ['Нет файлов']
         };
-        
+
         try {
             const mailOptions = {
                 from: `"Форма с сайта RedPanda" <${process.env.EMAIL_USER}>`,
@@ -164,13 +186,12 @@ app.post(
 
             await transporter.sendMail(mailOptions);
             await db.collection('submissions').add(newSubmission);
-            
+
             res.status(200).json({ success: true, message: 'Заявка успешно отправлена!' });
         } catch (error) {
             console.error('ОШИБКА ПРИ ОБРАБОТКЕ ЗАЯВКИ:', error);
             res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера.' });
         } finally {
-            // --- ИЗМЕНЕНИЕ: Удаляем файлы после отправки ---
             if (files && files.length > 0) {
                 files.forEach(file => fs.unlinkSync(file.path));
             }
@@ -178,9 +199,78 @@ app.post(
     }
 );
 
+// --- НОВЫЙ ОБРАБОТЧИК ДЛЯ ВАКАНСИЙ ---
+app.post(
+    '/api/submit-application',
+    resumeUpload.single('resume'), // Принимаем один файл с именем 'resume'
+    [
+        body('name').trim().notEmpty().withMessage('Имя не может быть пустым'),
+        body('phone').trim().notEmpty().withMessage('Телефон не может быть пустым'),
+    ],
+    async (req, res) => {
+        const errors = validationResult(req);
+        if (!errors.isEmpty()) {
+            if (req.file) {
+                fs.unlinkSync(req.file.path);
+            }
+            return res.status(400).json({ success: false, message: 'Ошибка валидации', errors: errors.array() });
+        }
+
+        if (!req.file) {
+            return res.status(400).json({ success: false, message: 'Файл резюме не был загружен.' });
+        }
+
+        const { name, phone, desiredPosition } = req.body;
+        const resumeFile = req.file;
+
+        const newApplication = {
+            name,
+            phone,
+            desiredPosition: desiredPosition || 'Кадровый резерв',
+            timestamp: admin.firestore.FieldValue.serverTimestamp(),
+            ip: req.ip,
+            userAgent: req.headers['user-agent'],
+            resumeFileName: resumeFile.originalname,
+        };
+
+        try {
+            const mailOptions = {
+                from: `"Отклик на вакансию" <${process.env.EMAIL_USER}>`,
+                to: process.env.EMAIL_HR_RECEIVER,
+                subject: `Новый отклик: ${newApplication.desiredPosition} от ${name}`,
+                html: `<div style="font-family: Arial, sans-serif; line-height: 1.6;">
+                         <h2>Новый отклик на вакансию</h2>
+                         <p><strong>Кандидат:</strong> ${name}</p>
+                         <p><strong>Телефон:</strong> ${phone}</p>
+                         <p><strong>Желаемая должность:</strong> ${newApplication.desiredPosition}</p>
+                         <hr>
+                         <p>Резюме кандидата прикреплено к этому письму.</p>
+                       </div>`,
+                attachments: [{
+                    filename: resumeFile.originalname,
+                    path: resumeFile.path
+                }]
+            };
+
+            await transporter.sendMail(mailOptions);
+            await db.collection('applications').add(newApplication);
+
+            res.status(200).json({ success: true, message: `Спасибо за отклик, ${name}! Мы свяжемся с вами.` });
+        } catch (error) {
+            console.error('ОШИБКА ПРИ ОБРАБОТКЕ ОТКЛИКА:', error);
+            res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера.' });
+        } finally {
+            fs.unlinkSync(resumeFile.path); // Удаляем файл после отправки
+        }
+    }
+);
+// --- КОНЕЦ НОВОГО ОБРАБОТЧИКА ---
+
+
+// --- Обработчик подписки (без изменений) ---
 app.post(
     '/api/subscribe',
-    [ 
+    [
         body('email').trim().isEmail().withMessage('Некорректный email адрес.')
     ],
     async (req, res) => {
@@ -212,11 +302,11 @@ app.post(
     }
 );
 
-// --- ИЗМЕНЕНИЕ: Обработчик ошибок Multer ---
+// --- Обработчик ошибок Multer (без изменений) ---
 app.use((error, req, res, next) => {
     if (error instanceof multer.MulterError) {
         if (error.code === 'LIMIT_FILE_SIZE') {
-            return res.status(400).json({ success: false, message: 'Файл слишком большой. Максимальный размер 10 МБ.' });
+            return res.status(400).json({ success: false, message: 'Файл слишком большой.' });
         }
     } else if (error) {
         return res.status(400).json({ success: false, message: error.message });
