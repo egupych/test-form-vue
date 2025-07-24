@@ -26,7 +26,7 @@ const promotions = ref([
     image: cupomBackToSchool,
     promo: 'SCHOOL10',
     buttonVariant: 'fill-black',
-  }
+  },
 ]);
 
 const isPopupVisible = ref(false);
@@ -46,25 +46,46 @@ const closePopup = () => {
 <template>
   <main class="py-10 md:py-25">
     <div class="max-w-6xl mx-auto">
-        <SectionHeader class="gap-container">Акции</SectionHeader>
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div v-for="promo in promotions" :key="promo.id" class="bg-light-gray overflow-hidden p-6 text-center promo-card">
-                <img :src="promo.image" :alt="promo.title" class="w-full h-auto object-cover mb-5 promo-image">
-                <h2 class="font-semibold text-panda-black text-h4-panda mb-1">{{ promo.title }}</h2>
-                <p class="text-body-panda text-dark-gray mb-4">{{ promo.description }}</p>
-                <BaseButton @click="openPopup(promo.promo)" :variant="promo.buttonVariant">
-                  Воспользоваться
-                </BaseButton>
-            </div>
+      <SectionHeader class="gap-container">Акции</SectionHeader>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div
+          v-for="promo in promotions"
+          :key="promo.id"
+          class="bg-light-gray overflow-hidden p-6 text-center promo-card"
+        >
+          <img
+            :src="promo.image"
+            :alt="promo.title"
+            class="w-full h-auto object-cover mb-5 promo-image"
+          />
+          <h2 class="font-semibold text-panda-black text-h4-panda mb-1">
+            {{ promo.title }}
+          </h2>
+          <p class="text-body-panda text-dark-gray mb-4">
+            {{ promo.description }}
+          </p>
+          <BaseButton
+            @click="openPopup(promo.promo)"
+            :variant="promo.buttonVariant"
+          >
+            Воспользоваться
+          </BaseButton>
         </div>
+      </div>
     </div>
 
     <Teleport to="body">
       <transition name="popup">
-        <div v-if="isPopupVisible" class="popup-overlay" @click.self="closePopup">
+        <div
+          v-if="isPopupVisible"
+          class="popup-overlay"
+          @click.self="closePopup"
+        >
           <div class="popup-container">
-            <button @click="closePopup" class="popup-close-button">&times;</button>
+            <button @click="closePopup" class="popup-close-button">
+              &times;
+            </button>
             <CalculationForm :promo-code="activePromoCode" />
           </div>
         </div>
@@ -92,8 +113,13 @@ const closePopup = () => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(19, 28, 38, 0.8); /* Цвет как на главной для единообразия */
-  backdrop-filter: blur(0.3125rem);            /* 5px -> 0.3125rem. Эффект размытия фона */
+  background-color: rgba(
+    19,
+    28,
+    38,
+    0.8
+  ); /* Цвет как на главной для единообразия */
+  backdrop-filter: blur(0.3125rem); /* 5px -> 0.3125rem. Эффект размытия фона */
   display: flex;
   justify-content: center;
   align-items: center;
@@ -120,20 +146,20 @@ const closePopup = () => {
 
 .popup-close-button {
   position: absolute;
-  top: 0.9375rem;  /* 15px -> 0.9375rem */
+  top: 0.9375rem; /* 15px -> 0.9375rem */
   right: 1.375rem; /* 22px -> 1.375rem */
   background: none;
   border: none;
   font-size: 2.5rem;
   line-height: 1;
-  color: #8F8F8F;
+  color: #8f8f8f;
   cursor: pointer;
   transition: color 0.2s;
   z-index: 1;
 }
 
 .popup-close-button:hover {
-  color: #131C26;
+  color: #131c26;
 }
 
 .popup-enter-active,

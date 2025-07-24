@@ -4,10 +4,12 @@ import { computed } from 'vue';
 
 // 1. Меняем путь для поиска на /src/assets/
 // 2. Добавляем { eager: true } - это заставляет Vite немедленно загрузить информацию о файлах
-const modules = import.meta.glob('/src/assets/images/services/**/*.+(png|jpg|jpeg|webp|svg)', { eager: true });
+const modules = import.meta.glob(
+  '/src/assets/images/services/**/*.+(png|jpg|jpeg|webp|svg)',
+  { eager: true }
+);
 
 export function useServiceImages(serviceId) {
-
   const imagePaths = computed(() => {
     const paths = [];
     for (const path in modules) {
@@ -30,6 +32,6 @@ export function useServiceImages(serviceId) {
 
   return {
     imagePaths,
-    lastImage
+    lastImage,
   };
 }

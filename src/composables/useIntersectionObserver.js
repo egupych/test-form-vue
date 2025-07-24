@@ -7,7 +7,10 @@ import { ref, onMounted, onUnmounted } from 'vue';
  * @param {object} options - Настройки для IntersectionObserver.
  * @returns {object} - Реактивная переменная isIntersecting.
  */
-export function useIntersectionObserver(target, options = { root: null, rootMargin: '0rem', threshold: 0.1 }) {
+export function useIntersectionObserver(
+  target,
+  options = { root: null, rootMargin: '0rem', threshold: 0.1 }
+) {
   const isIntersecting = ref(false);
   let observer = null;
 

@@ -1,47 +1,45 @@
-
-
 {
-    "header": {
-      "nav": {
-        "home": "Басты бет",
-        "about": "Біз туралы",
-        "promotions": "Науқандар",
-        "preparation": "Дайындық",
-        "projects": "Жобалар",
-        "shop": "Дүкен"
-      },
-      "about_dropdown": {
-        "team": "Команда",
-        "news": "Жаңалықтар",
-        "vacancies": "Бос орындар",
-        "equipment": "Жабдықтар"
-      },
-      "buttons": {
-        "login": "Кіру",
-        "logout": "Шығу"
-      },
-      "mobile_menu": {
-        "title": "Мәзір"
-      },
-      "dev_section": {
-        "title": "Бөлім әзірленуде"
-      }
+  "header": {
+    "nav": {
+      "home": "Басты бет",
+      "about": "Біз туралы",
+      "promotions": "Науқандар",
+      "preparation": "Дайындық",
+      "projects": "Жобалар",
+      "shop": "Дүкен"
     },
-    "footer": {
-      "subscription_title": "Болашақ науқандар туралы <br>жаңалықтарға жазылыңыз",
-      "email_placeholder": "Сіздің email-адресіңіз",
-      "business_sphere_placeholder": "Сіздің бизнес салаңыз",
-      "consent_text": "Ақпараттық хабарламаға келісім. Кез келген уақытта жазылудан бас тарта аласыз.",
-      "subscribe_button": "Жазылу",
-      "subscribing_button": "Жіберілуде...",
-      "consent_error": "Ақпараттық хабарламаға келісім беріңіз.",
-      "network_error": "Желі қатесі. Кейінірек қайталап көріңіз.",
-      "address_line_1": "Астана, Қорғалжын тас жолы, 6",
-      "address_line_2": "Дс-Жм 10:00-18:00",
-      "qr_instagram": "redpandakz",
-      "button_whatsapp": "Whatsapp",
-      "button_instagram": "Instagram",
-      "button_2gis": "2GIS",
-      "company_details": "«RED PANDA» ЖШС БСН 221240030264"
+    "about_dropdown": {
+      "team": "Команда",
+      "news": "Жаңалықтар",
+      "vacancies": "Бос орындар",
+      "equipment": "Жабдықтар"
+    },
+    "buttons": {
+      "login": "Кіру",
+      "logout": "Шығу"
+    },
+    "mobile_menu": {
+      "title": "Мәзір"
+    },
+    "dev_section": {
+      "title": "Бөлім әзірленуде"
     }
+  },
+  "footer": {
+    "subscription_title": "Болашақ науқандар туралы <br>жаңалықтарға жазылыңыз",
+    "email_placeholder": "Сіздің email-адресіңіз",
+    "business_sphere_placeholder": "Сіздің бизнес салаңыз",
+    "consent_text": "Ақпараттық хабарламаға келісім. Кез келген уақытта жазылудан бас тарта аласыз.",
+    "subscribe_button": "Жазылу",
+    "subscribing_button": "Жіберілуде...",
+    "consent_error": "Ақпараттық хабарламаға келісім беріңіз.",
+    "network_error": "Желі қатесі. Кейінірек қайталап көріңіз.",
+    "address_line_1": "Астана, Қорғалжын тас жолы, 6",
+    "address_line_2": "Дс-Жм 10:00-18:00",
+    "qr_instagram": "redpandakz",
+    "button_whatsapp": "Whatsapp",
+    "button_instagram": "Instagram",
+    "button_2gis": "2GIS",
+    "company_details": "«RED PANDA» ЖШС БСН 221240030264"
   }
+}

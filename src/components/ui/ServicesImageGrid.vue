@@ -30,66 +30,151 @@ import brochuring from '@/assets/images/pages/HomePage/ServicesImageGrid/brochur
 import accessories from '@/assets/images/pages/HomePage/ServicesImageGrid/accessories.jpg';
 import perforation from '@/assets/images/pages/HomePage/ServicesImageGrid/perforation.jpg';
 
-
 const services = ref([
   // --- Большие блоки ---
   {
     id: 'digital-printing',
     title: 'Цифровая печать',
-    description: 'Срочная и высококачественная печать визиток, флаеров, каталогов, буклетов, календарей, и многого другого',
+    description:
+      'Срочная и высококачественная печать визиток, флаеров, каталогов, буклетов, календарей, и многого другого',
     imageUrl: digitalPrinting, // <-- 2. Используем импортированную переменную
-    style: 'grid-column: span 2; grid-row: span 2;'
+    style: 'grid-column: span 2; grid-row: span 2;',
   },
   {
     id: 'packaging',
     title: 'Упаковка',
-    description: 'Изготовление коробок и бумажных стаканчиков с фирменным стилем',
+    description:
+      'Изготовление коробок и бумажных стаканчиков с фирменным стилем',
     imageUrl: packaging, // <-- 2. Используем импортированную переменную
   },
 
   // --- Маленькие блоки (1x1) ---
-  { id: 'laser-cutting', title: 'Лазерная резка', description: 'Акриловые таблички, награды', imageUrl: laserCutting },
-  { id: 'outdoor-adv', title: 'Наружная реклама', description: 'Баннеры, вывески, билборды, лайтбоксы', imageUrl: outdoorAdv },
+  {
+    id: 'laser-cutting',
+    title: 'Лазерная резка',
+    description: 'Акриловые таблички, награды',
+    imageUrl: laserCutting,
+  },
+  {
+    id: 'outdoor-adv',
+    title: 'Наружная реклама',
+    description: 'Баннеры, вывески, билборды, лайтбоксы',
+    imageUrl: outdoorAdv,
+  },
 
-  { id: 'dtf-print', title: 'DTF-печать', description: 'Качественная печать на футболках, худи, кепках и фартуках', imageUrl: dtfPrint },
-  
-  { id: 'souvenirs', title: 'Сувениры', description: 'Презентабельные и полезные сувениры: ручки, блокноты, флешки, ', imageUrl: souvenirs },
+  {
+    id: 'dtf-print',
+    title: 'DTF-печать',
+    description: 'Качественная печать на футболках, худи, кепках и фартуках',
+    imageUrl: dtfPrint,
+  },
 
+  {
+    id: 'souvenirs',
+    title: 'Сувениры',
+    description:
+      'Презентабельные и полезные сувениры: ручки, блокноты, флешки, ',
+    imageUrl: souvenirs,
+  },
 
-  { id: 'uv-print', title: 'УФ-печать', description: 'На любых поверхностях', imageUrl: uvPrint },
+  {
+    id: 'uv-print',
+    title: 'УФ-печать',
+    description: 'На любых поверхностях',
+    imageUrl: uvPrint,
+  },
   {
     id: 'design',
     title: 'Дизайнерские услуги',
-    description: 'Создадим продающий баннер, презентацию или полный брендбук — под любую задачу, быстро и со вкусом',
+    description:
+      'Создадим продающий баннер, презентацию или полный брендбук — под любую задачу, быстро и со вкусом',
     imageUrl: design, // <-- 2. Используем импортированную переменную
-    style: 'grid-column: span 2; grid-row: span 2;'
+    style: 'grid-column: span 2; grid-row: span 2;',
   },
-  
-  { id: 'embroidery', title: 'Вышивка', description: 'На бейсболках, одежде, рюкзаках и многом другом', imageUrl: embroidery },
-  { id: 'laser-engraving', title: 'Лазерная гравировка', description: 'На металле, акриле и дереве', imageUrl: laserEngraving },
+
+  {
+    id: 'embroidery',
+    title: 'Вышивка',
+    description: 'На бейсболках, одежде, рюкзаках и многом другом',
+    imageUrl: embroidery,
+  },
+  {
+    id: 'laser-engraving',
+    title: 'Лазерная гравировка',
+    description: 'На металле, акриле и дереве',
+    imageUrl: laserEngraving,
+  },
   {
     id: 'color',
     title: 'Дополнительные цвета',
     description: 'Печатаем золотой, серебрянной и белой краской',
     imageUrl: color,
-    style: 'grid-column: span 2; grid-row: span 2;'
+    style: 'grid-column: span 2; grid-row: span 2;',
   },
-  
-  
-  { id: 'interior-printing', title: 'Интерьерная печать', description: 'Эко-сольвентная печать с возможностью контурной резки', imageUrl: interiorPrinting },
-  { id: 'varnishing', title: 'Лакирование', description: 'Для придания выборочного блеска', imageUrl: varnishing },
-  
-  { id: 'foil-stamping', title: 'Тиснение фольгой', description: 'Золотые элементы на бумажной поверхности', imageUrl: foilStamping },
-  { id: 'lamination', title: 'Ламинация', description: 'Глянцевая или матовая, для защиты и придания особого внешнего вида', imageUrl: lamination },
-  { id: 'hardcover', title: 'Твердый переплёт', description: 'Твёрдая обложка для книг, дипломов', imageUrl: hardcover },
-  { id: 'softcover', title: 'Мягкий переплёт', description: 'Термопереплёт', imageUrl: softcover },
 
+  {
+    id: 'interior-printing',
+    title: 'Интерьерная печать',
+    description: 'Эко-сольвентная печать с возможностью контурной резки',
+    imageUrl: interiorPrinting,
+  },
+  {
+    id: 'varnishing',
+    title: 'Лакирование',
+    description: 'Для придания выборочного блеска',
+    imageUrl: varnishing,
+  },
 
+  {
+    id: 'foil-stamping',
+    title: 'Тиснение фольгой',
+    description: 'Золотые элементы на бумажной поверхности',
+    imageUrl: foilStamping,
+  },
+  {
+    id: 'lamination',
+    title: 'Ламинация',
+    description:
+      'Глянцевая или матовая, для защиты и придания особого внешнего вида',
+    imageUrl: lamination,
+  },
+  {
+    id: 'hardcover',
+    title: 'Твердый переплёт',
+    description: 'Твёрдая обложка для книг, дипломов',
+    imageUrl: hardcover,
+  },
+  {
+    id: 'softcover',
+    title: 'Мягкий переплёт',
+    description: 'Термопереплёт',
+    imageUrl: softcover,
+  },
 
-  { id: 'contour-cutting', title: 'Контурная резка', description: 'Вырезка сложных форм на плоттере', imageUrl: contourCutting },
-  { id: 'brochuring', title: 'Брошюровка', description: 'На пружину, скрепку, винты, кольца', imageUrl: brochuring },
-  { id: 'accessories', title: 'Фурнитура', description: 'Установка защитных и декоратиыных элементов', imageUrl: accessories },
-  { id: 'perforation', title: 'Перфорация', description: 'Линии отрыва', imageUrl: perforation },
+  {
+    id: 'contour-cutting',
+    title: 'Контурная резка',
+    description: 'Вырезка сложных форм на плоттере',
+    imageUrl: contourCutting,
+  },
+  {
+    id: 'brochuring',
+    title: 'Брошюровка',
+    description: 'На пружину, скрепку, винты, кольца',
+    imageUrl: brochuring,
+  },
+  {
+    id: 'accessories',
+    title: 'Фурнитура',
+    description: 'Установка защитных и декоратиыных элементов',
+    imageUrl: accessories,
+  },
+  {
+    id: 'perforation',
+    title: 'Перфорация',
+    description: 'Линии отрыва',
+    imageUrl: perforation,
+  },
 ]);
 </script>
 
@@ -102,11 +187,23 @@ const services = ref([
       :style="service.style"
     >
       <div class="text-content">
-        <h3 class="title text-h5-panda font-semibold text-panda-black transition-colors duration-300">{{ service.title }}</h3>
-        <p class="description text-body-panda text-dark-gray transition-colors duration-300 mt-1">{{ service.description }}</p>
+        <h3
+          class="title text-h5-panda font-semibold text-panda-black transition-colors duration-300"
+        >
+          {{ service.title }}
+        </h3>
+        <p
+          class="description text-body-panda text-dark-gray transition-colors duration-300 mt-1"
+        >
+          {{ service.description }}
+        </p>
       </div>
       <div class="image-wrapper">
-        <img :src="service.imageUrl" :alt="service.title" class="service-image" />
+        <img
+          :src="service.imageUrl"
+          :alt="service.title"
+          class="service-image"
+        />
       </div>
     </div>
   </div>
@@ -118,8 +215,8 @@ const services = ref([
   grid-template-columns: repeat(4, 1fr);
   grid-auto-flow: dense;
   gap: 0;
-  border-top: 0.0625rem solid #E3E3E3;
-  border-left: 0.0625rem solid #E3E3E3;
+  border-top: 0.0625rem solid #e3e3e3;
+  border-left: 0.0625rem solid #e3e3e3;
 }
 
 .grid-item {
@@ -130,14 +227,14 @@ const services = ref([
   display: flex;
   flex-direction: column;
   transition: background-color 0.3s ease-out;
-  border-right: 0.0625rem solid #E3E3E3;
-  border-bottom: 0.0625rem solid #E3E3E3;
+  border-right: 0.0625rem solid #e3e3e3;
+  border-bottom: 0.0625rem solid #e3e3e3;
   min-width: 0;
   overflow: hidden;
 }
 
 .grid-item:hover {
-  background-color: #E3E3E3; 
+  background-color: #e3e3e3;
 }
 
 .text-content {

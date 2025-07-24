@@ -6,13 +6,9 @@
     "indexes": "firestore.indexes.json"
   },
   "hosting": {
-    "target": "redpanda-main",  
+    "target": "redpanda-main",
     "public": "dist",
-    "ignore": [
-      "firebase.json",
-      "**/.*",
-      "**/node_modules/**"
-    ],
+    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "rewrites": [
       {
         "source": "**",

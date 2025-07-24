@@ -12,19 +12,19 @@ import kz from './locales/kz.json';
 const i18n = createI18n({
   // Устанавливаем `legacy: false`, чтобы использовать современный Composition API
   legacy: false,
-  
+
   // Устанавливаем язык по умолчанию
-  locale: 'ru', 
-  
+  locale: 'ru',
+
   // Устанавливаем язык, который будет использоваться, если для текущего языка нет перевода
   fallbackLocale: 'ru',
-  
+
   // Подключаем наши файлы с переводами
   messages: {
     ru, // { "ключ": "значение на русском", ... }
     kz, // { "ключ": "значение на казахском", ... }
   },
-  
+
   // Отключаем назойливые предупреждения в консоли о недостающих переводах
   silentTranslationWarn: true,
   silentFallbackWarn: true,

@@ -24,7 +24,12 @@ const handleImageClick = (image, index) => {
       class="grid-item group"
       @click="handleImageClick(image, index)"
     >
-      <img :src="image.url || image" :alt="image.alt || ''" class="grid-image" loading="lazy">
+      <img
+        :src="image.url || image"
+        :alt="image.alt || ''"
+        class="grid-image"
+        loading="lazy"
+      />
       <LikeButton :image-url="image.url || image" />
     </div>
   </div>
@@ -35,7 +40,7 @@ const handleImageClick = (image, index) => {
   position: relative;
   cursor: pointer;
   overflow: hidden;
-  background-color: #F7F7F7;
+  background-color: #f7f7f7;
   aspect-ratio: 1 / 1;
 }
 .grid-image {

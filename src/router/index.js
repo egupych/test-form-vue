@@ -25,17 +25,72 @@ import AuthPage from '@/components/pages/AuthPage.vue';
 import NotFoundPage from '@/components/pages/NotFoundPage.vue';
 
 const routes = [
-  { path: '/', name: 'Home', component: HomePage, meta: { title: 'Главная - Red Panda', order: 1 } },
-  { path: '/gallery', name: 'Gallery', component: GalleryPage, meta: { title: 'Портфолио - Red Panda', order: 2 } },
-  { path: '/promotions', name: 'Promotions', component: PromotionsPage, meta: { title: 'Акции - Red Panda', order: 3 } },
-  { path: '/preparation', name: 'Preparation', component: PreparationPage, meta: { title: 'Подготовка к печати - Red Panda', order: 4 } },
-  { path: '/shop', name: 'Shop', component: ShopPage, meta: { title: 'Магазин - Red Panda', order: 5 } },
-  { path: '/team', name: 'Team', component: TeamPage, meta: { title: 'Наша команда - Red Panda', order: 6 } },
-  { path: '/news', name: 'News', component: NewsPage, meta: { title: 'Новости - Red Panda', order: 7 } },
-  { path: '/vacancies', name: 'Vacancies', component: VacanciesPage, meta: { title: 'Вакансии - Red Panda', order: 8 } },
-  { path: '/equipment', name: 'Equipment', component: EquipmentPage, meta: { title: 'Оборудование - Red Panda', order: 9 } },
-  { path: '/auth', name: 'Auth', component: AuthPage, meta: { title: 'Вход - Red Panda', order: 100 } },
-  { path: '/:pathMatch(.*)*', name: 'NotFound', component: NotFoundPage, meta: { title: 'Страница не найдена - Red Panda', order: 101 } }
+  {
+    path: '/',
+    name: 'Home',
+    component: HomePage,
+    meta: { title: 'Главная - Red Panda', order: 1 },
+  },
+  {
+    path: '/gallery',
+    name: 'Gallery',
+    component: GalleryPage,
+    meta: { title: 'Портфолио - Red Panda', order: 2 },
+  },
+  {
+    path: '/promotions',
+    name: 'Promotions',
+    component: PromotionsPage,
+    meta: { title: 'Акции - Red Panda', order: 3 },
+  },
+  {
+    path: '/preparation',
+    name: 'Preparation',
+    component: PreparationPage,
+    meta: { title: 'Подготовка к печати - Red Panda', order: 4 },
+  },
+  {
+    path: '/shop',
+    name: 'Shop',
+    component: ShopPage,
+    meta: { title: 'Магазин - Red Panda', order: 5 },
+  },
+  {
+    path: '/team',
+    name: 'Team',
+    component: TeamPage,
+    meta: { title: 'Наша команда - Red Panda', order: 6 },
+  },
+  {
+    path: '/news',
+    name: 'News',
+    component: NewsPage,
+    meta: { title: 'Новости - Red Panda', order: 7 },
+  },
+  {
+    path: '/vacancies',
+    name: 'Vacancies',
+    component: VacanciesPage,
+    meta: { title: 'Вакансии - Red Panda', order: 8 },
+  },
+  {
+    path: '/equipment',
+    name: 'Equipment',
+    component: EquipmentPage,
+    meta: { title: 'Оборудование - Red Panda', order: 9 },
+  },
+  {
+    path: '/auth',
+    name: 'Auth',
+    component: AuthPage,
+    meta: { title: 'Вход - Red Panda', order: 100 },
+  },
+  {
+    path: '/:pathMatch(.*)*',
+    name: 'NotFound',
+    component: NotFoundPage,
+    meta: { title: 'Страница не найдена - Red Panda', order: 101 },
+  },
 ];
 
 const router = createRouter({

@@ -16,12 +16,20 @@ const emit = defineEmits(['close']);
 
 const currentIndex = ref(props.startIndex);
 
-const prevImageObject = computed(() => currentIndex.value > 0 ? props.images[currentIndex.value - 1] : null);
+const prevImageObject = computed(() =>
+  currentIndex.value > 0 ? props.images[currentIndex.value - 1] : null
+);
 const currentImage = computed(() => props.images[currentIndex.value]);
-const nextImageObject = computed(() => currentIndex.value < totalImages.value - 1 ? props.images[currentIndex.value + 1] : null);
+const nextImageObject = computed(() =>
+  currentIndex.value < totalImages.value - 1
+    ? props.images[currentIndex.value + 1]
+    : null
+);
 
 const totalImages = computed(() => props.images.length);
-const counterText = computed(() => `${currentIndex.value + 1} / ${totalImages.value}`);
+const counterText = computed(
+  () => `${currentIndex.value + 1} / ${totalImages.value}`
+);
 
 const goToNextImage = () => {
   if (currentIndex.value < totalImages.value - 1) {
@@ -60,10 +68,11 @@ onUnmounted(() => {
   <Teleport to="body">
     <transition name="viewer-fade">
       <div class="image-viewer-overlay" @click="close">
-
         <div class="top-controls" @click.stop>
           <span class="counter top-counter">{{ counterText }}</span>
-          <button class="close-button" @click="close" aria-label="Закрыть">&times;</button>
+          <button class="close-button" @click="close" aria-label="Закрыть">
+            &times;
+          </button>
         </div>
 
         <div class="viewer-wrapper" @click.stop>
@@ -76,13 +85,18 @@ onUnmounted(() => {
                   alt="Предыдущее изображение"
                   class="side-image"
                   @click.stop="goToPrevImage"
-                >
+                />
               </transition>
             </div>
 
             <div class="image-container">
               <transition name="image-swap" mode="out-in">
-                <img :key="currentImage.url || currentImage" :src="currentImage.url || currentImage" :alt="currentImage.alt || 'Просмотр изображения'" class="main-image">
+                <img
+                  :key="currentImage.url || currentImage"
+                  :src="currentImage.url || currentImage"
+                  :alt="currentImage.alt || 'Просмотр изображения'"
+                  class="main-image"
+                />
               </transition>
             </div>
 
@@ -94,15 +108,27 @@ onUnmounted(() => {
                   alt="Следующее изображение"
                   class="side-image"
                   @click.stop="goToNextImage"
-                >
+                />
               </transition>
             </div>
           </div>
 
           <div class="controls-footer">
-            <button @click.stop="goToPrevImage" :disabled="currentIndex === 0" class="footer-nav-button">назад</button>
+            <button
+              @click.stop="goToPrevImage"
+              :disabled="currentIndex === 0"
+              class="footer-nav-button"
+            >
+              назад
+            </button>
             <span class="category-title">{{ currentImage.categoryTitle }}</span>
-            <button @click.stop="goToNextImage" :disabled="currentIndex === totalImages - 1" class="footer-nav-button">вперёд</button>
+            <button
+              @click.stop="goToNextImage"
+              :disabled="currentIndex === totalImages - 1"
+              class="footer-nav-button"
+            >
+              вперёд
+            </button>
           </div>
         </div>
       </div>
@@ -149,12 +175,14 @@ onUnmounted(() => {
 
 .close-button {
   position: static; /* Убираем absolute, т.к. теперь он во flex-контейнере */
-  color: #8F8F8F;
+  color: #8f8f8f;
   font-size: 3rem;
   font-weight: 300;
   line-height: 1;
   cursor: pointer;
-  transition: color 0.2s ease, transform 0.2s ease;
+  transition:
+    color 0.2s ease,
+    transform 0.2s ease;
 }
 .close-button:hover {
   color: white;
@@ -201,7 +229,7 @@ onUnmounted(() => {
   max-height: 100%;
   object-fit: contain;
   border-radius: 1rem;
-  box-shadow: 0 0.625rem 2.5rem rgba(0,0,0,0.3);
+  box-shadow: 0 0.625rem 2.5rem rgba(0, 0, 0, 0.3);
 }
 
 .nav-container {
@@ -220,8 +248,12 @@ onUnmounted(() => {
     display: flex;
   }
 }
-.nav-container.left { left: 2rem; }
-.nav-container.right { right: 2rem; }
+.nav-container.left {
+  left: 2rem;
+}
+.nav-container.right {
+  right: 2rem;
+}
 
 .side-image {
   width: 100%;
@@ -265,7 +297,7 @@ onUnmounted(() => {
   padding: 0.25rem 1.25rem;
   border-radius: 9999px;
   background-color: #ffffff12;
-  color: #8F8F8F;
+  color: #8f8f8f;
   font-family: 'Gilroy-SemiBold', sans-serif;
   font-size: 0.875rem;
   cursor: pointer;
@@ -273,7 +305,7 @@ onUnmounted(() => {
 }
 .footer-nav-button:hover:not(:disabled) {
   background-color: #f7f7f7;
-  color: #131C26;
+  color: #131c26;
   border-color: #f7f7f7;
 }
 .footer-nav-button:disabled {
@@ -293,7 +325,9 @@ onUnmounted(() => {
 
 .image-swap-enter-active,
 .image-swap-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 .image-swap-enter-from {
   opacity: 0;

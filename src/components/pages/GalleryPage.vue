@@ -12,8 +12,10 @@ const servicesStore = useServicesStore();
 const route = useRoute();
 
 const categoriesWithItems = computed(() => {
-  return servicesStore.services.filter(service =>
-    galleryStore.items[service.id] && galleryStore.items[service.id].length > 0
+  return servicesStore.services.filter(
+    (service) =>
+      galleryStore.items[service.id] &&
+      galleryStore.items[service.id].length > 0
   );
 });
 
@@ -26,12 +28,14 @@ const openViewer = (payload) => {
   const clickedImage = payload.image;
 
   // Создаем "справочник" категорий для быстрого поиска названий
-  const servicesMap = new Map(servicesStore.services.map(s => [s.id, s.title]));
+  const servicesMap = new Map(
+    servicesStore.services.map((s) => [s.id, s.title])
+  );
 
   // Создаем единый массив, добавляя к каждому изображению полное название категории
   const allItems = Object.values(galleryStore.items)
     .flat()
-    .map(image => ({
+    .map((image) => ({
       ...image,
       // Находим название категории в "справочнике" по ID
       categoryTitle: servicesMap.get(image.category) || image.category,
@@ -39,7 +43,9 @@ const openViewer = (payload) => {
 
   if (allItems.length > 0) {
     viewerImages.value = allItems;
-    viewerStartIndex.value = allItems.findIndex(img => img.id === clickedImage.id);
+    viewerStartIndex.value = allItems.findIndex(
+      (img) => img.id === clickedImage.id
+    );
     isViewerOpen.value = true;
   }
 };
@@ -68,7 +74,6 @@ onMounted(() => {
   <div>
     <main class="py-10 md:py-25">
       <div class="max-w-6xl mx-auto">
-
         <div v-if="categoriesWithItems.length > 0" class="space-y-16">
           <section
             v-for="category in categoriesWithItems"
@@ -89,7 +94,9 @@ onMounted(() => {
 
         <div v-else class="text-center py-10 text-dark-gray text-xl">
           <p v-if="galleryStore.loading">Загружаем портфолио...</p>
-          <p v-else>Портфолио наполняется. Скоро здесь появятся примеры наших работ!</p>
+          <p v-else>
+            Портфолио наполняется. Скоро здесь появятся примеры наших работ!
+          </p>
         </div>
       </div>
     </main>

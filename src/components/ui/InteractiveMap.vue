@@ -1,5 +1,5 @@
 <template>
-  <div id="map" style="width: 100%; height: 31.25rem;"></div>
+  <div id="map" style="width: 100%; height: 31.25rem"></div>
 </template>
 
 <script setup>
@@ -17,14 +17,16 @@ onMounted(() => {
       // Создаем карту
       const map = window.DG.map('map', {
         center: [lat, lon],
-        zoom: 16
+        zoom: 16,
       });
 
       // Добавляем маркер на карту
       const marker = window.DG.marker([lat, lon]).addTo(map);
 
       // Добавляем всплывающее окно (popup) к маркеру
-      marker.bindPopup('<b>Название вашей компании</b><br>Дополнительная информация здесь.');
+      marker.bindPopup(
+        '<b>Название вашей компании</b><br>Дополнительная информация здесь.'
+      );
 
       // Кнопки +/- и перемещение мышью включены по умолчанию
     });

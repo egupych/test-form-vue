@@ -27,6 +27,6 @@ export const useFormStateStore = defineStore('formState', () => {
     calculationFormFiles,
     addCalculationFiles,
     removeCalculationFile,
-    clearCalculationFiles
+    clearCalculationFiles,
   };
 });

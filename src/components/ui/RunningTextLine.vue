@@ -11,11 +11,20 @@ defineProps({
 <template>
   <div class="running-line-container">
     <div class="running-line-content">
-      <span v-for="(item, index) in items" :key="`item-${index}`" class="running-line-item">
+      <span
+        v-for="(item, index) in items"
+        :key="`item-${index}`"
+        class="running-line-item"
+      >
         {{ item }}
       </span>
 
-      <span v-for="(item, index) in items" :key="`item-copy-${index}`" class="running-line-item" aria-hidden="true">
+      <span
+        v-for="(item, index) in items"
+        :key="`item-copy-${index}`"
+        class="running-line-item"
+        aria-hidden="true"
+      >
         {{ item }}
       </span>
     </div>

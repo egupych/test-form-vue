@@ -19,7 +19,7 @@ export const useReferencesStore = defineStore('references', () => {
       items.value.splice(index, 1);
     }
   }
-  
+
   // Действие: очистить все референсы
   function clearReferences() {
     items.value = [];

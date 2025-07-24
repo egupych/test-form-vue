@@ -24,35 +24,62 @@ const departments = ref([
     name: 'Руководящий состав',
     employees: [
       { name: 'Андрей Фёдорович', role: 'CEO', image: andreyFedorovich },
-      { name: 'Анжелика', role: 'Менеджер по персоналу', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Анжелика' },
-      { name: 'Светлана', role: 'Руководитель отдела продаж', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Светлана' },
-      { name: 'Асиля', role: 'Руководитель цеха', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Асиля' }
-    ]
+      {
+        name: 'Анжелика',
+        role: 'Менеджер по персоналу',
+        image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Анжелика',
+      },
+      {
+        name: 'Светлана',
+        role: 'Руководитель отдела продаж',
+        image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Светлана',
+      },
+      {
+        name: 'Асиля',
+        role: 'Руководитель цеха',
+        image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Асиля',
+      },
+    ],
   },
   {
     name: 'Офис',
     employees: [
-      { name: 'Никита', role: 'Офис-менеджер', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Никита' },
+      {
+        name: 'Никита',
+        role: 'Офис-менеджер',
+        image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Никита',
+      },
       { name: 'Яна', role: 'Помощник бухгалтера', image: yana },
-    ]
+    ],
   },
   {
     name: 'Отдел продаж',
     employees: [
-
       { name: 'Лаура', role: 'Старший менеджер', image: laura },
       { name: 'Алина', role: 'Старший менеджер', image: alina },
-      { name: 'Инна', role: 'Менеджер', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Инна' },
-      { name: 'Расул', role: 'Менеджер', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Расул' }
-    ]
+      {
+        name: 'Инна',
+        role: 'Менеджер',
+        image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Инна',
+      },
+      {
+        name: 'Расул',
+        role: 'Менеджер',
+        image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Расул',
+      },
+    ],
   },
   {
     name: 'Отдел дизайна',
     employees: [
       { name: 'Екатерина', role: 'Дизайнер', image: kata },
-      { name: 'Анеля', role: 'Дизайнер', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Анеля' },
-      { name: 'Дмитрий', role: 'Дизайнер', image: dmitry }
-    ]
+      {
+        name: 'Анеля',
+        role: 'Дизайнер',
+        image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Анеля',
+      },
+      { name: 'Дмитрий', role: 'Дизайнер', image: dmitry },
+    ],
   },
   {
     name: 'Производство',
@@ -61,10 +88,18 @@ const departments = ref([
       { name: 'Лина', role: 'Технолог', image: lina },
       { name: 'Владислав', role: 'Печатник', image: vlad },
       { name: 'Юля', role: 'Печатник', image: ula },
-      { name: 'Карина', role: 'Печатник', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Карина' },
-      { name: 'Артур', role: 'Печатник', image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Артур' },
-    ]
-  }
+      {
+        name: 'Карина',
+        role: 'Печатник',
+        image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Карина',
+      },
+      {
+        name: 'Артур',
+        role: 'Печатник',
+        image: 'https://placehold.co/250x250/E3E3E3/131C26?text=Артур',
+      },
+    ],
+  },
 ]);
 
 // --- Логика для вакансий и попапа ---
@@ -72,14 +107,16 @@ const vacanciesStore = useVacanciesStore();
 const allVacancies = vacanciesStore.list;
 
 const vacancyDepartmentMap = {
-  'Печатник': 'Производство',
+  Печатник: 'Производство',
   'Офис-менеджер': 'Офис',
-  'Дизайнер': 'Отдел дизайна',
-  'Менеджер': 'Отдел продаж'
+  Дизайнер: 'Отдел дизайна',
+  Менеджер: 'Отдел продаж',
 };
 
 const getVacanciesForDepartment = (departmentName) => {
-  return allVacancies.filter(vacancy => vacancyDepartmentMap[vacancy.title] === departmentName);
+  return allVacancies.filter(
+    (vacancy) => vacancyDepartmentMap[vacancy.title] === departmentName
+  );
 };
 
 const isPopupOpen = ref(false);
@@ -97,31 +134,48 @@ const closePopup = () => {
 <template>
   <main class="py-10 md:py-25">
     <div class="max-w-6xl mx-auto px-4">
-
       <section class="mb-16">
-        <SectionHeader class="gap-container">
-          Наша команда
-        </SectionHeader>
-        <p class="text-h5-panda text-dark-gray leading-relaxed text-center max-w-4xl mx-auto">
-            Разрешите представить нашу команду. Это те, кто всегда на связи, кто воплощает идеи в жизнь, кто следит за финансами и логистикой. А наши производственные волшебники, хоть и невидимы, каждый день творят чудеса, чтобы вы получали лучшее.
+        <SectionHeader class="gap-container"> Наша команда </SectionHeader>
+        <p
+          class="text-h5-panda text-dark-gray leading-relaxed text-center max-w-4xl mx-auto"
+        >
+          Разрешите представить нашу команду. Это те, кто всегда на связи, кто
+          воплощает идеи в жизнь, кто следит за финансами и логистикой. А наши
+          производственные волшебники, хоть и невидимы, каждый день творят
+          чудеса, чтобы вы получали лучшее.
         </p>
       </section>
 
-      <section v-for="department in departments" :key="department.name" class="mb-16">
-        <h2 class="text-h4-panda font-bold text-panda-black mb-4">{{ department.name }}</h2>
-        
-        <div class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          
-          <div 
-            v-for="employee in department.employees" 
+      <section
+        v-for="department in departments"
+        :key="department.name"
+        class="mb-16"
+      >
+        <h2 class="text-h4-panda font-bold text-panda-black mb-4">
+          {{ department.name }}
+        </h2>
+
+        <div
+          class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"
+        >
+          <div
+            v-for="employee in department.employees"
             :key="employee.name"
             class="group"
           >
-            <div class="bg-light-gray overflow-hidden aspect-square flex items-center justify-center">
-              <img :src="employee.image" :alt="employee.name" class="w-full h-full object-cover">
+            <div
+              class="bg-light-gray overflow-hidden aspect-square flex items-center justify-center"
+            >
+              <img
+                :src="employee.image"
+                :alt="employee.name"
+                class="w-full h-full object-cover"
+              />
             </div>
             <div class="pt-3">
-              <h3 class="font-semibold text-panda-black text-lg">{{ employee.name }}</h3>
+              <h3 class="font-semibold text-panda-black text-lg">
+                {{ employee.name }}
+              </h3>
               <p class="text-sm text-dark-gray">{{ employee.role }}</p>
             </div>
           </div>
@@ -133,35 +187,45 @@ const closePopup = () => {
             class="group block cursor-pointer"
           >
             <div class="vacancy-card">
-               <div class="vacancy-card-icon-wrapper">
-                  <svg xmlns="http://www.w3.org/2000/svg" class="vacancy-card-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                  </svg>
-               </div>
-               <p class="vacancy-card-text">Присоединяйтесь к нам</p>
+              <div class="vacancy-card-icon-wrapper">
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  class="vacancy-card-icon"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    d="M12 4v16m8-8H4"
+                  />
+                </svg>
+              </div>
+              <p class="vacancy-card-text">Присоединяйтесь к нам</p>
             </div>
             <div class="pt-3">
               <h3 class="font-semibold text-panda-black text-lg">В поиске</h3>
               <p class="text-sm text-dark-gray">{{ vacancy.title }}</p>
             </div>
           </div>
-
         </div>
       </section>
 
       <section class="gap-page">
-        <SectionHeader class="gap-container">
-          Наша история
-        </SectionHeader>
+        <SectionHeader class="gap-container"> Наша история </SectionHeader>
         <HistorySlider />
       </section>
-      </div>
+    </div>
 
     <Teleport to="body">
       <transition name="popup">
         <div v-if="isPopupOpen" class="popup-overlay" @click.self="closePopup">
           <div class="popup-container">
-            <button @click="closePopup" class="popup-close-button">&times;</button>
+            <button @click="closePopup" class="popup-close-button">
+              &times;
+            </button>
             <VacancyApplicationForm :position-title="selectedVacancyTitle" />
           </div>
         </div>
@@ -180,36 +244,36 @@ const closePopup = () => {
   aspect-ratio: 1 / 1;
   width: 100%;
   padding: 1rem; /* 16px -> 1rem */
-  border: 0.125rem dashed #E3E3E3; /* 2px -> 0.125rem */
-  background-color: #F7F7F7;
+  border: 0.125rem dashed #e3e3e3; /* 2px -> 0.125rem */
+  background-color: #f7f7f7;
   transition: all 0.3s ease;
 }
 
 .group:hover .vacancy-card {
-  border-color: #F15F31;
+  border-color: #f15f31;
 }
 
 .vacancy-card-icon {
   width: 2.5rem; /* 40px -> 2.5rem */
   height: 2.5rem; /* 40px -> 2.5rem */
   margin-bottom: 0.5rem; /* 8px -> 0.5rem */
-  color: #8F8F8F;
+  color: #8f8f8f;
   transition: color 0.3s ease;
 }
 
 .group:hover .vacancy-card-icon {
-  color: #F15F31;
+  color: #f15f31;
 }
 
 .vacancy-card-text {
   font-family: 'Gilroy-Semibold', sans-serif;
   font-size: 1rem; /* 16px -> 1rem */
-  color: #8F8F8F;
+  color: #8f8f8f;
   transition: color 0.3s ease;
 }
 
 .group:hover .vacancy-card-text {
-  color: #F15F31;
+  color: #f15f31;
 }
 
 .popup-overlay {
@@ -255,14 +319,14 @@ const closePopup = () => {
   border: none;
   font-size: 2.5rem;
   line-height: 1;
-  color: #8F8F8F;
+  color: #8f8f8f;
   cursor: pointer;
   transition: color 0.2s;
   z-index: 1001;
 }
 
 .popup-close-button:hover {
-  color: #131C26;
+  color: #131c26;
 }
 
 .popup-enter-active,

@@ -7,7 +7,7 @@ import {
   updateProfile, // Оставляем для возможных будущих обновлений профиля
   sendSignInLinkToEmail,
   isSignInWithEmailLink,
-  signInWithEmailLink
+  signInWithEmailLink,
 } from 'firebase/auth';
 import { auth } from '../firebase';
 import defaultAvatar from '@/assets/images/app/avatar.svg';
@@ -19,7 +19,7 @@ const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
   if (firebaseUser) {
     // При входе по ссылке может не быть displayName. Установим email в качестве имени, если его нет.
     const displayName = firebaseUser.displayName || firebaseUser.email;
-    
+
     // Если у нового пользователя нет фото, устанавливаем аватарку по умолчанию
     if (firebaseUser.photoURL === null) {
       updateProfile(firebaseUser, { photoURL: defaultAvatar });
@@ -31,7 +31,6 @@ const unsubscribe = onAuthStateChanged(auth, (firebaseUser) => {
       email: firebaseUser.email,
       photoURL: firebaseUser.photoURL || defaultAvatar,
     };
-
   } else {
     user.value = null;
   }
@@ -48,33 +47,33 @@ const signInWithGoogle = async () => {
   try {
     await signInWithPopup(auth, provider);
   } catch (error) {
-    console.error("Ошибка аутентификации Google:", error);
-    authError.value = "Не удалось войти с помощью Google. Попробуйте снова.";
+    console.error('Ошибка аутентификации Google:', error);
+    authError.value = 'Не удалось войти с помощью Google. Попробуйте снова.';
   }
 };
 
 const sendSignInLink = async (email) => {
-    authError.value = null;
-    const actionCodeSettings = {
-        url: `${window.location.origin}/auth`,
-        handleCodeInApp: true,
-    };
+  authError.value = null;
+  const actionCodeSettings = {
+    url: `${window.location.origin}/auth`,
+    handleCodeInApp: true,
+  };
 
-    try {
-        await sendSignInLinkToEmail(auth, email, actionCodeSettings);
-        window.localStorage.setItem('emailForSignIn', email);
-        return true; 
-    } catch (error) {
-        console.error("Ошибка отправки ссылки:", error.code);
-        switch (error.code) {
-            case 'auth/invalid-email':
-                authError.value = 'Некорректный email адрес.';
-                break;
-            default:
-                authError.value = 'Не удалось отправить ссылку. Попробуйте позже.';
-        }
-        return false;
+  try {
+    await sendSignInLinkToEmail(auth, email, actionCodeSettings);
+    window.localStorage.setItem('emailForSignIn', email);
+    return true;
+  } catch (error) {
+    console.error('Ошибка отправки ссылки:', error.code);
+    switch (error.code) {
+      case 'auth/invalid-email':
+        authError.value = 'Некорректный email адрес.';
+        break;
+      default:
+        authError.value = 'Не удалось отправить ссылку. Попробуйте позже.';
     }
+    return false;
+  }
 };
 
 const signOut = async () => {
@@ -82,19 +81,19 @@ const signOut = async () => {
   try {
     await firebaseSignOut(auth);
   } catch (error) {
-    console.error("Ошибка выхода:", error);
-    authError.value = "Произошла ошибка при выходе.";
+    console.error('Ошибка выхода:', error);
+    authError.value = 'Произошла ошибка при выходе.';
   }
 };
 
 export function useAuth() {
-  return { 
-    user, 
-    authError, 
-    signInWithGoogle, 
-    signOut, 
+  return {
+    user,
+    authError,
+    signInWithGoogle,
+    signOut,
     sendSignInLink,
     isSignInWithEmailLink,
-    signInWithEmailLink
+    signInWithEmailLink,
   };
 }

@@ -1,47 +1,45 @@
-
-
 {
-    "header": {
-      "nav": {
-        "home": "Главная",
-        "about": "О нас",
-        "promotions": "Акции",
-        "preparation": "Подготовка",
-        "projects": "Проекты",
-        "shop": "Магазин"
-      },
-      "about_dropdown": {
-        "team": "Команда",
-        "news": "Новости",
-        "vacancies": "Вакансии",
-        "equipment": "Оборудование"
-      },
-      "buttons": {
-        "login": "Войти",
-        "logout": "Выйти"
-      },
-      "mobile_menu": {
-        "title": "Меню"
-      },
-      "dev_section": {
-        "title": "Раздел в разработке"
-      }
+  "header": {
+    "nav": {
+      "home": "Главная",
+      "about": "О нас",
+      "promotions": "Акции",
+      "preparation": "Подготовка",
+      "projects": "Проекты",
+      "shop": "Магазин"
     },
-    "footer": {
-      "subscription_title": "Подпишитесь на рассылку <br>о будущих акциях",
-      "email_placeholder": "Ваш email-адрес",
-      "business_sphere_placeholder": "Сфера вашего бизнеса",
-      "consent_text": "Согласие на информационную рассылку. Отписаться можно в любое время.",
-      "subscribe_button": "Подписаться",
-      "subscribing_button": "Отправка...",
-      "consent_error": "Пожалуйста, дайте согласие на рассылку.",
-      "network_error": "Ошибка сети. Попробуйте позже.",
-      "address_line_1": "Астана, Шоссе Коргалжын, 6",
-      "address_line_2": "ПН-ПТ 10:00-18:00",
-      "qr_instagram": "redpandakz",
-      "button_whatsapp": "Whatsapp",
-      "button_instagram": "Instagram",
-      "button_2gis": "2GIS",
-      "company_details": "TOO «RED PANDA» БИН 221240030264"
+    "about_dropdown": {
+      "team": "Команда",
+      "news": "Новости",
+      "vacancies": "Вакансии",
+      "equipment": "Оборудование"
+    },
+    "buttons": {
+      "login": "Войти",
+      "logout": "Выйти"
+    },
+    "mobile_menu": {
+      "title": "Меню"
+    },
+    "dev_section": {
+      "title": "Раздел в разработке"
     }
+  },
+  "footer": {
+    "subscription_title": "Подпишитесь на рассылку <br>о будущих акциях",
+    "email_placeholder": "Ваш email-адрес",
+    "business_sphere_placeholder": "Сфера вашего бизнеса",
+    "consent_text": "Согласие на информационную рассылку. Отписаться можно в любое время.",
+    "subscribe_button": "Подписаться",
+    "subscribing_button": "Отправка...",
+    "consent_error": "Пожалуйста, дайте согласие на рассылку.",
+    "network_error": "Ошибка сети. Попробуйте позже.",
+    "address_line_1": "Астана, Шоссе Коргалжын, 6",
+    "address_line_2": "ПН-ПТ 10:00-18:00",
+    "qr_instagram": "redpandakz",
+    "button_whatsapp": "Whatsapp",
+    "button_instagram": "Instagram",
+    "button_2gis": "2GIS",
+    "company_details": "TOO «RED PANDA» БИН 221240030264"
   }
+}

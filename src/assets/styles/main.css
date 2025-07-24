@@ -16,7 +16,6 @@ html.lenis {
 }
 /* --- КОНЕЦ СТИЛЕЙ ДЛЯ ПРОКРУТКИ --- */
 
-
 /* src/assets/styles/main.css */
 
 @tailwind base;
@@ -36,37 +35,40 @@ html.lenis {
    оставляем только подключение файлов шрифтов.
 */
 @font-face {
-    font-family: 'Gilroy-Medium';
-    src: url('../fonts/Gilroy-Medium.woff2') format('woff2'),
-         url('../fonts/Gilroy-Medium.woff') format('woff');
-    font-weight: 500;
-    font-style: normal;
+  font-family: 'Gilroy-Medium';
+  src:
+    url('../fonts/Gilroy-Medium.woff2') format('woff2'),
+    url('../fonts/Gilroy-Medium.woff') format('woff');
+  font-weight: 500;
+  font-style: normal;
 }
 @font-face {
-    font-family: 'Gilroy-SemiBold';
-    src: url('../fonts/Gilroy-SemiBold.woff2') format('woff2'),
-         url('../fonts/Gilroy-SemiBold.woff') format('woff');
-    font-weight: 600;
-    font-style: normal;
+  font-family: 'Gilroy-SemiBold';
+  src:
+    url('../fonts/Gilroy-SemiBold.woff2') format('woff2'),
+    url('../fonts/Gilroy-SemiBold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
 }
 @font-face {
-    font-family: 'Gilroy-Bold';
-    src: url('../fonts/Gilroy-Bold.woff2') format('woff2'),
-         url('../fonts/Gilroy-Bold.woff') format('woff');
-    font-weight: 700;
-    font-style: normal;
+  font-family: 'Gilroy-Bold';
+  src:
+    url('../fonts/Gilroy-Bold.woff2') format('woff2'),
+    url('../fonts/Gilroy-Bold.woff') format('woff');
+  font-weight: 700;
+  font-style: normal;
 }
 
 /* Стили для скроллбара остаются, так как это кастомизация */
 ::-webkit-scrollbar {
   width: 0.5rem;
   height: 0.5rem;
-  background-color: #E3E3E3;
+  background-color: #e3e3e3;
   transition: all 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb {
-  background-color: #8F8F8F;
+  background-color: #8f8f8f;
 }
 
 /* --- ИЗМЕНЕНИЯ В СТИЛЯХ КНОПКИ-ПОДСКАЗКИ --- */
@@ -77,8 +79,8 @@ html.lenis {
   --tooltip-height: 2.1875rem; /* 35px -> 2.1875rem */
   --tooltip-width: 5.625rem; /* 90px -> 5.625rem */
   --gap-between-tooltip-to-button: 0.75rem; /* 12px -> 0.75rem */
-  --button-color: #131C26;
-  --tooltip-color: #E3E3E3;
+  --button-color: #131c26;
+  --tooltip-color: #e3e3e3;
   width: var(--width);
   height: var(--height);
   background: var(--button-color);
@@ -95,8 +97,8 @@ html.lenis {
   height: var(--tooltip-height);
   background-color: var(--tooltip-color);
   font-size: 0.8125rem;
-  color: #131C26;
-  border-radius: .25em;
+  color: #131c26;
+  border-radius: 0.25em;
   line-height: var(--tooltip-height);
   /* Позиционируем подсказку снизу */
   top: calc(100% + var(--gap-between-tooltip-to-button));
@@ -117,25 +119,28 @@ html.lenis {
   justify-content: center;
 }
 
-.button-wrapper,.text,.icon {
+.button-wrapper,
+.text,
+.icon {
   overflow: hidden;
   position: absolute;
   width: 100%;
   height: 100%;
   left: 0;
-  color: #F7F7F7;
+  color: #f7f7f7;
 }
 
 .text {
-  top: 0
+  top: 0;
 }
 
-.text,.icon {
+.text,
+.icon {
   transition: top 0.5s;
 }
 
 .icon {
-  color: #F7F7F7;
+  color: #f7f7f7;
   top: 100%;
   display: flex;
   align-items: center;
@@ -148,7 +153,7 @@ html.lenis {
 }
 
 .button:hover {
-  background: #F15F31;
+  background: #f15f31;
 }
 
 .button:hover .text {
@@ -167,27 +172,28 @@ html.lenis {
 }
 
 ::selection {
-  background-color: #F15F31; /* Цвет фона выделения */
-  color: #F7F7F7; /* Цвет текста внутри выделения */
+  background-color: #f15f31; /* Цвет фона выделения */
+  color: #f7f7f7; /* Цвет текста внутри выделения */
 }
 
-img { /* запрет на выделение картинок на сайте */
+img {
+  /* запрет на выделение картинок на сайте */
   -webkit-user-select: none; /* Safari */
-  -moz-user-select: none;     /* Firefox */
-  -ms-user-select: none;      /* Internet Explorer/Edge */
-  user-select: none;          /* Standard */
+  -moz-user-select: none; /* Firefox */
+  -ms-user-select: none; /* Internet Explorer/Edge */
+  user-select: none; /* Standard */
 }
 
 input:-webkit-autofill,
 input:-webkit-autofill:hover,
 input:-webkit-autofill:focus,
 input:-webkit-autofill:active {
-    /* "Закрашиваем" фон белой внутренней тенью. Это самый надежный способ. */
-    box-shadow: inset 0 0 0 50px theme('colors.panda-white');
-    
-    /* Устанавливаем цвет текста. Используем !important, чтобы перебить стили браузера. */
-    -webkit-text-fill-color: theme('colors.panda-black') !important;
-    
-    /* Добавляем плавный переход, чтобы избежать "моргания" цвета */
-    transition: background-color 5000s ease-in-out 0s;
+  /* "Закрашиваем" фон белой внутренней тенью. Это самый надежный способ. */
+  box-shadow: inset 0 0 0 50px theme('colors.panda-white');
+
+  /* Устанавливаем цвет текста. Используем !important, чтобы перебить стили браузера. */
+  -webkit-text-fill-color: theme('colors.panda-black') !important;
+
+  /* Добавляем плавный переход, чтобы избежать "моргания" цвета */
+  transition: background-color 5000s ease-in-out 0s;
 }

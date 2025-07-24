@@ -7,19 +7,23 @@ const activeIndex = ref(null);
 const faqs = [
   {
     question: 'Сколько стоит?',
-    answer: 'Прайс-листа у нас нет. Каждый заказ просчитывается индивидуально, согласно Вашему запросу.'
+    answer:
+      'Прайс-листа у нас нет. Каждый заказ просчитывается индивидуально, согласно Вашему запросу.',
   },
   {
     question: 'Какие полиграфические услуги у Вас можно заказать?',
-    answer: 'Мы предоставляем весь спектр полиграфических услуг. Ведь мы прекрасно понимаем насколько важно для нашего клиента его время и качество получаемых услуг.'
+    answer:
+      'Мы предоставляем весь спектр полиграфических услуг. Ведь мы прекрасно понимаем насколько важно для нашего клиента его время и качество получаемых услуг.',
   },
   {
     question: 'Сколько времени длится заказ?',
-    answer: 'Это зависит от типа и сложности заказа. В среднем на производства мы закладываем от 3-х рабочих дней. Естественно в наших же интересах и в интересах клиента выдать заказ раньше. Но в первую очередь мы придерживаемся качеству выпускаемой продукции.'
+    answer:
+      'Это зависит от типа и сложности заказа. В среднем на производства мы закладываем от 3-х рабочих дней. Естественно в наших же интересах и в интересах клиента выдать заказ раньше. Но в первую очередь мы придерживаемся качеству выпускаемой продукции.',
   },
   {
     question: 'Работаете ли с файлами клиента?',
-    answer: 'Конечно. Мы работаем со многими компаниями, у которых в штате есть собственные дизайнеры. Однако нужно понимать, что рисовать дизайн, чтобы выглядело красиво и рисовать дизайн для дальнейшего производства это две разные вещи. И здесь мы предоставляем помощь нашим клиентам в этом вопросе.'
+    answer:
+      'Конечно. Мы работаем со многими компаниями, у которых в штате есть собственные дизайнеры. Однако нужно понимать, что рисовать дизайн, чтобы выглядело красиво и рисовать дизайн для дальнейшего производства это две разные вещи. И здесь мы предоставляем помощь нашим клиентам в этом вопросе.',
   },
 ];
 
@@ -35,25 +39,28 @@ const toggleAccordion = (index) => {
 
 <template>
   <div class="max-w-4xl mx-auto space-y-3">
-    <div
-      v-for="(faq, index) in faqs"
-      :key="index"
-      class="bg-white"
-    >
+    <div v-for="(faq, index) in faqs" :key="index" class="bg-white">
       <button
         @click="toggleAccordion(index)"
         class="w-full flex justify-between items-center p-6 text-left focus:outline-none"
         :aria-expanded="activeIndex === index"
       >
-        <span class="text-h5-panda font-semibold text-panda-black">{{ faq.question }}</span>
+        <span class="text-h5-panda font-semibold text-panda-black">{{
+          faq.question
+        }}</span>
 
-        <div class="w-7 h-7 flex items-center justify-center flex-shrink-0 relative">
+        <div
+          class="w-7 h-7 flex items-center justify-center flex-shrink-0 relative"
+        >
           <div class="w-5 h-0.5 bg-gray rounded-full"></div>
-          
+
           <div
             class="w-5 h-0.5 bg-gray rounded-full absolute transition-transform duration-300 ease-in-out"
-            :class="{ 'rotate-90': activeIndex !== index, 'rotate-0': activeIndex === index }"
-            style="transform-origin: center;"
+            :class="{
+              'rotate-90': activeIndex !== index,
+              'rotate-0': activeIndex === index,
+            }"
+            style="transform-origin: center"
           ></div>
         </div>
       </button>

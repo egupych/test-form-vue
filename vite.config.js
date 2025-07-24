@@ -6,13 +6,11 @@ import vue from '@vitejs/plugin-vue';
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig({
-  plugins: [
-    vue()
-  ],
+  plugins: [vue()],
   resolve: {
     alias: {
       // --- ИЗМЕНЕНИЕ: Это правильный способ указать псевдоним в Vite ---
-      '@': fileURLToPath(new URL('./src', import.meta.url))
+      '@': fileURLToPath(new URL('./src', import.meta.url)),
     },
   },
   server: {

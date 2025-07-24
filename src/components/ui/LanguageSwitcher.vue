@@ -22,7 +22,7 @@ onMounted(() => {
 });
 
 // Вычисляемое свойство для получения списка языков, которые не являются текущим
-const otherLocales = availableLocales.filter(l => l !== locale.value);
+const otherLocales = availableLocales.filter((l) => l !== locale.value);
 </script>
 
 <template>
@@ -56,7 +56,9 @@ const otherLocales = availableLocales.filter(l => l !== locale.value);
 /* Стили для анимации выпадающего списка, похожие на те, что у вас уже есть */
 .slide-down-enter-active,
 .slide-down-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 
 .slide-down-enter-from,

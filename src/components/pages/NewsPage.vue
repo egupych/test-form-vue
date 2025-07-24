@@ -2,9 +2,18 @@
   <main class="py-10 md:py-25 px-4 md:px-0">
     <div class="max-w-6xl mx-auto">
       <article class="news-layout">
-        <h1 class="news-title text-h3-panda font-bold text-panda-black">{{ news.title }}</h1>
-        <p class="news-description text-body-panda text-dark-gray leading-relaxed">{{ news.description }}</p>
-        <time :datetime="news.date" class="news-date block text-sm text-dark-gray uppercase font-semibold tracking-wider">
+        <h1 class="news-title text-h3-panda font-bold text-panda-black">
+          {{ news.title }}
+        </h1>
+        <p
+          class="news-description text-body-panda text-dark-gray leading-relaxed"
+        >
+          {{ news.description }}
+        </p>
+        <time
+          :datetime="news.date"
+          class="news-date block text-sm text-dark-gray uppercase font-semibold tracking-wider"
+        >
           {{ formatDate(news.date) }}
         </time>
 
@@ -15,7 +24,7 @@
             class="gallery-item group"
             :class="{
               'gallery-item-large': index === 0,
-              'gallery-item-small': index > 0
+              'gallery-item-small': index > 0,
             }"
             @click="openViewer(news.images, index)"
           >
@@ -24,9 +33,14 @@
               :alt="image.alt"
               class="gallery-image"
               loading="lazy"
+            />
+            <div
+              v-if="index === MAX_VISIBLE_IMAGES - 1 && hiddenImagesCount > 0"
+              class="overlay"
             >
-            <div v-if="index === (MAX_VISIBLE_IMAGES - 1) && hiddenImagesCount > 0" class="overlay">
-              <span class="text-h3-panda font-bold">+{{ hiddenImagesCount }}</span>
+              <span class="text-h3-panda font-bold"
+                >+{{ hiddenImagesCount }}</span
+              >
             </div>
           </div>
         </aside>
@@ -48,15 +62,31 @@ import ImageViewer from '@/components/ui/ImageViewer.vue';
 
 const news = ref({
   title: 'Посетили крупнейшую азиатскую выставку',
-  description: '8-я международная выставка рекламы, полиграфии, технологий и материалов в Алмате стала для нас источником вдохновения и новых идей. Мы изучили передовые технологии, наладили контакты с партнерами и готовы внедрять лучшие решения для наших клиентов.',
+  description:
+    '8-я международная выставка рекламы, полиграфии, технологий и материалов в Алмате стала для нас источником вдохновения и новых идей. Мы изучили передовые технологии, наладили контакты с партнерами и готовы внедрять лучшие решения для наших клиентов.',
   date: '2025-05-28',
   images: [
-    { src: 'src/assets/images/pages/NewsPage/3d458f95-8b5b-4965-9f9a-0297d373a34a.jpg', alt: 'Фото с выставки 1' },
-    { src: 'src/assets/images/pages/NewsPage/c563329c-569c-4d0a-a308-8b0d1abc16fe.jpg', alt: 'Фото с выставки 2' },
-    { src: 'src/assets/images/pages/NewsPage/image 211.png', alt: 'Фото с выставки 3' },
-    { src: 'src/assets/images/pages/NewsPage/image 212.png', alt: 'Фото с выставки 4' },
-    { src: 'src/assets/images/pages/NewsPage/image 211.png', alt: 'Фото с выставки 5' },
-  ]
+    {
+      src: 'src/assets/images/pages/NewsPage/3d458f95-8b5b-4965-9f9a-0297d373a34a.jpg',
+      alt: 'Фото с выставки 1',
+    },
+    {
+      src: 'src/assets/images/pages/NewsPage/c563329c-569c-4d0a-a308-8b0d1abc16fe.jpg',
+      alt: 'Фото с выставки 2',
+    },
+    {
+      src: 'src/assets/images/pages/NewsPage/image 211.png',
+      alt: 'Фото с выставки 3',
+    },
+    {
+      src: 'src/assets/images/pages/NewsPage/image 212.png',
+      alt: 'Фото с выставки 4',
+    },
+    {
+      src: 'src/assets/images/pages/NewsPage/image 211.png',
+      alt: 'Фото с выставки 5',
+    },
+  ],
 });
 
 // --- ЛОГИКА ГАЛЕРЕИ ---
@@ -68,9 +98,10 @@ const visibleImages = computed(() => {
 
 const hiddenImagesCount = computed(() => {
   const totalImages = news.value.images.length;
-  return totalImages > MAX_VISIBLE_IMAGES ? totalImages - MAX_VISIBLE_IMAGES : 0;
+  return totalImages > MAX_VISIBLE_IMAGES
+    ? totalImages - MAX_VISIBLE_IMAGES
+    : 0;
 });
-
 
 // --- ЛОГИКА ПРОСМОТРЩИКА ---
 const isViewerOpen = ref(false);
@@ -78,15 +109,20 @@ const viewerImages = ref([]);
 const viewerStartIndex = ref(0);
 
 const formatDate = (dateString) => {
-  const options = { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' };
+  const options = {
+    day: 'numeric',
+    month: 'long',
+    year: 'numeric',
+    timeZone: 'UTC',
+  };
   return new Date(dateString).toLocaleDateString('ru-RU', options);
 };
 
 const openViewer = (images, index) => {
-  viewerImages.value = images.map(img => ({
-      url: img.src,
-      alt: img.alt,
-      categoryTitle: formatDate(news.value.date)
+  viewerImages.value = images.map((img) => ({
+    url: img.src,
+    alt: img.alt,
+    categoryTitle: formatDate(news.value.date),
   }));
   viewerStartIndex.value = index;
   isViewerOpen.value = true;
@@ -121,17 +157,27 @@ const closeViewer = () => {
     grid-template-rows: auto 1fr auto;
     /* "Рисуем" нашу сетку */
     grid-template-areas:
-      "title   . gallery"
-      "desc    . gallery"
-      "date    . gallery";
+      'title   . gallery'
+      'desc    . gallery'
+      'date    . gallery';
   }
 }
 
 /* Присваиваем каждому элементу его область в сетке */
-.news-title { grid-area: title; }
-.news-description { grid-area: desc; align-self: start; /* Выравниваем по верху ячейки */ }
-.news-date { grid-area: date; align-self: end; /* Выравниваем по низу ячейки */ }
-.fancy-gallery { grid-area: gallery; }
+.news-title {
+  grid-area: title;
+}
+.news-description {
+  grid-area: desc;
+  align-self: start; /* Выравниваем по верху ячейки */
+}
+.news-date {
+  grid-area: date;
+  align-self: end; /* Выравниваем по низу ячейки */
+}
+.fancy-gallery {
+  grid-area: gallery;
+}
 
 /*
   Стили для галереи изображений.
@@ -178,7 +224,7 @@ const closeViewer = () => {
   width: 100%;
   height: 100%;
   /* ИЗМЕНЕНИЕ: Используем новый цвет из палитры Tailwind */
-  background-color: theme('colors.panda-black-overlay'); 
+  background-color: theme('colors.panda-black-overlay');
   color: white;
   display: flex;
   align-items: center;
@@ -189,7 +235,7 @@ const closeViewer = () => {
 
 .gallery-item:hover .overlay {
   /* При наведении можно сделать оверлей чуть темнее, если нужно */
-  background-color: rgba(19, 28, 38, 0.65); 
+  background-color: rgba(19, 28, 38, 0.65);
 }
 
 .overlay + .gallery-image {
