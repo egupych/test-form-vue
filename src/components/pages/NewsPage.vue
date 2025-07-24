@@ -60,6 +60,12 @@
 import { ref, computed } from 'vue';
 import ImageViewer from '@/components/ui/ImageViewer.vue';
 
+// Импорт изображений
+import image1 from '@/assets/images/pages/NewsPage/1.png';
+import image2 from '@/assets/images/pages/NewsPage/2.jpg';
+import image3 from '@/assets/images/pages/NewsPage/3.jpg';
+
+
 const news = ref({
   title: 'Посетили крупнейшую азиатскую выставку',
   description:
@@ -67,24 +73,16 @@ const news = ref({
   date: '2025-05-28',
   images: [
     {
-      src: 'src/assets/images/pages/NewsPage/3d458f95-8b5b-4965-9f9a-0297d373a34a.jpg',
+      src: image1,
       alt: 'Фото с выставки 1',
     },
     {
-      src: 'src/assets/images/pages/NewsPage/c563329c-569c-4d0a-a308-8b0d1abc16fe.jpg',
+      src: image2,
       alt: 'Фото с выставки 2',
     },
     {
-      src: 'src/assets/images/pages/NewsPage/image 211.png',
+      src: image3,
       alt: 'Фото с выставки 3',
-    },
-    {
-      src: 'src/assets/images/pages/NewsPage/image 212.png',
-      alt: 'Фото с выставки 4',
-    },
-    {
-      src: 'src/assets/images/pages/NewsPage/image 211.png',
-      alt: 'Фото с выставки 5',
     },
   ],
 });
