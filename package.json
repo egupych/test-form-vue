@@ -24,7 +24,6 @@
     "nodemailer": "^6.10.1",
     "pinia": "^3.0.3",
     "vue": "^3.4.21",
-    "vue-i18n": "^11.1.10",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {

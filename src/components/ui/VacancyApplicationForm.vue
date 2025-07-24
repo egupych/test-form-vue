@@ -1,3 +1,4 @@
+// Файл: VacancyApplicationForm.vue
 <script setup>
 // Этот скрипт управляет логикой формы отклика на вакансию.
 // Он выполняет следующие функции:
@@ -5,7 +6,7 @@
 // - Собирает данные из полей (имя, телефон).
 // - Использует композибл useFormValidation для валидации полей.
 // - Обрабатывает загрузку одного файла (резюме) с проверкой формата и размера.
-// - Отправляет данные формы на бэкенд-сервер по адресу /api/submit-application.
+// - Отправляет данные формы (в данный момент имитирует отправку через console.log и показывает уведомление).
 
 import { ref, reactive, watch, computed } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
@@ -19,7 +20,6 @@ const props = defineProps({
   }
 });
 
-const emit = defineEmits(['close']); // Добавляем emit для закрытия попапа
 const notificationStore = useNotificationStore();
 
 const formData = reactive({
@@ -67,44 +67,27 @@ const removeFile = (index) => {
   files.value.splice(index, 1);
 };
 
-// --- ИЗМЕНЕННАЯ ФУНКЦИЯ ОТПРАВКИ ---
-const handleSubmit = async () => {
-  if (!validateForm(validationFields) || files.value.length === 0) {
-    notificationStore.showNotification('Пожалуйста, заполните все поля и прикрепите резюме.', 'error');
+const handleSubmit = () => {
+  if (!validateForm(validationFields)) {
+    notificationStore.showNotification('Пожалуйста, заполните имя и телефон.', 'error');
     return;
   }
-
-  isSubmitting.value = true;
-  const data = new FormData();
-  data.append('name', formData.name);
-  data.append('phone', formData.phone);
-  data.append('desiredPosition', desiredPosition.value);
-  data.append('resume', files.value[0]); // Прикрепляем файл под именем 'resume'
-
-  try {
-    const response = await fetch('/api/submit-application', {
-      method: 'POST',
-      body: data
-    });
-    const result = await response.json();
-
-    if (!response.ok) {
-      throw new Error(result.message || 'Ошибка на стороне сервера.');
-    }
-
-    notificationStore.showNotification(result.message, 'success');
-    // Очистка формы и закрытие окна
-    formData.name = '';
-    formData.phone = '';
-    files.value = [];
-    emit('close'); // Сигнал родительскому компоненту закрыть попап
-
-  } catch (error) {
-    console.error('Ошибка отправки отклика:', error);
-    notificationStore.showNotification(error.message || 'Не удалось отправить отклик.', 'error');
-  } finally {
-    isSubmitting.value = false;
+  if (files.value.length === 0) {
+    notificationStore.showNotification('Пожалуйста, прикрепите ваше резюме.', 'error');
+    return;
   }
+  
+  isSubmitting.value = true;
+  console.log({
+    vacancy: desiredPosition.value,
+    ...formData,
+    resume: files.value[0]
+  });
+
+  setTimeout(() => {
+    notificationStore.showNotification(`Спасибо за отклик, ${formData.name}! Мы свяжемся с вами.`, 'success');
+    isSubmitting.value = false;
+  }, 1500);
 };
 </script>
 
@@ -147,9 +130,9 @@ const handleSubmit = async () => {
 
               <div class="mt-auto pt-8">
                 <div v-if="files.length > 0" class="file-list">
-                  <div
-                    v-for="(file, index) in files"
-                    :key="file.name + index"
+                  <div 
+                    v-for="(file, index) in files" 
+                    :key="file.name + index" 
                     class="file-item"
                   >
                     <span class="file-name">{{ file.name }}</span>
@@ -177,10 +160,18 @@ const handleSubmit = async () => {
 </template>
 
 <style scoped>
-/* Стили остаются без изменений */
-.form-input { @apply block w-full pb-1 pt-4 text-base text-panda-black bg-transparent border-b border-gray appearance-none focus:outline-none focus:ring-0 z-10; }
-.form-label { @apply pointer-events-none absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 ; }
-.input-border { @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full; }
+/* Общие стили для полей ввода */
+.form-input {
+  @apply block w-full pb-1 pt-4 text-base text-panda-black bg-transparent border-b border-gray appearance-none focus:outline-none focus:ring-0 z-10;
+}
+.form-label {
+  @apply pointer-events-none absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 ;
+}
+.input-border {
+  @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full;
+}
+
+/* Старые стили, которые все еще нужны */
 .file-list { margin-bottom: 0.75rem; max-height: 7.8125rem; overflow-y: auto; padding-right: 0.25rem; }
 .file-item { display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 0.75rem; background-color: #f0f0f0; border-radius: 0.5rem; margin-bottom: 0.5rem; }
 .file-name { font-size: 0.875rem; color: #131C26; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 0.5rem; }
