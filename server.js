@@ -11,6 +11,7 @@ import rateLimit from 'express-rate-limit';
 import { body, validationResult } from 'express-validator';
 import nodemailer from 'nodemailer';
 import path from 'path';
+import admin from 'firebase-admin';
 
 import { fileURLToPath } from 'url';
 import 'dotenv/config';
@@ -163,7 +164,7 @@ export function createApp(admin, db) {
         company: company || 'Не указана',
         task,
         promo: promo || 'Не указан',
-        timestamp: db.FieldValue.serverTimestamp(),
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
         ip: req.ip,
         userAgent: req.headers['user-agent'],
         fileNames:
@@ -241,7 +242,7 @@ export function createApp(admin, db) {
         name,
         phone,
         desiredPosition: desiredPosition || 'Кадровый резерв',
-        timestamp: db.FieldValue.serverTimestamp(),
+        timestamp: admin.firestore.FieldValue.serverTimestamp(),
         ip: req.ip,
         userAgent: req.headers['user-agent'],
         resumeFileName: resumeFile.originalname,
@@ -314,7 +315,7 @@ export function createApp(admin, db) {
         await subscribersRef.add({
           email: email,
           sphere: sphere || 'Не указана',
-          subscribedAt: db.FieldValue.serverTimestamp(),
+          subscribedAt: admin.firestore.FieldValue.serverTimestamp(),
         });
 
         res.status(200).json({ success: true, message: 'Спасибо за подписку!' });
@@ -351,7 +352,44 @@ export function createApp(admin, db) {
 
 // Условный запуск сервера, чтобы не запускать его во время тестов
 if (process.env.NODE_ENV !== 'test') {
-  const app = createApp();
+  // --- Проверка переменных окружения (добавлена EMAIL_HR_RECEIVER) ---
+  const requiredEnv = [
+    'PORT',
+    'EMAIL_HOST',
+    'EMAIL_PORT',
+    'EMAIL_SECURE',
+    'EMAIL_USER',
+    'EMAIL_PASS',
+    'EMAIL_RECEIVER',
+    'EMAIL_HR_RECEIVER',
+    'FIREBASE_PROJECT_ID',
+    'GOOGLE_APPLICATION_CREDENTIALS',
+  ];
+  for (const envVar of requiredEnv) {
+    if (!process.env[envVar]) {
+      console.error(
+        `\x1b[31mКРИТИЧЕСКАЯ ОШИБКА: Переменная окружения ${envVar} не определена в файле .env.\x1b[0m`
+      );
+      process.exit(1);
+    }
+  }
+
+  try {
+    admin.initializeApp({
+      credential: admin.credential.applicationDefault(),
+      projectId: process.env.FIREBASE_PROJECT_ID,
+    });
+    console.log('\x1b[32m✅ Firebase Admin SDK успешно инициализирован.\x1b[0m');
+  } catch (error) {
+    console.error(
+      '\x1b[31m--- Ошибка инициализации Firebase Admin SDK ---',
+      error
+    );
+    process.exit(1);
+  }
+  const db = admin.firestore();
+
+  const app = createApp(admin, db);
   app.listen(process.env.PORT, () => {
     console.log(
       `\x1b[36m🚀 Сервер запущен на порту ${process.env.PORT}. Откройте сайт по адресу http://localhost:${process.env.PORT}\x1b[0m`
