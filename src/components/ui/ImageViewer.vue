@@ -1,5 +1,6 @@
 <script setup>
 import { ref, computed, onMounted, onUnmounted } from 'vue';
+import LikeButton from '@/components/ui/LikeButton.vue';
 
 const props = defineProps({
   images: {
@@ -70,6 +71,7 @@ onUnmounted(() => {
       <div class="image-viewer-overlay" @click="close">
         <div class="top-controls" @click.stop>
           <span class="counter top-counter">{{ counterText }}</span>
+          <LikeButton :image-url="currentImage.url || currentImage" class="viewer-like-button" />
           <button class="close-button" @click="close" aria-label="Закрыть">
             &times;
           </button>
@@ -171,6 +173,10 @@ onUnmounted(() => {
   align-items: center;
   gap: 1.5rem;
   z-index: 10;
+}
+
+.viewer-like-button {
+  position: static; /* Убираем absolute, т.к. теперь он во flex-контейнере */
 }
 
 .close-button {
