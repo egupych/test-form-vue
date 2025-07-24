@@ -70,8 +70,8 @@ onUnmounted(() => {
     <transition name="viewer-fade">
       <div class="image-viewer-overlay" @click="close">
         <div class="top-controls" @click.stop>
-          <span class="counter top-counter">{{ counterText }}</span>
           <LikeButton :image-url="currentImage.url || currentImage" class="viewer-like-button" />
+          <span class="counter top-counter">{{ counterText }}</span>
           <button class="close-button" @click="close" aria-label="Закрыть">
             &times;
           </button>
