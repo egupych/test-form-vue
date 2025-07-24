@@ -116,5 +116,12 @@ const toggle = () => {
 .like-button.is-liked .like-icon {
   stroke: #f7f7f7;
   fill: #f7f7f7;
+  animation: heart-pop 0.3s ease-out;
+}
+
+@keyframes heart-pop {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+  100% { transform: scale(1); }
 }
 </style>
