@@ -1,9 +1,15 @@
+// Код для файла firestore.rules
+// Как работает: Добавлен новый блок match /applications/{applicationId},
+// который разрешает только операцию create. Это позволяет серверу добавлять
+// новые отклики на вакансии, сохраняя при этом безопасность остальных данных,
+// так как чтение, обновление и удаление запрещены.
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // --- ГЛАВНОЕ ПРАВИЛО БЕЗОПАСНОСТИ ---
+    // --- ГЛАВВНОЕ ПРАВИЛО БЕЗОПАСНОСТИ ---
     // Запрещаем любые действия по умолчанию для всех коллекций.
     // Это гарантирует, что ни одна коллекция не останется незащищенной.
     match /{document=**} {
@@ -13,6 +19,13 @@ service cloud.firestore {
     // --- Правила для Заявок ---
     // Разрешаем только создавать новые заявки (это делает ваш сервер).
     match /submissions/{submissionId} {
+      allow create: if true;
+      allow read, update, delete: if false;
+    }
+
+    // --- [НОВОЕ] Правила для Откликов на вакансии ---
+    // Разрешаем только создавать новые отклики (это делает ваш сервер).
+    match /applications/{applicationId} {
       allow create: if true;
       allow read, update, delete: if false;
     }
