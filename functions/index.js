@@ -1,18 +1,18 @@
 // Код functions/index.js
-// Финальная, стабильная версия на основе оригинального server.js для 1-го поколения Firebase Functions
+// Финальная стабильная версия для 2-го поколения Firebase Functions
 
-const functions = require("firebase-functions");
-const express = require("express");
-const cors = require("cors");
-const helmet = require("helmet");
-const rateLimit = require("express-rate-limit");
-const { body, validationResult } = require("express-validator");
-const nodemailer = require("nodemailer");
-const path = require("path");
-const admin = require("firebase-admin");
-const multer = require("multer");
-const fs = require("fs");
-const fetch = require("node-fetch");
+import * as functions from "firebase-functions";
+import { onRequest } from "firebase-functions/v2/https";
+import express from "express";
+import cors from "cors";
+import helmet from "helmet";
+import rateLimit from "express-rate-limit";
+import { body, validationResult } from "express-validator";
+import nodemailer from "nodemailer";
+import path from "path";
+import admin from "firebase-admin";
+import multer from "multer";
+import fs from "fs";
 
 const env = functions.config();
 
@@ -24,8 +24,8 @@ const app = express();
 const db = admin.firestore();
 
 app.set('trust proxy', 1);
-app.use(express.json());
-app.use(cors({ origin: true }));
+app.use(express.json()); // Обработчик JSON-запросов
+app.use(cors({ origin: true })); // Упрощенный CORS для Firebase
 app.use(helmet());
 
 const limiter = rateLimit({
@@ -118,7 +118,8 @@ app.post('/api/submit-form', mainFormUpload.array('files', 10), [
                        console.error(`Не удалось скачать референс (не изображение): ${absoluteUrl}`);
                        return null;
                     }
-                    const buffer = await response.buffer();
+                    const arrayBuffer = await response.arrayBuffer();
+                    const buffer = Buffer.from(arrayBuffer);
                     const cid = `reference-${index}@redpanda.kz`;
                     return { filename: path.basename(url), content: buffer, contentType: contentType, cid: cid, };
                 } catch (e) {
@@ -165,7 +166,7 @@ app.post('/api/submit-application', resumeUpload.single('resume'), [ body('name'
         const resumeFile = req.file;
         const decodedOriginalName = Buffer.from(resumeFile.originalname, 'latin1').toString('utf8');
         const newApplication = { name, phone, desiredPosition: desiredPosition || 'Кадровый резерв', timestamp: admin.firestore.FieldValue.serverTimestamp(), ip: req.ip, userAgent: req.headers['user-agent'], resumeFileName: decodedOriginalName, };
-        const mailOptions = { from: `"Отклик на вакансию" <${env.email.user}>`, to: env.email.hr_receiver, subject: `Новый отклик: ${newApplication.desiredPosition} от ${name}`, html: `<div style="font-family: Arial, sans-serif; line-height: 1.6;"><h2>Новый отклик на вакансию</h2><p><strong>Кандидат:</strong> ${name}</p><p><strong>Телефон:</strong> ${phone}</p><p><strong>Желаемая должность:</strong> ${newApplication.desiredPosition}</p><hr><p>Резюме кандидата прикреплено (файл: ${decodedOriginalName}).</p></div>`, attachments: [{ filename: decodedOriginalName, path: resumeFile.path }] };
+        const mailOptions = { from: `"Отклик на вакансию" <${env.email.user}>`, to: env.email.hr_receiver, subject: `Новый отклик: ${newApplication.desiredPosition} от ${name}`, html: `<div style="font-family: Arial, sans-serif; line-height: 1.6;"><h2>Новый отклик на вакансию</h2><p><strong>Кандидат:</strong> ${name}</p><p><strong>Телефон:</strong> ${phone}</p><p><strong>Желаемая должность:</strong> ${newApplication.desiredPosition}</p><hr><p>Резюме прикреплено (файл: ${decodedOriginalName}).</p></div>`, attachments: [{ filename: decodedOriginalName, path: resumeFile.path }] };
         await transporter.sendMail(mailOptions);
         await db.collection('applications').add(newApplication);
         fs.unlinkSync(resumeFile.path);
@@ -206,4 +207,4 @@ app.use((error, req, res, next) => {
     next();
 });
 
-exports.api = functions.region('europe-west1').https.onRequest(app);
+export const api = onRequest({ region: "europe-west1", maxInstances: 1 }, app);
