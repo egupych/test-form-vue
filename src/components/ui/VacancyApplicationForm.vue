@@ -12,20 +12,13 @@ import BaseButton from '@/components/ui/BaseButton.vue';
 import { useNotificationStore } from '@/stores/notifications.js';
 import { useFormValidation } from '@/composables/useFormValidation.js';
 
-const props = defineProps({
-  positionTitle: {
-    type: String,
-    required: true,
-  },
-});
+
 
 const emit = defineEmits(['close']); // Добавляем emit для закрытия попапа
 const notificationStore = useNotificationStore();
+const formStateStore = useFormStateStore();
 
-const formData = reactive({
-  name: '',
-  phone: '',
-});
+const formData = formStateStore.vacancyForm;
 const validationFields = ['name', 'phone'];
 const { errors, validateField, validateForm, formatPhoneInput } =
   useFormValidation(formData, validationFields);
@@ -37,11 +30,13 @@ watch(
   () => props.positionTitle,
   (newVal) => {
     desiredPosition.value = newVal;
-  }
+    formStateStore.updateVacancyFormField('desiredPosition', newVal);
+  },
+  { immediate: true }
 );
 
 const isFormValid = computed(() => {
-  const allFieldsFilled = validationFields.every((field) => !!formData[field]);
+  const allFieldsFilled = validationFields.every((field) => !!formStateStore.vacancyForm[field]);
   const noErrors = validationFields.every((field) => !errors[field]);
   return allFieldsFilled && noErrors && files.value.length > 0;
 });
@@ -89,8 +84,8 @@ const handleSubmit = async () => {
 
   isSubmitting.value = true;
   const data = new FormData();
-  data.append('name', formData.name);
-  data.append('phone', formData.phone);
+  data.append('name', formStateStore.vacancyForm.name);
+  data.append('phone', formStateStore.vacancyForm.phone);
   data.append('desiredPosition', desiredPosition.value);
   data.append('resume', files.value[0]); // Прикрепляем файл под именем 'resume'
 
@@ -107,8 +102,7 @@ const handleSubmit = async () => {
 
     notificationStore.showNotification(result.message, 'success');
     // Очистка формы и закрытие окна
-    formData.name = '';
-    formData.phone = '';
+    formStateStore.clearVacancyForm();
     files.value = [];
     emit('close'); // Сигнал родительскому компоненту закрыть попап
   } catch (error) {
@@ -149,7 +143,7 @@ const handleSubmit = async () => {
                 type="text"
                 id="vacancyName"
                 required
-                v-model.trim="formData.name"
+                v-model.trim="formStateStore.vacancyForm.name"
                 @input="validateField('name')"
                 class="form-input peer"
                 :class="{ 'border-panda-orange': errors.name }"
@@ -175,7 +169,7 @@ const handleSubmit = async () => {
                 type="tel"
                 id="vacancyPhone"
                 required
-                v-model="formData.phone"
+                v-model="formStateStore.vacancyForm.phone"
                 @input="formatPhoneInput"
                 class="form-input peer"
                 :class="{ 'border-panda-orange': errors.phone }"

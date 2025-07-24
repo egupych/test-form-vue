@@ -1,8 +1,3 @@
-// Файл: src/stores/formState.js
-// Описание: Это хранилище предназначено для сохранения состояния форм между
-// переходами по страницам. Сейчас оно хранит файлы, прикрепленные к форме
-// расчёта стоимости, чтобы они не пропадали при навигации по сайту.
-
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 
@@ -10,7 +5,24 @@ export const useFormStateStore = defineStore('formState', () => {
   // Состояние: массив для хранения файлов формы расчёта
   const calculationFormFiles = ref([]);
 
-  // Действия для управления файлами
+  // Состояние для полей формы расчёта стоимости
+  const calculationForm = ref({
+    name: '',
+    phone: '',
+    email: '',
+    company: '',
+    task: '',
+    promo: '',
+  });
+
+  // Состояние для полей формы отклика на вакансию
+  const vacancyForm = ref({
+    name: '',
+    phone: '',
+    desiredPosition: '',
+  });
+
+  // Действия для управления файлами формы расчёта
   function addCalculationFiles(newFiles) {
     calculationFormFiles.value.push(...newFiles);
   }
@@ -23,10 +35,45 @@ export const useFormStateStore = defineStore('formState', () => {
     calculationFormFiles.value = [];
   }
 
+  // Действия для управления полями формы расчёта стоимости
+  function updateCalculationFormField(field, value) {
+    calculationForm.value[field] = value;
+  }
+
+  function clearCalculationForm() {
+    calculationForm.value = {
+      name: '',
+      phone: '',
+      email: '',
+      company: '',
+      task: '',
+      promo: '',
+    };
+  }
+
+  // Действия для управления полями формы отклика на вакансию
+  function updateVacancyFormField(field, value) {
+    vacancyForm.value[field] = value;
+  }
+
+  function clearVacancyForm() {
+    vacancyForm.value = {
+      name: '',
+      phone: '',
+      desiredPosition: '',
+    };
+  }
+
   return {
     calculationFormFiles,
+    calculationForm,
+    vacancyForm,
     addCalculationFiles,
     removeCalculationFile,
     clearCalculationFiles,
+    updateCalculationFormField,
+    clearCalculationForm,
+    updateVacancyFormField,
+    clearVacancyForm,
   };
 });

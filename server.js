@@ -47,10 +47,19 @@ const mainFormUpload = multer({
   dest: 'uploads/',
   limits: { fileSize: MAX_FILE_SIZE },
   fileFilter: (req, file, cb) => {
+    let originalname = file.originalname;
+    try {
+      // Попытка декодировать имя файла, если оно содержит некорректные символы
+      originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    } catch (e) {
+      console.error('Ошибка декодирования имени файла:', e);
+    }
+    console.log('Multer file object:', file);
     if (ALLOWED_MIMETYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(new Error('Недопустимый тип файла для макета!'), false);
+      req.fileValidationError = `Недопустимый тип файла для макета: ${originalname}.`;
+      cb(null, false);
     }
   },
 });
@@ -69,15 +78,19 @@ const resumeUpload = multer({
   dest: 'uploads/',
   limits: { fileSize: MAX_RESUME_SIZE },
   fileFilter: (req, file, cb) => {
+    let originalname = file.originalname;
+    try {
+      // Попытка декодировать имя файла, если оно содержит некорректные символы
+      originalname = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    } catch (e) {
+      console.error('Ошибка декодирования имени файла:', e);
+    }
+    console.log('Multer file object:', file);
     if (ALLOWED_RESUME_MIMETYPES.includes(file.mimetype)) {
       cb(null, true);
     } else {
-      cb(
-        new Error(
-          'Недопустимый тип файла для резюме! Разрешены .pdf, .doc, .docx, .jpg, .png'
-        ),
-        false
-      );
+      req.fileValidationError = `Недопустимый тип файла для резюме: ${originalname}.`;
+      cb(null, false);
     }
   },
 });
@@ -132,6 +145,12 @@ export function createApp(admin, db) {
   app.post(
     '/api/submit-form',
     mainFormUpload.array('files', 10),
+    (req, res, next) => {
+      if (req.fileValidationError) {
+        return res.status(400).json({ success: false, message: req.fileValidationError });
+      }
+      next();
+    },
     [
       body('name').trim().notEmpty().withMessage('Имя не может быть пустым'),
       body('phone').trim().notEmpty().withMessage('Телефон не может быть пустым'),
@@ -212,6 +231,12 @@ export function createApp(admin, db) {
   app.post(
     '/api/submit-application',
     resumeUpload.single('resume'), // Принимаем один файл с именем 'resume'
+    (req, res, next) => {
+      if (req.fileValidationError) {
+        return res.status(400).json({ success: false, message: req.fileValidationError });
+      }
+      next();
+    },
     [
       body('name').trim().notEmpty().withMessage('Имя не может быть пустым'),
       body('phone').trim().notEmpty().withMessage('Телефон не может быть пустым'),

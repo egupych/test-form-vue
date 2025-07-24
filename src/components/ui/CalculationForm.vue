@@ -22,17 +22,11 @@ const props = defineProps({ promoCode: { type: String, default: '' } });
 const { user } = useAuth();
 const referencesStore = useReferencesStore();
 const notificationStore = useNotificationStore();
-// --- ИЗМЕНЕНИЕ: Инициализируем новое хранилище ---
+
+
 const formStateStore = useFormStateStore();
 
-const formData = reactive({
-  name: '',
-  phone: '',
-  email: '',
-  company: '',
-  task: '',
-  promo: '',
-});
+const formData = formStateStore.calculationForm;
 const validationFields = ['name', 'phone', 'email', 'task'];
 const { errors, validateField, validateForm, formatPhoneInput } =
   useFormValidation(formData, validationFields);
@@ -99,7 +93,7 @@ const removeFile = (index) => {
 watch(
   () => props.promoCode,
   (newPromo) => {
-    if (newPromo) formData.promo = newPromo;
+    if (newPromo) formStateStore.updateCalculationFormField('promo', newPromo);
   },
   { immediate: true }
 );
@@ -107,32 +101,32 @@ watch(
   user,
   (currentUser) => {
     if (currentUser) {
-      if (!formData.name) formData.name = currentUser.displayName || '';
-      if (!formData.email) formData.email = currentUser.email || '';
+      if (!formStateStore.calculationForm.name) formStateStore.updateCalculationFormField('name', currentUser.displayName || '');
+      if (!formStateStore.calculationForm.email) formStateStore.updateCalculationFormField('email', currentUser.email || '');
     }
   },
   { immediate: true }
 );
 
 const isFormValid = computed(() => {
-  const allFieldsFilled = validationFields.every((field) => !!formData[field]);
+  const allFieldsFilled = validationFields.every((field) => !!formStateStore.calculationForm[field]);
   const noErrors = validationFields.every((field) => !errors[field]);
   return allFieldsFilled && noErrors;
 });
 
-const handleSubmit = async () => {
-  if (!validateForm(validationFields)) {
-    notificationStore.showNotification(
-      'Пожалуйста, исправьте ошибки в форме.',
-      'error'
-    );
-    return;
-  }
-  isSubmitting.value = true;
-  const data = new FormData();
-  for (const key in formData) {
-    data.append(key, formData[key]);
-  }
+  const handleSubmit = async () => {
+    if (!validateForm(validationFields)) {
+      notificationStore.showNotification(
+        'Пожалуйста, исправьте ошибки в форме.',
+        'error'
+      );
+      return;
+    }
+    isSubmitting.value = true;
+    const data = new FormData();
+    for (const key in formStateStore.calculationForm) {
+      data.append(key, formStateStore.calculationForm[key]);
+    }
 
   if (files.value.length > 0) {
     files.value.forEach((file) => {
@@ -153,7 +147,7 @@ const handleSubmit = async () => {
     const result = await response.json();
     if (!response.ok) throw new Error(result.message || 'Ошибка сервера');
     notificationStore.showNotification(result.message, 'success');
-    Object.keys(formData).forEach((key) => (formData[key] = ''));
+    formStateStore.clearCalculationForm();
     // --- ИЗМЕНЕНИЕ: Очищаем файлы в хранилище ---
     formStateStore.clearCalculationFiles();
     referencesStore.clearReferences();
@@ -266,7 +260,7 @@ const handleSubmit = async () => {
               type="text"
               id="name"
               required
-              v-model.trim="formData.name"
+              v-model.trim="formStateStore.calculationForm.name"
               @input="validateField('name')"
               class="form-input peer"
               :class="{ 'border-panda-orange': errors.name }"
@@ -293,7 +287,7 @@ const handleSubmit = async () => {
               type="tel"
               id="phone"
               required
-              v-model="formData.phone"
+              v-model="formStateStore.calculationForm.phone"
               @input="formatPhoneInput"
               class="form-input peer"
               :class="{ 'border-panda-orange': errors.phone }"
@@ -320,7 +314,7 @@ const handleSubmit = async () => {
               type="email"
               id="email"
               required
-              v-model.trim="formData.email"
+              v-model.trim="formStateStore.calculationForm.email"
               @input="validateField('email')"
               class="form-input peer"
               :class="{ 'border-panda-orange': errors.email }"
@@ -346,7 +340,7 @@ const handleSubmit = async () => {
             <input
               type="text"
               id="company"
-              v-model.trim="formData.company"
+              v-model.trim="formStateStore.calculationForm.company"
               class="form-input peer"
               placeholder=" "
             />
@@ -360,7 +354,7 @@ const handleSubmit = async () => {
             <textarea
               id="task"
               required
-              v-model.trim="formData.task"
+              v-model.trim="formStateStore.calculationForm.task"
               @input="validateField('task')"
               class="form-input peer min-h-[6.25rem] resize-y"
               :class="{ 'border-panda-orange': errors.task }"
@@ -386,7 +380,7 @@ const handleSubmit = async () => {
             <input
               type="text"
               id="promo"
-              v-model.trim="formData.promo"
+              v-model.trim="formStateStore.calculationForm.promo"
               class="form-input peer"
               placeholder=" "
             />
