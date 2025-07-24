@@ -12,83 +12,73 @@
   5. Таким образом, компонент App.vue всегда будет получать уже готовое, правильное имя анимации.
 */
 import { createRouter, createWebHistory } from 'vue-router';
-import HomePage from '@/components/pages/HomePage.vue';
-import GalleryPage from '@/components/pages/GalleryPage.vue';
-import PromotionsPage from '@/components/pages/PromotionsPage.vue';
-import EquipmentPage from '@/components/pages/EquipmentPage.vue';
-import TeamPage from '@/components/pages/TeamPage.vue';
-import VacanciesPage from '@/components/pages/VacanciesPage.vue';
-import NewsPage from '@/components/pages/NewsPage.vue';
-import ShopPage from '@/components/pages/ShopPage.vue';
-import PreparationPage from '@/components/pages/PreparationPage.vue';
-import AuthPage from '@/components/pages/AuthPage.vue';
-import NotFoundPage from '@/components/pages/NotFoundPage.vue';
+
 
 const routes = [
   {
     path: '/',
     name: 'Home',
-    component: HomePage,
+    component: () => import('@/components/pages/HomePage.vue'),
     meta: { title: 'Главная - Red Panda', order: 1 },
   },
   {
     path: '/gallery',
     name: 'Gallery',
-    component: GalleryPage,
+    component: () => import('@/components/pages/GalleryPage.vue'),
     meta: { title: 'Портфолио - Red Panda', order: 2 },
   },
   {
     path: '/promotions',
     name: 'Promotions',
-    component: PromotionsPage,
+    component: () => import('@/components/pages/PromotionsPage.vue'),
     meta: { title: 'Акции - Red Panda', order: 3 },
   },
   {
     path: '/preparation',
     name: 'Preparation',
-    component: PreparationPage,
+    component: () => import('@/components/pages/PreparationPage.vue'),
     meta: { title: 'Подготовка к печати - Red Panda', order: 4 },
   },
   {
     path: '/shop',
     name: 'Shop',
-    component: ShopPage,
+    component: () => import('@/components/pages/ShopPage.vue'),
     meta: { title: 'Магазин - Red Panda', order: 5 },
   },
   {
     path: '/team',
     name: 'Team',
-    component: TeamPage,
+    component: () => import('@/components/pages/TeamPage.vue'),
     meta: { title: 'Наша команда - Red Panda', order: 6 },
   },
   {
     path: '/news',
     name: 'News',
-    component: NewsPage,
+    component: () => import('@/components/pages/NewsPage.vue'),
     meta: { title: 'Новости - Red Panda', order: 7 },
   },
   {
     path: '/vacancies',
     name: 'Vacancies',
-    component: VacanciesPage,
+    component: () => import('@/components/pages/VacanciesPage.vue'),
     meta: { title: 'Вакансии - Red Panda', order: 8 },
   },
   {
     path: '/equipment',
     name: 'Equipment',
-    component: EquipmentPage,
+    component: () => import('@/components/pages/EquipmentPage.vue'),
     meta: { title: 'Оборудование - Red Panda', order: 9 },
   },
   {
     path: '/auth',
     name: 'Auth',
-    component: AuthPage,
+    component: () => import('@/components/pages/AuthPage.vue'),
     meta: { title: 'Вход - Red Panda', order: 100 },
   },
   {
     path: '/:pathMatch(.*)*',
     name: 'NotFound',
-    component: NotFoundPage,
+    component: () => import('@/components/pages/NotFoundPage.vue'),
     meta: { title: 'Страница не найдена - Red Panda', order: 101 },
   },
 ];
