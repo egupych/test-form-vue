@@ -30,7 +30,7 @@ const closePopup = () => {
           Вакансии
         </SectionHeader>
 
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
           <div
             v-for="vacancy in vacancies"
             :key="vacancy.id"
