@@ -57,7 +57,7 @@ const sliderStyle = computed(() => ({
 
       <div v-if="allLogos.length > 0" class="relative overflow-hidden">
         <div
-          class="flex transition-transform duration-500 ease-in-out"
+          class="flex transition-transform duration-300 ease-out"
           :style="sliderStyle"
         >
           <div
