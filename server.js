@@ -96,27 +96,12 @@ const resumeUpload = multer({
 });
 // --- КОНЕЦ НОВОЙ КОНФИГУРАЦИИ ---
 
-export function createApp(admin, db) {
-
-  
+export function createApp(admin, db, transporter) { // Добавлен transporter в аргументы
 
   const app = express();
   const PORT = process.env.PORT;
 
-  const transporter = nodemailer.createTransport({
-    host: process.env.EMAIL_HOST,
-    port: parseInt(process.env.EMAIL_PORT, 10),
-    secure: process.env.EMAIL_SECURE === 'true',
-    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
-  });
-
-  transporter.verify((error) => {
-    if (error) {
-      console.error('\x1b[31m--- Ошибка конфигурации Nodemailer ---', error);
-    } else {
-      console.log('\x1b[32m✅ Nodemailer готов к отправке писем.\x1b[0m');
-    }
-  });
+  // transporter теперь передается извне, поэтому его инициализация здесь не нужна
 
   app.use(express.json());
   app.use(helmet());
@@ -414,7 +399,23 @@ if (process.env.NODE_ENV !== 'test') {
   }
   const db = admin.firestore();
 
-  const app = createApp(admin, db);
+  // Инициализация и верификация Nodemailer здесь
+  const transporter = nodemailer.createTransport({
+    host: process.env.EMAIL_HOST,
+    port: parseInt(process.env.EMAIL_PORT, 10),
+    secure: process.env.EMAIL_SECURE === 'true',
+    auth: { user: process.env.EMAIL_USER, pass: process.env.EMAIL_PASS },
+  });
+
+  try {
+    await transporter.verify();
+    console.log('\x1b[32m✅ Nodemailer готов к отправке писем.\x1b[0m');
+  } catch (error) {
+    console.error("\x1b[31m--- Ошибка конфигурации Nodemailer ---", error);
+    process.exit(1); // Выход из процесса, если Nodemailer не настроен
+  }
+
+  const app = createApp(admin, db, transporter); // Передаем transporter
   app.listen(process.env.PORT, () => {
     console.log(
       `\x1b[36m🚀 Сервер запущен на порту ${process.env.PORT}. Откройте сайт по адресу http://localhost:${process.env.PORT}\x1b[0m`

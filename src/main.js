@@ -16,8 +16,8 @@ const pinia = createPinia();
 app.use(pinia);
 app.use(router);
 
-app.mount('#app');
 app.use(i18n);
+app.mount('#app');
 
 // 2. Запускаем загрузку изображений
 useGalleryStore(pinia).loadGalleryItems();

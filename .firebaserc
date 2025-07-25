@@ -1,6 +1,7 @@
 {
   "projects": {
-    "default": "redpanda-cca8e"
+    "default": "redpanda-cca8e",
+    "redpanda": "redpanda-cca8e"
   },
   "targets": {
     "redpanda-cca8e": {

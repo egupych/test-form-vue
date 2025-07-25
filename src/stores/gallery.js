@@ -117,13 +117,18 @@ export const useGalleryStore = defineStore('gallery', () => {
       let itemCounter = 1;
 
       for (const path in imageModules) {
-        const imageUrlModule = await imageModules[path]();
-        categoryImages.push({
-          id: `${categoryId}-${itemCounter++}`,
-          url: imageUrlModule.default,
-          title: `Работа по категории «${categoryId}»`,
-          category: categoryId,
-        });
+        try {
+          const imageUrlModule = await imageModules[path]();
+          categoryImages.push({
+            id: `${categoryId}-${itemCounter++}`,
+            url: imageUrlModule.default,
+            title: `Работа по категории «${categoryId}»`,
+            category: categoryId,
+          });
+        } catch (error) {
+          console.error(`Ошибка загрузки изображения по пути ${path}:`, error);
+          // Можно добавить логику для пропуска или отображения заглушки
+        }
       }
 
       if (categoryImages.length > 0) {

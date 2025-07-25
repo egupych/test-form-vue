@@ -95,9 +95,9 @@ router.beforeEach((to, from) => {
   const fromDepth = from.meta.order;
 
   // Если у предыдущей страницы нет order (например, первая загрузка),
-  // то просто не задаём анимацию или ставим по умолчанию.
+  // то анимация не нужна.
   if (fromDepth === undefined) {
-    to.meta.transition = 'slide-left';
+    to.meta.transition = ''; // Или null, или undefined, чтобы не применять анимацию
     return;
   }
 
