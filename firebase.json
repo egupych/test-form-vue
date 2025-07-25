@@ -4,6 +4,11 @@
       "source": "functions",
       "codebase": "default",
       "runtime": "nodejs20"
+    },
+    {
+      "source": "functions-form-handler",
+      "codebase": "form-handler",
+      "runtime": "nodejs20"
     }
   ],
   "hosting": {
@@ -14,6 +19,14 @@
       "**/node_modules/**"
     ],
     "rewrites": [
+      {
+        "source": "/api/submit-form",
+        "function": {
+          "functionId": "submitForm",
+          "codebase": "form-handler",
+          "region": "us-central1"
+        }
+      },
       {
         "source": "/api/**",
         "function": {

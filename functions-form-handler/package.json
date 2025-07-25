@@ -1,0 +1,13 @@
+{
+  "name": "form-handler-function",
+  "description": "Firebase Cloud Function for form handling",
+  "main": "index.js",
+  "dependencies": {
+    "firebase-admin": "^11.11.1",
+    "firebase-functions": "^4.9.0",
+    "busboy": "^1.6.0"
+  },
+  "engines": {
+    "node": "20"
+  }
+}
