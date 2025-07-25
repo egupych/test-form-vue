@@ -75,7 +75,7 @@ const ALLOWED_RESUME_MIMETYPES = [
 ];
 
 const resumeUpload = multer({
-  dest: 'uploads/',
+  dest: path.join(__dirname, 'uploads'),
   limits: { fileSize: MAX_RESUME_SIZE },
   fileFilter: (req, file, cb) => {
     let originalname = file.originalname;
@@ -106,7 +106,7 @@ export function createApp(admin, db, transporter) { // Добавлен transpor
   app.use(express.json());
   app.use(helmet());
 
-  const whitelist = ['http://localhost:5173', 'https://redpanda.web.app/'];
+  const whitelist = ['http://localhost:5173', 'https://redpanda-cca8e.web.app', 'http://localhost:3000'];
   const corsOptions = {
     origin: function (origin, callback) {
       if (!origin || whitelist.indexOf(origin) !== -1) {

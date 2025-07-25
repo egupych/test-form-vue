@@ -2,36 +2,47 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import request from 'supertest';
 import { createApp } from '../../server.js'; // Импортируем функцию createApp
 
-let app; // Переменная для хранения экземпляра приложения
-let mockAdmin; // Переменная для хранения замокированного admin
-let mockDb; // Переменная для хранения замокированного db
+let app;
+let mockAdmin;
+let mockDb;
+let mockTransporter;
 
 beforeEach(() => {
-  // Сбрасываем все моки перед каждым тестом
   vi.resetAllMocks();
 
-  // Создаем замокированные объекты admin и db
+  // Настройка мока для Firestore
+  const mockFirestoreInstance = {
+    collection: vi.fn(() => ({
+      add: vi.fn().mockResolvedValue(true),
+      where: vi.fn(() => ({
+        get: vi.fn().mockResolvedValue({ empty: true }),
+      })),
+    })),
+  };
+
+  // Мокируем admin.firestore как функцию, у которой есть свойство FieldValue
+  const mockFirestore = vi.fn(() => mockFirestoreInstance);
+  mockFirestore.FieldValue = {
+    serverTimestamp: vi.fn(() => 'MOCKED_TIMESTAMP'),
+  };
+
   mockAdmin = {
     initializeApp: vi.fn(),
     credential: {
       applicationDefault: vi.fn(),
     },
-    firestore: vi.fn(() => ({
-      collection: vi.fn(() => ({
-        add: vi.fn().mockResolvedValue(true),
-        where: vi.fn(() => ({
-          get: vi.fn().mockResolvedValue({ empty: true }),
-        })),
-      })),
-      FieldValue: {
-        serverTimestamp: vi.fn(() => 'MOCKED_TIMESTAMP'),
-      },
-    })),
+    firestore: mockFirestore, // Используем наш новый, более сложный мок
   };
 
   mockDb = mockAdmin.firestore();
 
-  app = createApp(mockAdmin, mockDb); // Передаем замокированные admin и db
+  mockTransporter = {
+    sendMail: vi.fn().mockResolvedValue(true),
+    verify: vi.fn().mockResolvedValue(true),
+  };
+
+  // Создаем приложение с нашими моками
+  app = createApp(mockAdmin, mockDb, mockTransporter);
 });
 
 describe('General API Endpoints', () => {
@@ -59,12 +70,40 @@ describe('POST /api/submit-form', () => {
     const response = await request(app)
       .post('/api/submit-form')
       .field('name', 'Тест Имя')
-      // Отсутствует телефон
       .field('email', 'test@example.com')
       .field('task', 'Это тестовое задание.');
 
     expect(response.statusCode).toBe(400);
     expect(response.body.success).toBe(false);
     expect(response.body.message).toBe('Ошибка валидации');
+  });
+});
+
+describe('CORS Policy', () => {
+  it('should allow requests from the whitelisted production domain', async () => {
+    const response = await request(app)
+      .post('/api/submit-form')
+      .set('Origin', 'https://redpanda-cca8e.web.app')
+      .field('name', 'CORS Test')
+      .field('phone', '+71234567890')
+      .field('email', 'cors@example.com')
+      .field('task', 'Testing CORS');
+
+    expect(response.statusCode).toBe(200);
+    expect(response.headers['access-control-allow-origin']).toBe('https://redpanda-cca8e.web.app');
+  });
+
+  it('should block requests from a non-whitelisted domain', async () => {
+    const response = await request(app)
+      .post('/api/submit-form')
+      .set('Origin', 'https://another-domain.com')
+      .field('name', 'CORS Block Test')
+      .field('phone', '+71234567890')
+      .field('email', 'cors-blocked@example.com')
+      .field('task', 'Testing CORS blocking');
+
+    // Изменено: Ожидаем 400, так как наш обработчик ошибок возвращает именно его
+    expect(response.statusCode).toBe(400);
+    expect(response.body.message).toContain('Not allowed by CORS');
   });
 });

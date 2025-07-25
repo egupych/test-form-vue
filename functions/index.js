@@ -73,10 +73,10 @@ const transporter = nodemailer.createTransport({
 });
 
 app.use(helmet());
-app.use(express.json());
+
 
 // CORS whitelist
-const whitelist = ['https://redpanda.web.app', 'http://localhost:5173'];
+const whitelist = ['https://redpanda.web.app', 'http://localhost:5173', 'https://redpanda-cca8e.web.app'];
 const corsOptions = {
     origin: function(origin, callback) {
         if (!origin || whitelist.indexOf(origin) !== -1) {
@@ -195,6 +195,7 @@ app.post(
 // --- Обработчик подписки ---
 app.post(
     '/api/subscribe',
+    express.json(), // Добавляем express.json() только для этого маршрута
     [body('email').trim().isEmail().withMessage('Некорректный email адрес.')],
     async (req, res) => {
         const errors = validationResult(req);
@@ -226,6 +227,11 @@ app.use((error, req, res, next) => {
     next(error);
 });
 
+
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Something broke!');
+});
 
 // --- Настройки и экспорт функции 2-го поколения ---
 setGlobalOptions({region: "us-central1", secrets: ["EMAIL_PASS", "EMAIL_HOST", "EMAIL_PORT", "EMAIL_SECURE", "EMAIL_USER", "EMAIL_RECEIVER", "HR_RECEIVER"]});
