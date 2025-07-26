@@ -24,7 +24,10 @@ const onImageClick = (eventPayload) => {
 </script>
 
 <template>
-  <div ref="target" class="lazy-grid-wrapper">
+  <div
+    ref="target"
+    class="lazy-grid-wrapper"
+  >
     <ImageGrid
       v-if="isIntersecting"
       :images="images"

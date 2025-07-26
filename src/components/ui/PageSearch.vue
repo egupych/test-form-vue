@@ -42,7 +42,10 @@ const noResultsFound = computed(() => {
 
 <template>
   <div class="search-wrapper">
-    <form @submit.prevent class="search-container">
+    <form
+      class="search-container"
+      @submit.prevent
+    >
       <div class="search-input-wrapper">
         <svg
           class="search-icon"
@@ -56,24 +59,47 @@ const noResultsFound = computed(() => {
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <circle cx="11" cy="11" r="8"></circle>
-          <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+          <circle
+            cx="11"
+            cy="11"
+            r="8"
+          />
+          <line
+            x1="21"
+            y1="21"
+            x2="16.65"
+            y2="16.65"
+          />
         </svg>
         <input
-          type="text"
           v-model="searchQuery"
+          type="text"
           placeholder="Поиск в портфолио..."
           class="search-input"
           autocomplete="off"
-        />
+        >
       </div>
-      <button type="button" class="search-button">Найти</button>
+      <button
+        type="button"
+        class="search-button"
+      >
+        Найти
+      </button>
     </form>
 
     <transition name="fade">
-      <div v-if="shouldShowResults" class="search-results-container">
-        <ul v-if="searchResults.length > 0" class="search-results-list">
-          <li v-for="item in searchResults" :key="item.id">
+      <div
+        v-if="shouldShowResults"
+        class="search-results-container"
+      >
+        <ul
+          v-if="searchResults.length > 0"
+          class="search-results-list"
+        >
+          <li
+            v-for="item in searchResults"
+            :key="item.id"
+          >
             <RouterLink
               :to="{ path: '/gallery', hash: '#' + item.category }"
               class="result-item"
@@ -83,7 +109,10 @@ const noResultsFound = computed(() => {
             </RouterLink>
           </li>
         </ul>
-        <p v-else-if="noResultsFound" class="no-results-message">
+        <p
+          v-else-if="noResultsFound"
+          class="no-results-message"
+        >
           Ничего не найдено по запросу «{{ searchQuery }}»
         </p>
       </div>

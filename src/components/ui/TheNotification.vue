@@ -12,7 +12,10 @@ const notificationStore = useNotificationStore();
         class="notification-overlay"
         @click="notificationStore.hideNotification"
       >
-        <div class="notification-modal" @click.stop>
+        <div
+          class="notification-modal"
+          @click.stop
+        >
           <div
             class="icon-wrapper"
             :class="
@@ -53,7 +56,9 @@ const notificationStore = useNotificationStore();
             </svg>
           </div>
 
-          <p class="message-text">{{ notificationStore.message }}</p>
+          <p class="message-text">
+            {{ notificationStore.message }}
+          </p>
         </div>
       </div>
     </transition>

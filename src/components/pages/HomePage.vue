@@ -1,7 +1,5 @@
 <script setup>
 import { ref } from 'vue';
-import { useServicesStore } from '@/stores/services.js';
-import { storeToRefs } from 'pinia';
 import HeroSection from '@/components/ui/HeroSection.vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import ServicesGrid from '@/components/ui/ServicesGrid.vue';
@@ -50,8 +48,6 @@ const { isIntersecting: benefitsAreVisible } = useIntersectionObserver(
 );
 
 // --- Новая логика для таблицы услуг ---
-const servicesStore = useServicesStore();
-const { services } = storeToRefs(servicesStore);
 </script>
 
 <template>
@@ -79,7 +75,10 @@ const { services } = storeToRefs(servicesStore);
         </div>
       </section>
 
-      <section class="gap-page" ref="benefitsSectionRef">
+      <section
+        ref="benefitsSectionRef"
+        class="gap-page"
+      >
         <SectionHeader class="gap-container">
           ПОЧЕМУ ВАМ ПОНРАВИТСЯ С НАМИ РАБОТАТЬ
         </SectionHeader>
@@ -97,7 +96,9 @@ const { services } = storeToRefs(servicesStore);
             <h3 class="text-h4-panda font-semibold text-panda-black">
               {{ benefit.title }}
             </h3>
-            <p class="text-body-panda text-dark-gray">{{ benefit.text }}</p>
+            <p class="text-body-panda text-dark-gray">
+              {{ benefit.text }}
+            </p>
           </div>
         </div>
       </section>
@@ -107,7 +108,9 @@ const { services } = storeToRefs(servicesStore);
       </section>
 
       <section class="gap-page">
-        <SectionHeader class="gap-container"> Наши услуги </SectionHeader>
+        <SectionHeader class="gap-container">
+          Наши услуги
+        </SectionHeader>
         <ServicesImageGrid />
       </section>
 
@@ -120,12 +123,16 @@ const { services } = storeToRefs(servicesStore);
       </section>
 
       <section class="gap-page">
-        <SectionHeader class="gap-container"> Обратная связь </SectionHeader>
+        <SectionHeader class="gap-container">
+          Обратная связь
+        </SectionHeader>
         <FeedbackBlock />
       </section>
 
       <section class="gap-page">
-        <SectionHeader class="gap-container"> Частые вопросы </SectionHeader>
+        <SectionHeader class="gap-container">
+          Частые вопросы
+        </SectionHeader>
         <FaqAccordion />
       </section>
 

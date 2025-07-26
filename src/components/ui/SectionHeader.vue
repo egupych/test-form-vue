@@ -5,7 +5,7 @@
     >
       <slot />
     </h2>
-    <div class="flex-grow custom-dashed-line"></div>
+    <div class="flex-grow custom-dashed-line" />
   </div>
 </template>
 

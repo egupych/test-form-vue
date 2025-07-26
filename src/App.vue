@@ -1,10 +1,8 @@
 <script setup>
-import { useSmoothScroll } from '@/composables/useSmoothScroll.js';
 import FloatingActionButton from '@/components/ui/FloatingActionButton.vue';
 import TheHeader from '@/components/ui/TheHeader.vue';
 import TheFooter from '@/components/ui/TheFooter.vue';
 import TheNotification from '@/components/ui/TheNotification.vue';
-import RunningTextLine from '@/components/ui/RunningTextLine.vue';
 
 // --- НАЧАЛО ИЗМЕНЕНИЙ ---
 import { useUiStore } from '@/stores/ui.js';
@@ -13,14 +11,6 @@ import CalculationForm from '@/components/ui/CalculationForm.vue';
 // Инициализируем наше новое хранилище
 const uiStore = useUiStore();
 // --- КОНЕЦ ИЗМЕНЕНИЙ ---
-
-useSmoothScroll();
-
-const marqueeItems = [
-  'По техническим причинам 29 июля мы работаем с 11:00',
-  'По техническим причинам 29 июля мы работаем с 11:00',
-  'По техническим причинам 29 июля мы работаем с 11:00',
-];
 </script>
 
 <template>
@@ -28,8 +18,14 @@ const marqueeItems = [
     <TheHeader />
     <main class="main-content">
       <router-view v-slot="{ Component, route }">
-        <transition :name="route.meta.transition || 'slide-left'" mode="out-in">
-          <div :key="route.path" class="page-wrapper">
+        <transition
+          :name="route.meta.transition || 'slide-left'"
+          mode="out-in"
+        >
+          <div
+            :key="route.path"
+            class="page-wrapper"
+          >
             <component :is="Component" />
           </div>
         </transition>
@@ -47,7 +43,10 @@ const marqueeItems = [
           @click.self="uiStore.closeCalcForm()"
         >
           <div class="popup-container">
-            <button @click="uiStore.closeCalcForm()" class="popup-close-button">
+            <button
+              class="popup-close-button"
+              @click="uiStore.closeCalcForm()"
+            >
               &times;
             </button>
             <CalculationForm />

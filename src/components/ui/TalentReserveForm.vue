@@ -152,11 +152,15 @@ const submitApplication = async () => {
 
 <template>
   <section class="talent-reserve-form">
-    <SectionHeader class="gap-container"> Кадровый резерв </SectionHeader>
+    <SectionHeader class="gap-container">
+      Кадровый резерв
+    </SectionHeader>
 
     <div class="form-wrapper bg-white p-4 md:p-16">
       <div class="form-info">
-        <h3 class="text-h2-panda font-bold">Нет подходящей вакансии?</h3>
+        <h3 class="text-h2-panda font-bold">
+          Нет подходящей вакансии?
+        </h3>
         <p class="text-h5-panda font-semibold">
           Оставьте заявку! Мы постоянно растём и ищем талантливых людей. Ваше
           резюме попадёт в нашу базу, и как только появится подходящая позиция,
@@ -177,10 +181,8 @@ const submitApplication = async () => {
                 d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span
-              ><b>Честная и быстрая оценка.</b> Мы рассмотрим ваше резюме в
-              течение 3 рабочих дней.</span
-            >
+            <span><b>Честная и быстрая оценка.</b> Мы рассмотрим ваше резюме в
+              течение 3 рабочих дней.</span>
           </li>
           <li class="flex items-start gap-3">
             <svg
@@ -196,10 +198,8 @@ const submitApplication = async () => {
                 d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span
-              ><b>Полная конфиденциальность.</b> Ваши данные будут доступны
-              только HR-отделу.</span
-            >
+            <span><b>Полная конфиденциальность.</b> Ваши данные будут доступны
+              только HR-отделу.</span>
           </li>
           <li class="flex items-start gap-3">
             <svg
@@ -215,47 +215,46 @@ const submitApplication = async () => {
                 d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
               />
             </svg>
-            <span
-              ><b>Всегда на связи.</b> Мы обязательно дадим обратную связь,
-              независимо от нашего решения.</span
-            >
+            <span><b>Всегда на связи.</b> Мы обязательно дадим обратную связь,
+              независимо от нашего решения.</span>
           </li>
         </ul>
       </div>
       <div class="form-body">
         <form
-          @submit.prevent="submitApplication"
           novalidate
           class="flex flex-col h-full"
+          @submit.prevent="submitApplication"
         >
           <div class="flex flex-col gap-2">
             <div class="form-group">
               <div class="relative">
                 <input
-                  type="text"
                   id="desiredPosition"
                   v-model.trim="formData.desiredPosition"
+                  type="text"
                   class="form-input peer"
                   placeholder=" "
-                />
-                <label for="desiredPosition" class="form-label"
-                  >Желаемая вакансия</label
                 >
-                <span class="input-border"></span>
+                <label
+                  for="desiredPosition"
+                  class="form-label"
+                >Желаемая вакансия</label>
+                <span class="input-border" />
               </div>
             </div>
             <div class="form-group">
               <div class="relative">
                 <input
-                  type="text"
                   id="talentName"
-                  required
                   v-model.trim="formData.name"
-                  @input="validateField('name')"
+                  type="text"
+                  required
                   class="form-input peer"
                   :class="{ 'border-panda-orange': errors.name }"
                   placeholder=" "
-                />
+                  @input="validateField('name')"
+                >
                 <label
                   for="talentName"
                   class="form-label"
@@ -267,21 +266,21 @@ const submitApplication = async () => {
                 <span
                   class="input-border"
                   :class="{ 'bg-panda-orange w-full': errors.name }"
-                ></span>
+                />
               </div>
             </div>
             <div class="form-group">
               <div class="relative">
                 <input
-                  type="tel"
                   id="talentPhone"
-                  required
                   v-model="formData.phone"
-                  @input="formatPhoneInput"
+                  type="tel"
+                  required
                   class="form-input peer"
                   :class="{ 'border-panda-orange': errors.phone }"
                   placeholder=" "
-                />
+                  @input="formatPhoneInput"
+                >
                 <label
                   for="talentPhone"
                   class="form-label"
@@ -293,13 +292,16 @@ const submitApplication = async () => {
                 <span
                   class="input-border"
                   :class="{ 'bg-panda-orange w-full': errors.phone }"
-                ></span>
+                />
               </div>
             </div>
           </div>
 
           <div class="mt-auto pt-8">
-            <div v-if="files.length > 0" class="file-list">
+            <div
+              v-if="files.length > 0"
+              class="file-list"
+            >
               <div
                 v-for="(file, index) in files"
                 :key="file.name + index"
@@ -308,12 +310,18 @@ const submitApplication = async () => {
                 @mouseleave="handleFileMouseLeave"
               >
                 <span class="file-name">{{ file.name }}</span>
-                <button @click="removeFile(index)" class="remove-file-button">
+                <button
+                  class="remove-file-button"
+                  @click="removeFile(index)"
+                >
                   &times;
                 </button>
               </div>
             </div>
-            <label for="talent-file-upload" class="upload-button">
+            <label
+              for="talent-file-upload"
+              class="upload-button"
+            >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
                 class="upload-icon"
@@ -336,10 +344,12 @@ const submitApplication = async () => {
               id="talent-file-upload"
               type="file"
               class="hidden"
-              @change="handleFileUpload"
               accept=".pdf,.doc,.docx,image/*"
-            />
-            <p class="upload-caption">до 1 файла, не более 15 МБ</p>
+              @change="handleFileUpload"
+            >
+            <p class="upload-caption">
+              до 1 файла, не более 15 МБ
+            </p>
             <BaseButton
               type="submit"
               :disabled="isSubmitting || !isFormValid"
@@ -365,7 +375,7 @@ const submitApplication = async () => {
           :src="hoveredFileUrl"
           alt="Предпросмотр файла"
           class="file-preview-image"
-        />
+        >
       </div>
     </transition>
   </Teleport>

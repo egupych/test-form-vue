@@ -1,4 +1,5 @@
-// Код server.js
+
+// Код server.refactored.js
 // Этот файл настраивает и запускает бэкенд-сервер с помощью Express.
 // Он обрабатывает API-запросы от Vue-приложения, такие как отправка форм и подписка на рассылку.
 // Сервер использует multer для загрузки файлов, nodemailer для отправки писем и Firebase Admin SDK для работы с базой данных Firestore.
@@ -80,7 +81,7 @@ const resumeUpload = createMulterUpload('uploads/', { fileSize: MAX_RESUME_SIZE 
 
 export function createApp(admin, db, transporter) {
   const app = express();
-  // const _PORT = process.env.PORT; // Удалено, так как не используется внутри createApp
+  const PORT = process.env.PORT;
 
   app.use(express.json());
   app.use(helmet());
@@ -108,11 +109,11 @@ export function createApp(admin, db, transporter) {
   app.post(
     '/api/submit-form',
     mainFormUpload.array('files', 10),
-    (req, res, _next) => {
+    (req, res, next) => {
       if (req.fileValidationError) {
         return res.status(400).json({ success: false, message: req.fileValidationError });
       }
-      _next();
+      next();
     },
     [
       body('name').trim().notEmpty().withMessage('Имя не может быть пустым'),
@@ -200,11 +201,11 @@ export function createApp(admin, db, transporter) {
   app.post(
     '/api/submit-application',
     resumeUpload.single('resume'),
-    (req, res, _next) => {
+    (req, res, next) => {
       if (req.fileValidationError) {
         return res.status(400).json({ success: false, message: req.fileValidationError });
       }
-      _next();
+      next();
     },
     [
       body('name').trim().notEmpty().withMessage('Имя не может быть пустым'),
@@ -323,14 +324,14 @@ export function createApp(admin, db, transporter) {
   );
 
   // --- Обработчик ошибок ---
-  app.use((error, req, res, _next) => {
+  app.use((error, req, res, next) => {
     console.error(error);
     if (error instanceof multer.MulterError) {
       if (error.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({ success: false, message: 'Файл слишком большой.' });
       }
     }
-    _next();
+    return res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера.' });
   });
 
   app.get('*', (req, res) => {
@@ -392,9 +393,9 @@ if (process.env.NODE_ENV !== 'test') {
     });
 
   const app = createApp(admin, db, transporter);
-  app.listen(process.env._PORT, () => {
+  app.listen(process.env.PORT, () => {
     console.log(
-      `\x1b[36m🚀 Сервер запущен на порту ${process.env._PORT}. Откройте сайт по адресу http://localhost:${process.env._PORT}\x1b[0m`
+      `\x1b[36m🚀 Сервер запущен на порту ${process.env.PORT}. Откройте сайт по адресу http://localhost:${process.env.PORT}\x1b[0m`
     );
   });
 }

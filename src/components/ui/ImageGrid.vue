@@ -29,7 +29,7 @@ const handleImageClick = (image, index) => {
         :alt="image.alt || ''"
         class="grid-image"
         loading="lazy"
-      />
+      >
       <LikeButton :image-url="image.url || image" />
     </div>
   </div>

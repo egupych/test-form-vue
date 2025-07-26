@@ -42,7 +42,7 @@ const closeVideoPopup = () => {
           src="@/assets/images/layout/red-panda-text-logo.svg"
           alt="RED PANDA"
           class="hero-text-logo"
-        />
+        >
 
         <div class="hero-cta">
           <h2 class="text-h4-panda font-semibold text-panda-black">
@@ -52,12 +52,18 @@ const closeVideoPopup = () => {
             Введите ваш номер телефона, и мы свяжемся с вами для консультации и
             расчёта стоимости вашего заказа.
           </p>
-          <BaseButton @click="uiStore.openCalcForm()" variant="fill-orange">
+          <BaseButton
+            variant="fill-orange"
+            @click="uiStore.openCalcForm()"
+          >
             Рассчитать стоимость
           </BaseButton>
         </div>
 
-        <div @click="openVideoPopup" class="hero-video-orb group">
+        <div
+          class="hero-video-orb group"
+          @click="openVideoPopup"
+        >
           <video
             class="rounded-full w-full h-full object-cover grayscale transition duration-500 group-hover:grayscale-0"
             src="@/assets/videos/hero-video.mp4"
@@ -65,7 +71,7 @@ const closeVideoPopup = () => {
             loop
             muted
             playsinline
-          ></video>
+          />
           <div
             class="absolute inset-0 z-30 flex items-center justify-center rounded-full bg-black/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
           >
@@ -77,7 +83,7 @@ const closeVideoPopup = () => {
                 viewBox="0 0 24 24"
                 fill="currentColor"
               >
-                <path d="M8 5.14v14l11-7-11-7z"></path>
+                <path d="M8 5.14v14l11-7-11-7z" />
               </svg>
             </div>
           </div>
@@ -94,8 +100,8 @@ const closeVideoPopup = () => {
         >
           <div class="video-container">
             <button
-              @click="closeVideoPopup"
               class="popup-close-button video-close-button"
+              @click="closeVideoPopup"
             >
               &times;
             </button>
@@ -104,7 +110,7 @@ const closeVideoPopup = () => {
               src="@/assets/videos/hero-video.mp4"
               controls
               class="w-full h-full rounded-lg"
-            ></video>
+            />
           </div>
         </div>
       </transition>

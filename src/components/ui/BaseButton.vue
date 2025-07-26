@@ -59,6 +59,6 @@ const variantClasses = computed(() => {
     :disabled="disabled"
     :class="[baseClasses, variantClasses, 'text-button-panda font-semibold']"
   >
-    <slot></slot>
+    <slot />
   </component>
 </template>

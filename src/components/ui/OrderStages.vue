@@ -113,18 +113,22 @@ onMounted(() => {
           <h2 class="text-h2-panda font-bold text-panda-black">
             Стадии заказа
           </h2>
-          <p class="text-h5-panda text-dark-gray mt-2">Быстро и удобно</p>
+          <p class="text-h5-panda text-dark-gray mt-2">
+            Быстро и удобно
+          </p>
         </div>
 
         <div class="w-full mt-8 lg:mt-0">
           <div class="grid grid-cols-1 md:grid-cols-2">
             <div>
-              <div ref="listWrapperRef" class="bg-white">
+              <div
+                ref="listWrapperRef"
+                class="bg-white"
+              >
                 <ul>
                   <li
                     v-for="(stage, index) in stages"
                     :key="stage.id"
-                    @mouseenter="setActiveStage(index)"
                     class="transition-all duration-300 h-[3.1875rem] flex items-center px-4 cursor-pointer"
                     :class="[
                       'text-button-panda font-semibold',
@@ -132,6 +136,7 @@ onMounted(() => {
                         ? 'bg-panda-black text-white'
                         : 'bg-white text-panda-black',
                     ]"
+                    @mouseenter="setActiveStage(index)"
                   >
                     {{ index + 1 }}. {{ stage.title }}
                   </li>
@@ -150,7 +155,7 @@ onMounted(() => {
                     :src="activeImage"
                     alt="Этап заказа"
                     class="absolute inset-0 w-full h-full object-cover"
-                  />
+                  >
                 </transition>
               </div>
             </div>

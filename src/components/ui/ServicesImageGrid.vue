@@ -14,8 +14,6 @@ import design from '@/assets/images/pages/HomePage/ServicesImageGrid/design.jpg'
 import dtfPrint from '@/assets/images/services/merch/dtfPrint.jpg';
 import souvenirs from '@/assets/images/pages/HomePage/ServicesImageGrid/souvenirs.webp';
 import color from '@/assets/images/pages/HomePage/ServicesImageGrid/gold-foil.jpg';
-import silverFoil from '@/assets/images/pages/HomePage/ServicesImageGrid/silverFoil.jpg';
-import whitePrint from '@/assets/images/pages/HomePage/ServicesImageGrid/whitePrint.jpg';
 import uvPrint from '@/assets/images/pages/HomePage/ServicesImageGrid/uv-print.jpg';
 import embroidery from '@/assets/images/services/merch/embroidery.jpg';
 import laserEngraving from '@/assets/images/pages/HomePage/ServicesImageGrid/laserEngraving.jpg';
@@ -203,7 +201,7 @@ const services = ref([
           :src="service.imageUrl"
           :alt="service.title"
           class="service-image"
-        />
+        >
       </div>
     </div>
   </div>

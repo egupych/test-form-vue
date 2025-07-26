@@ -20,7 +20,9 @@ import BaseButton from '@/components/ui/BaseButton.vue';
           К сожалению, страница, которую вы ищете, не существует, была
           перемещена или удалена.
         </p>
-        <BaseButton to="/">Вернуться на главную</BaseButton>
+        <BaseButton to="/">
+          Вернуться на главную
+        </BaseButton>
       </div>
     </div>
   </main>

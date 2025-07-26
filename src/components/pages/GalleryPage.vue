@@ -74,11 +74,14 @@ onMounted(() => {
   <div>
     <main class="py-10 md:py-25">
       <div class="max-w-6xl mx-auto">
-        <div v-if="categoriesWithItems.length > 0" class="space-y-16">
+        <div
+          v-if="categoriesWithItems.length > 0"
+          class="space-y-16"
+        >
           <section
             v-for="category in categoriesWithItems"
-            :key="`section-${category.id}`"
             :id="category.id"
+            :key="`section-${category.id}`"
             class="scroll-mt-28"
           >
             <SectionHeader class="mb-10">
@@ -92,8 +95,13 @@ onMounted(() => {
           </section>
         </div>
 
-        <div v-else class="text-center py-10 text-dark-gray text-xl">
-          <p v-if="galleryStore.loading">Загружаем портфолио...</p>
+        <div
+          v-else
+          class="text-center py-10 text-dark-gray text-xl"
+        >
+          <p v-if="galleryStore.loading">
+            Загружаем портфолио...
+          </p>
           <p v-else>
             Портфолио наполняется. Скоро здесь появятся примеры наших работ!
           </p>

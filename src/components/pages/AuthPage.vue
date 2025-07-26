@@ -79,7 +79,9 @@ const handleGoogleSignIn = async () => {
           v-if="linkSent"
           class="text-center p-4 bg-panda-green text-panda-white rounded-lg mb-6"
         >
-          <h3 class="font-bold">Ссылка отправлена!</h3>
+          <h3 class="font-bold">
+            Ссылка отправлена!
+          </h3>
           <p>
             Проверьте вашу почту
             <span class="font-semibold">{{ email }}</span> и перейдите по ссылке
@@ -87,16 +89,20 @@ const handleGoogleSignIn = async () => {
           </p>
         </div>
 
-        <form v-else @submit.prevent="handleSendLink" class="space-y-6">
+        <form
+          v-else
+          class="space-y-6"
+          @submit.prevent="handleSendLink"
+        >
           <div class="relative form-control">
             <input
-              type="email"
               id="email"
-              required
               v-model.trim="email"
+              type="email"
+              required
               class="block w-full px-1 pb-2 pt-5 text-base text-panda-black bg-transparent border-b border-gray appearance-none focus:outline-none focus:ring-0 peer z-10"
               placeholder=" "
-            />
+            >
             <label
               for="email"
               class="absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4 peer-focus:text-panda-orange"
@@ -105,36 +111,41 @@ const handleGoogleSignIn = async () => {
             </label>
             <span
               class="absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full"
-            ></span>
+            />
           </div>
 
-          <div v-if="authError" class="text-panda-orange text-center text-sm">
+          <div
+            v-if="authError"
+            class="text-panda-orange text-center text-sm"
+          >
             {{ authError }}
           </div>
-          <BaseButton type="submit" :disabled="isSubmitting" class="w-full">
+          <BaseButton
+            type="submit"
+            :disabled="isSubmitting"
+            class="w-full"
+          >
             <span v-if="!isSubmitting">Получить ссылку для входа</span>
             <span v-else>Отправка...</span>
           </BaseButton>
         </form>
 
         <div class="flex items-center my-6">
-          <hr class="flex-grow border-t border-gray" />
+          <hr class="flex-grow border-t border-gray">
           <span class="mx-4 text-sm text-dark-gray">или</span>
-          <hr class="flex-grow border-t border-gray" />
+          <hr class="flex-grow border-t border-gray">
         </div>
 
         <button
-          @click="handleGoogleSignIn"
           class="w-full flex items-center justify-center gap-3 py-3 px-4 border border-gray rounded-full hover:bg-light-gray transition-colors"
+          @click="handleGoogleSignIn"
         >
           <img
             src="@/assets/images/pages/AuthPage/google-gradient-icon.svg"
             alt="Google"
             class="w-7 h-7"
-          />
-          <span class="text-panda-black font-semibold text-sm"
-            >Войти через Google</span
           >
+          <span class="text-panda-black font-semibold text-sm">Войти через Google</span>
         </button>
       </div>
     </div>

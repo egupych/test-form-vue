@@ -170,7 +170,10 @@ const scrollToLetter = (letter) => {
 </script>
 
 <template>
-  <div class="relative" @mouseleave="handleMouseLeaveComponent">
+  <div
+    class="relative"
+    @mouseleave="handleMouseLeaveComponent"
+  >
     <div
       class="alphabet-bar flex justify-center items-center flex-wrap gap-1 mb-4"
       @mouseleave="hoveredLetter = null"
@@ -188,10 +191,14 @@ const scrollToLetter = (letter) => {
       </span>
     </div>
 
-    <div ref="gridContainerRef" class="services-grid-container">
+    <div
+      ref="gridContainerRef"
+      class="services-grid-container"
+    >
       <div
         v-for="service in sortedServices"
         :key="service.id"
+        :ref="(el) => setCellRef(service, el)"
         class="service-cell"
         :class="{
           'is-highlighted':
@@ -201,7 +208,6 @@ const scrollToLetter = (letter) => {
         }"
         @mouseenter="handleMouseEnter(service, $event)"
         @mouseleave="resetPreview"
-        :ref="(el) => setCellRef(service, el)"
       >
         <router-link
           v-if="!service.isPlaceholder"
@@ -234,7 +240,7 @@ const scrollToLetter = (letter) => {
           :src="previewImageUrl"
           :alt="hoveredService ? hoveredService.name : ''"
           class="w-full h-full object-cover"
-        />
+        >
       </div>
     </transition>
   </div>

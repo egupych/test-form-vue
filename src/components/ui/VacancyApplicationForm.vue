@@ -7,16 +7,13 @@
 // - Обрабатывает загрузку одного файла (резюме).
 // - Отправляет данные формы НАПРЯМУЮ на облачную функцию submitApplication.
 
-import { ref, reactive, watch, computed } from 'vue';
+import { ref, watch, computed } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import { useNotificationStore } from '@/stores/notifications.js';
 import { useFormValidation } from '@/composables/useFormValidation.js';
+import { useFormStateStore } from '@/stores/formState.js';
 
-
-<<<<<<< Updated upstream
-
-=======
->>>>>>> Stashed changes
+const props = defineProps({ positionTitle: { type: String, default: '' } });
 const emit = defineEmits(['close']);
 const notificationStore = useNotificationStore();
 const formStateStore = useFormStateStore();
@@ -75,7 +72,6 @@ const removeFile = (index) => {
   files.value.splice(index, 1);
 };
 
-// --- ИЗМЕНЕНИЕ: Функция отправки теперь использует прямой URL ---
 const handleSubmit = async () => {
   if (!validateForm(validationFields) || files.value.length === 0) {
     notificationStore.showNotification(
@@ -106,21 +102,10 @@ const handleSubmit = async () => {
     }
 
     notificationStore.showNotification(result.message, 'success');
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    // Очистка формы и закрытие окна
     formStateStore.clearVacancyForm();
-    files.value = [];
-    emit('close'); // Сигнал родительскому компоненту закрыть попап
-=======
-=======
->>>>>>> Stashed changes
-    formData.name = '';
-    formData.phone = '';
     files.value = [];
     emit('close');
 
->>>>>>> Stashed changes
   } catch (error) {
     console.error('Ошибка отправки отклика:', error);
     notificationStore.showNotification(
@@ -136,9 +121,11 @@ const handleSubmit = async () => {
 <template>
   <div class="form-wrapper bg-white p-4 md:p-16">
     <div class="form-info">
-      <h3 class="text-h2-panda font-bold">Отклик на вакансию</h3>
+      <h3 class="text-h2-panda font-bold">
+        Отклик на вакансию
+      </h3>
       <p class="text-h5-panda font-semibold">
-        Вы откликаетесь на вакансию <br />
+        Вы откликаетесь на вакансию <br>
         <span class="text-panda-orange">«{{ positionTitle }}»</span>
       </p>
       <p class="text-body-panda text-dark-gray mt-4">
@@ -148,23 +135,23 @@ const handleSubmit = async () => {
     </div>
     <div class="form-body">
       <form
-        @submit.prevent="handleSubmit"
         novalidate
         class="flex flex-col h-full"
+        @submit.prevent="handleSubmit"
       >
         <div class="flex flex-col gap-2">
           <div class="form-group">
             <div class="relative">
               <input
-                type="text"
                 id="vacancyName"
-                required
                 v-model.trim="formStateStore.vacancyForm.name"
-                @input="validateField('name')"
+                type="text"
+                required
                 class="form-input peer"
                 :class="{ 'border-panda-orange': errors.name }"
                 placeholder=" "
-              />
+                @input="validateField('name')"
+              >
               <label
                 for="vacancyName"
                 class="form-label"
@@ -176,21 +163,21 @@ const handleSubmit = async () => {
               <span
                 class="input-border"
                 :class="{ 'bg-panda-orange w-full': errors.name }"
-              ></span>
+              />
             </div>
           </div>
           <div class="form-group">
             <div class="relative">
               <input
-                type="tel"
                 id="vacancyPhone"
-                required
                 v-model="formStateStore.vacancyForm.phone"
-                @input="formatPhoneInput"
+                type="tel"
+                required
                 class="form-input peer"
                 :class="{ 'border-panda-orange': errors.phone }"
                 placeholder=" "
-              />
+                @input="formatPhoneInput"
+              >
               <label
                 for="vacancyPhone"
                 class="form-label"
@@ -202,25 +189,34 @@ const handleSubmit = async () => {
               <span
                 class="input-border"
                 :class="{ 'bg-panda-orange w-full': errors.phone }"
-              ></span>
+              />
             </div>
           </div>
         </div>
 
         <div class="mt-auto pt-8">
-          <div v-if="files.length > 0" class="file-list">
+          <div
+            v-if="files.length > 0"
+            class="file-list"
+          >
             <div
               v-for="(file, index) in files"
               :key="file.name + index"
               class="file-item"
             >
               <span class="file-name">{{ file.name }}</span>
-              <button @click="removeFile(index)" class="remove-file-button">
+              <button
+                class="remove-file-button"
+                @click="removeFile(index)"
+              >
                 &times;
               </button>
             </div>
           </div>
-          <label for="resume-upload" class="upload-button">
+          <label
+            for="resume-upload"
+            class="upload-button"
+          >
             <svg
               xmlns="http://www.w3.org/2000/svg"
               class="upload-icon"
@@ -245,10 +241,12 @@ const handleSubmit = async () => {
             id="resume-upload"
             type="file"
             class="hidden"
-            @change="handleFileUpload"
             accept=".pdf,.doc,.docx"
-          />
-          <p class="upload-caption">.pdf, .doc, .docx, не более 15 МБ</p>
+            @change="handleFileUpload"
+          >
+          <p class="upload-caption">
+            .pdf, .doc, .docx, не более 15 МБ
+          </p>
           <BaseButton
             type="submit"
             :disabled="isSubmitting || !isFormValid"

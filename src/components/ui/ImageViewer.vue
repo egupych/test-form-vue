@@ -1,4 +1,5 @@
 <script setup>
+/* eslint-disable vue/require-toggle-inside-transition */
 import { ref, computed, onMounted, onUnmounted } from 'vue';
 import LikeButton from '@/components/ui/LikeButton.vue';
 
@@ -68,16 +69,32 @@ onUnmounted(() => {
 <template>
   <Teleport to="body">
     <transition name="viewer-fade">
-      <div class="image-viewer-overlay" @click="close">
-        <div class="top-controls" @click.stop>
-          <LikeButton :image-url="currentImage.url || currentImage" class="viewer-like-button" />
+      <div
+        class="image-viewer-overlay"
+        @click="close"
+      >
+        <div
+          class="top-controls"
+          @click.stop
+        >
+          <LikeButton
+            :image-url="currentImage.url || currentImage"
+            class="viewer-like-button"
+          />
           <span class="counter top-counter">{{ counterText }}</span>
-          <button class="close-button" @click="close" aria-label="Закрыть">
+          <button
+            class="close-button"
+            aria-label="Закрыть"
+            @click="close"
+          >
             &times;
           </button>
         </div>
 
-        <div class="viewer-wrapper" @click.stop>
+        <div
+          class="viewer-wrapper"
+          @click.stop
+        >
           <div class="viewer-content">
             <div class="nav-container left">
               <transition name="side-image-fade">
@@ -87,18 +104,24 @@ onUnmounted(() => {
                   alt="Предыдущее изображение"
                   class="side-image"
                   @click.stop="goToPrevImage"
-                />
+                >
               </transition>
             </div>
 
             <div class="image-container">
-              <transition name="image-swap" mode="out-in">
+              <transition
+                v-if="currentImage"
+                name="image-swap"
+                mode="out-in"
+              >
+                <!-- eslint-disable-next-line vue/require-toggle-inside-transition -->
                 <img
+                  v-if="currentImage"
                   :key="currentImage.url || currentImage"
                   :src="currentImage.url || currentImage"
                   :alt="currentImage.alt || 'Просмотр изображения'"
                   class="main-image"
-                />
+                >
               </transition>
             </div>
 
@@ -110,24 +133,24 @@ onUnmounted(() => {
                   alt="Следующее изображение"
                   class="side-image"
                   @click.stop="goToNextImage"
-                />
+                >
               </transition>
             </div>
           </div>
 
           <div class="controls-footer">
             <button
-              @click.stop="goToPrevImage"
               :disabled="currentIndex === 0"
               class="footer-nav-button"
+              @click.stop="goToPrevImage"
             >
               назад
             </button>
             <span class="category-title">{{ currentImage.categoryTitle }}</span>
             <button
-              @click.stop="goToNextImage"
               :disabled="currentIndex === totalImages - 1"
               class="footer-nav-button"
+              @click.stop="goToNextImage"
             >
               вперёд
             </button>

@@ -54,9 +54,12 @@ const specialOffer = {
             <p class="text-body-panda text-panda-black">
               {{ specialOffer.description }}
             </p>
-            <BaseButton to="/gallery" variant="fill-black"
-              >Смотреть все</BaseButton
+            <BaseButton
+              to="/gallery"
+              variant="fill-black"
             >
+              Смотреть все
+            </BaseButton>
           </div>
 
           <div class="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-6 items-start">
@@ -76,7 +79,7 @@ const specialOffer = {
                     :src="product.image"
                     :alt="product.name"
                     class="mx-auto h-48 object-contain"
-                  />
+                  >
                   <div class="">
                     <h3 class="text-h5-panda font-semibold text-panda-black">
                       {{ product.name }}

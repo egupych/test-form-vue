@@ -62,10 +62,15 @@ const nextReview = () => {
 <template>
   <div class="">
     <div class="max-w-6xl mx-auto">
-      <SectionHeader class="gap-container">ОТЗЫВЫ</SectionHeader>
+      <SectionHeader class="gap-container">
+        ОТЗЫВЫ
+      </SectionHeader>
 
       <div class="reviews-slider relative overflow-hidden">
-        <transition name="slide-fade" mode="out-in">
+        <transition
+          name="slide-fade"
+          mode="out-in"
+        >
           <div
             :key="currentReview?.id"
             class="review-card flex flex-col items-center text-center"
@@ -75,7 +80,7 @@ const nextReview = () => {
               :src="currentReview.companyLogo"
               :alt="currentReview.companyName"
               class="max-h-16 object-contain mb-10"
-            />
+            >
             <p class="text-body-panda mb-6 px-6 md:px-16 max-w-3xl">
               «{{ currentReview?.text }}»
             </p>
@@ -84,9 +89,11 @@ const nextReview = () => {
               :src="currentReview.photo"
               :alt="currentReview.author"
               class="w-40 h-40 rounded-full object-cover mb-3"
-            />
+            >
             <div class="font-semibold text-panda-black">
-              <p class="text-h5-panda">{{ currentReview?.author }}</p>
+              <p class="text-h5-panda">
+                {{ currentReview?.author }}
+              </p>
               <p class="text-sm text-dark-gray">
                 {{ currentReview?.position }}
               </p>
@@ -97,19 +104,17 @@ const nextReview = () => {
 
       <div class="flex justify-center items-center mt-8 gap-4">
         <button
-          @click="prevReview"
           :disabled="currentIndex === 0"
           class="px-5 py-1.5 bg-transparent text-dark-gray text-sm font-semibold border border-gray rounded-full hover:bg-gray disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          @click="prevReview"
         >
           назад
         </button>
-        <span class="text-sm text-dark-gray font-mono"
-          >{{ currentIndex + 1 }} из {{ totalReviews }}</span
-        >
+        <span class="text-sm text-dark-gray font-mono">{{ currentIndex + 1 }} из {{ totalReviews }}</span>
         <button
-          @click="nextReview"
           :disabled="currentIndex === totalReviews - 1"
           class="px-5 py-1.5 bg-transparent text-dark-gray text-sm font-semibold border border-gray rounded-full hover:bg-gray disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          @click="nextReview"
         >
           вперёд
         </button>

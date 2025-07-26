@@ -41,31 +41,10 @@ const handleSubscription = async () => {
 
   subscription.isSubmitting = true;
   try {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-    const response = await fetch('/api/subscribe', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        email: subscription.email,
-        sphere: subscription.sphere,
-      }),
-    });
-    const result = await response.json();
-=======
-=======
->>>>>>> Stashed changes
-    // Получаем экземпляр Firebase Functions
     const functions = getFunctions();
-    // Создаем ссылку на нашу облачную функцию 'subscribe'
     const subscribeFunction = httpsCallable(functions, 'subscribe');
     
-    // Вызываем функцию, передавая данные
     const result = await subscribeFunction({ email: subscription.email, sphere: subscription.sphere });
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
 
     subscription.message = result.data.message;
     subscription.messageType = result.data.success ? 'success' : 'error';
@@ -99,33 +78,33 @@ const handleSubscription = async () => {
                   src="@/assets/images/layout/red-panda-logo-white.svg"
                   alt="Логотип Red Panda"
                   class="h-15 mb-8"
-                />
+                >
               </div>
             </div>
             <div class="pt-6">
               <h3 class="text-light-gray text-body-panda">
-                Подпишитесь на рассылку <br />о будущих акциях
+                Подпишитесь на рассылку <br>о будущих акциях
               </h3>
             </div>
           </div>
 
           <form
             class="flex flex-col md:flex-grow gap-2 mt-1"
-            @submit.prevent="handleSubscription"
             novalidate
+            @submit.prevent="handleSubscription"
           >
             <div>
               <div class="relative">
                 <input
-                  v-model.trim="subscription.email"
-                  @blur="validateField('email')"
-                  type="email"
                   id="footer-email"
+                  v-model.trim="subscription.email"
+                  type="email"
                   required
                   class="form-input peer"
                   :class="{ '!border-panda-orange': errors.email }"
                   placeholder=" "
-                />
+                  @blur="validateField('email')"
+                >
                 <label
                   for="footer-email"
                   class="form-label"
@@ -137,21 +116,24 @@ const handleSubscription = async () => {
                 <span
                   class="input-border"
                   :class="{ 'bg-panda-orange w-full': errors.email }"
-                ></span>
+                />
               </div>
 
               <div class="relative mt-2">
                 <input
+                  id="footer-sphere"
                   v-model.trim="subscription.sphere"
                   type="text"
-                  id="footer-sphere"
                   class="form-input peer"
                   placeholder=" "
-                />
-                <label for="footer-sphere" class="form-label">
+                >
+                <label
+                  for="footer-sphere"
+                  class="form-label"
+                >
                   Сфера вашего бизнеса
                 </label>
-                <span class="input-border"></span>
+                <span class="input-border" />
               </div>
 
               <div>
@@ -160,11 +142,11 @@ const handleSubscription = async () => {
                   class="relative flex items-start cursor-pointer text-xs group py-4"
                 >
                   <input
-                    v-model="subscription.consent"
                     id="consent"
+                    v-model="subscription.consent"
                     type="checkbox"
                     class="peer sr-only"
-                  />
+                  >
                   <span
                     class="flex-shrink-0 w-4 h-4 border-2 rounded transition-colors"
                     :class="
@@ -245,8 +227,10 @@ const handleSubscription = async () => {
                 src="@/assets/images/layout/QR-instagram.svg"
                 alt="QR Code redpandakz"
                 class="w-28 h-28 rounded-md p-1"
-              />
-              <p class="text-md mt-1">redpandakz</p>
+              >
+              <p class="text-md mt-1">
+                redpandakz
+              </p>
             </div>
           </div>
 
@@ -254,18 +238,15 @@ const handleSubscription = async () => {
             <a
               href="https://wa.me/77007257799"
               class="px-5 py-1.5 text-center bg-gray-700 text-light-gray text-sm font-semibold border border-dark-gray rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors"
-              >Whatsapp</a
-            >
+            >Whatsapp</a>
             <a
               href="https://www.instagram.com/redpandakz/"
               class="px-5 py-1.5 text-center bg-gray-700 text-light-gray text-sm font-semibold border border-dark-gray rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors"
-              >Instagram</a
-            >
+            >Instagram</a>
             <a
               href="https://2gis.kz/astana/firm/70000001067520759"
               class="px-5 py-1.5 bg-gray-700 text-center text-light-gray text-sm font-semibold border border-dark-gray rounded-full hover:bg-transparent hover:border-panda-orange hover:text-panda-orange transition-colors"
-              >2GIS</a
-            >
+            >2GIS</a>
           </div>
 
           <div
@@ -292,9 +273,7 @@ const handleSubscription = async () => {
 </template>
 
 <style scoped>
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-/* Стили для полей ввода остаются без изменений */
+/* Стили остаются без изменений */
 .form-input {
   @apply block w-full pb-1 pt-4 text-light-gray bg-transparent border-b border-dark-gray appearance-none focus:outline-none focus:ring-0 z-10;
 }
@@ -305,16 +284,3 @@ const handleSubscription = async () => {
   @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full;
 }
 </style>
-=======
-=======
->>>>>>> Stashed changes
-/* Стили остаются без изменений */
-.form-input { @apply block w-full pb-1 pt-4 text-light-gray bg-transparent border-b border-dark-gray appearance-none focus:outline-none focus:ring-0 z-10; }
-.form-label { @apply pointer-events-none absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4; }
-.input-border { @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full; }
-<<<<<<< Updated upstream
-</style>
->>>>>>> Stashed changes
-=======
-</style>
->>>>>>> Stashed changes

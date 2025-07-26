@@ -61,8 +61,8 @@ const mainIconClose = closeIcon;
       class="flex flex-col items-center gap-2"
     >
       <div
-        v-if="isOpen"
         v-for="(action, index) in actions"
+        v-show="isOpen"
         :key="action.label"
         class="relative flex items-center group"
       >
@@ -80,18 +80,26 @@ const mainIconClose = closeIcon;
           class="fab-item"
           :class="action.colorClass"
         >
-          <img :src="action.iconUrl" alt="" class="fab-icon" />
+          <img
+            :src="action.iconUrl"
+            alt=""
+            class="fab-icon"
+          >
         </a>
 
         <button
           v-else
-          @click="action.action"
           :aria-label="action.label"
           :style="{ 'transition-delay': `${index * 50}ms` }"
           class="fab-item"
           :class="action.colorClass"
+          @click="action.action"
         >
-          <img :src="action.iconUrl" alt="" class="fab-icon" />
+          <img
+            :src="action.iconUrl"
+            alt=""
+            class="fab-icon"
+          >
         </button>
       </div>
     </transition-group>
@@ -101,24 +109,27 @@ const mainIconClose = closeIcon;
         <span>{{ isOpen ? 'Закрыть' : 'Связаться с нами' }}</span>
       </div>
       <button
-        @click="toggleMenu"
         class="fab-main bg-panda-orange hover:bg-orange-600"
+        @click="toggleMenu"
       >
-        <transition name="icon-fade" mode="out-in">
+        <transition
+          name="icon-fade"
+          mode="out-in"
+        >
           <img
             v-if="isOpen"
+            key="close"
             :src="mainIconClose"
             alt="Закрыть"
-            key="close"
             class="fab-main-icon"
-          />
+          >
           <img
             v-else
+            key="open"
             :src="mainIconOpen"
             alt="Открыть"
-            key="open"
             class="fab-main-icon"
-          />
+          >
         </transition>
       </button>
     </div>

@@ -135,7 +135,9 @@ const closePopup = () => {
   <main class="py-10 md:py-25">
     <div class="max-w-6xl mx-auto px-4">
       <section class="mb-16">
-        <SectionHeader class="gap-container"> Наша команда </SectionHeader>
+        <SectionHeader class="gap-container">
+          Наша команда
+        </SectionHeader>
         <p
           class="text-h5-panda text-dark-gray leading-relaxed text-center max-w-4xl mx-auto"
         >
@@ -170,21 +172,23 @@ const closePopup = () => {
                 :src="employee.image"
                 :alt="employee.name"
                 class="w-full h-full object-cover"
-              />
+              >
             </div>
             <div class="pt-3">
               <h3 class="font-semibold text-panda-black text-lg">
                 {{ employee.name }}
               </h3>
-              <p class="text-sm text-dark-gray">{{ employee.role }}</p>
+              <p class="text-sm text-dark-gray">
+                {{ employee.role }}
+              </p>
             </div>
           </div>
 
           <div
             v-for="vacancy in getVacanciesForDepartment(department.name)"
             :key="vacancy.id"
-            @click="openPopup(vacancy.title)"
             class="group block cursor-pointer"
+            @click="openPopup(vacancy.title)"
           >
             <div class="vacancy-card">
               <div class="vacancy-card-icon-wrapper">
@@ -203,27 +207,42 @@ const closePopup = () => {
                   />
                 </svg>
               </div>
-              <p class="vacancy-card-text">Присоединяйтесь к нам</p>
+              <p class="vacancy-card-text">
+                Присоединяйтесь к нам
+              </p>
             </div>
             <div class="pt-3">
-              <h3 class="font-semibold text-panda-black text-lg">В поиске</h3>
-              <p class="text-sm text-dark-gray">{{ vacancy.title }}</p>
+              <h3 class="font-semibold text-panda-black text-lg">
+                В поиске
+              </h3>
+              <p class="text-sm text-dark-gray">
+                {{ vacancy.title }}
+              </p>
             </div>
           </div>
         </div>
       </section>
 
       <section class="gap-page">
-        <SectionHeader class="gap-container"> Наша история </SectionHeader>
+        <SectionHeader class="gap-container">
+          Наша история
+        </SectionHeader>
         <HistorySlider />
       </section>
     </div>
 
     <Teleport to="body">
       <transition name="popup">
-        <div v-if="isPopupOpen" class="popup-overlay" @click.self="closePopup">
+        <div
+          v-if="isPopupOpen"
+          class="popup-overlay"
+          @click.self="closePopup"
+        >
           <div class="popup-container">
-            <button @click="closePopup" class="popup-close-button">
+            <button
+              class="popup-close-button"
+              @click="closePopup"
+            >
               &times;
             </button>
             <VacancyApplicationForm :position-title="selectedVacancyTitle" />

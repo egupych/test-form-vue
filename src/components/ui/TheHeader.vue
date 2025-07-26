@@ -116,12 +116,15 @@ const cancelHidePreviewTimer = () => {
   <div>
     <header class="site-header">
       <div class="max-w-6xl mx-auto flex items-center justify-between w-full">
-        <router-link to="/" class="cursor-pointer flex-none z-50">
+        <router-link
+          to="/"
+          class="cursor-pointer flex-none z-50"
+        >
           <img
             src="@/assets/images/layout/red-panda-logo-black.svg"
             alt="Логотип Red Panda"
             class="h-12 pr-2"
-          />
+          >
         </router-link>
 
         <nav class="mx-auto hidden lg-custom:block">
@@ -140,13 +143,22 @@ const cancelHidePreviewTimer = () => {
                 handleMouseLeavePreview();
               "
             >
-              <div v-if="link.inDevelopment" class="nav-item-inactive">
+              <div
+                v-if="link.inDevelopment"
+                class="nav-item-inactive"
+              >
                 {{ link.name }}
               </div>
-              <router-link v-else-if="!link.isDropdown" :to="link.path">
+              <router-link
+                v-else-if="!link.isDropdown"
+                :to="link.path"
+              >
                 {{ link.name }}
               </router-link>
-              <div v-else class="nav-item">
+              <div
+                v-else
+                class="nav-item"
+              >
                 {{ link.name }}
                 <svg
                   class="w-4 h-4 ml-1"
@@ -159,7 +171,7 @@ const cancelHidePreviewTimer = () => {
                     stroke-linejoin="round"
                     stroke-width="2"
                     d="M19 9l-7 7-7-7"
-                  ></path>
+                  />
                 </svg>
               </div>
 
@@ -170,10 +182,18 @@ const cancelHidePreviewTimer = () => {
                   @mouseenter="showDropdown(link.id)"
                   @mouseleave="hideDropdown()"
                 >
-                  <li v-for="child in link.children" :key="child.name">
-                    <router-link :to="child.path" class="dropdown-item">{{
-                      child.name
-                    }}</router-link>
+                  <li
+                    v-for="child in link.children"
+                    :key="child.name"
+                  >
+                    <router-link
+                      :to="child.path"
+                      class="dropdown-item"
+                    >
+                      {{
+                        child.name
+                      }}
+                    </router-link>
                   </li>
                 </ul>
               </transition>
@@ -209,7 +229,11 @@ const cancelHidePreviewTimer = () => {
         <div class="flex items-center flex-none gap-4">
           <div class="hidden lg-custom:flex items-center gap-3">
             <WeatherWidget />
-            <BaseButton v-if="!user" to="/auth" variant="stroke">
+            <BaseButton
+              v-if="!user"
+              to="/auth"
+              variant="stroke"
+            >
               Войти
             </BaseButton>
             <div
@@ -223,7 +247,7 @@ const cancelHidePreviewTimer = () => {
                   :src="user.photoURL"
                   alt="User Avatar"
                   class="w-8 h-8 rounded-full border-2 border-gray"
-                />
+                >
                 <span class="font-semibold text-sm">{{
                   user.displayName
                 }}</span>
@@ -238,7 +262,7 @@ const cancelHidePreviewTimer = () => {
                     stroke-linejoin="round"
                     stroke-width="2"
                     d="M19 9l-7 7-7-7"
-                  ></path>
+                  />
                 </svg>
               </div>
 
@@ -250,7 +274,10 @@ const cancelHidePreviewTimer = () => {
                   @mouseleave="hideDropdown()"
                 >
                   <li>
-                    <button @click="signOut" class="dropdown-item w-full">
+                    <button
+                      class="dropdown-item w-full"
+                      @click="signOut"
+                    >
                       Выйти
                     </button>
                   </li>
@@ -260,13 +287,13 @@ const cancelHidePreviewTimer = () => {
           </div>
 
           <button
-            @click="isMobileMenuOpen = !isMobileMenuOpen"
             class="flex lg-custom:hidden z-50 burger-button"
             :class="{ 'is-active': isMobileMenuOpen }"
+            @click="isMobileMenuOpen = !isMobileMenuOpen"
           >
-            <span class="line"></span>
-            <span class="line"></span>
-            <span class="line"></span>
+            <span class="line" />
+            <span class="line" />
+            <span class="line" />
           </button>
         </div>
       </div>
@@ -282,26 +309,31 @@ const cancelHidePreviewTimer = () => {
           <div
             class="mobile-menu-backdrop"
             @click="isMobileMenuOpen = false"
-          ></div>
+          />
           <nav class="mobile-menu-panel">
             <div
               class="px-6 py-4 border-b border-gray flex justify-between items-center"
             >
-              <h2 class="text-h5-panda font-bold">Меню</h2>
+              <h2 class="text-h5-panda font-bold">
+                Меню
+              </h2>
               <button
-                @click="isMobileMenuOpen = false"
                 class="mobile-menu-close-button"
+                @click="isMobileMenuOpen = false"
               >
                 &times;
               </button>
             </div>
             <ul class="flex-grow p-6 space-y-4 overflow-y-auto">
-              <li v-for="link in navLinks" :key="`mobile-${link.name}`">
+              <li
+                v-for="link in navLinks"
+                :key="`mobile-${link.name}`"
+              >
                 <router-link
                   v-if="!link.isDropdown && !link.inDevelopment"
                   :to="link.path"
-                  @click="handleMobileLinkClick"
                   class="mobile-menu-link"
+                  @click="handleMobileLinkClick"
                 >
                   {{ link.name }}
                 </router-link>
@@ -320,8 +352,8 @@ const cancelHidePreviewTimer = () => {
                     >
                       <router-link
                         :to="child.path"
-                        @click="handleMobileLinkClick"
                         class="mobile-menu-sublink"
+                        @click="handleMobileLinkClick"
                       >
                         {{ child.name }}
                       </router-link>
@@ -335,18 +367,21 @@ const cancelHidePreviewTimer = () => {
                 v-if="!user"
                 to="/auth"
                 variant="stroke"
-                @click="handleMobileLinkClick"
                 class="w-full"
+                @click="handleMobileLinkClick"
               >
                 Войти
               </BaseButton>
-              <div v-else class="text-center">
+              <div
+                v-else
+                class="text-center"
+              >
                 <button
+                  class="w-full text-sm font-semibold text-dark-gray py-2 px-4 hover:text-panda-orange transition-colors"
                   @click="
                     signOut();
                     handleMobileLinkClick();
                   "
-                  class="w-full text-sm font-semibold text-dark-gray py-2 px-4 hover:text-panda-orange transition-colors"
                 >
                   Выйти
                 </button>
@@ -370,7 +405,7 @@ const cancelHidePreviewTimer = () => {
           :src="activePreviewLink.preview"
           alt="Page preview"
           class="preview-image"
-        />
+        >
       </router-link>
     </transition>
   </div>

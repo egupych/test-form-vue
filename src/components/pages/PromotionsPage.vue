@@ -46,7 +46,9 @@ const closePopup = () => {
 <template>
   <main class="py-10 md:py-25">
     <div class="max-w-6xl mx-auto">
-      <SectionHeader class="gap-container">Акции</SectionHeader>
+      <SectionHeader class="gap-container">
+        Акции
+      </SectionHeader>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div
@@ -58,7 +60,7 @@ const closePopup = () => {
             :src="promo.image"
             :alt="promo.title"
             class="w-full h-auto object-cover mb-5 promo-image"
-          />
+          >
           <h2 class="font-semibold text-panda-black text-h4-panda mb-1">
             {{ promo.title }}
           </h2>
@@ -66,8 +68,8 @@ const closePopup = () => {
             {{ promo.description }}
           </p>
           <BaseButton
-            @click="openPopup(promo.promo)"
             :variant="promo.buttonVariant"
+            @click="openPopup(promo.promo)"
           >
             Воспользоваться
           </BaseButton>
@@ -83,7 +85,10 @@ const closePopup = () => {
           @click.self="closePopup"
         >
           <div class="popup-container">
-            <button @click="closePopup" class="popup-close-button">
+            <button
+              class="popup-close-button"
+              @click="closePopup"
+            >
               &times;
             </button>
             <CalculationForm :promo-code="activePromoCode" />

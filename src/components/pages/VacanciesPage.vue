@@ -1,4 +1,5 @@
 <script setup>
+/* eslint-disable vue/no-v-html */
 import { ref } from 'vue';
 import SectionHeader from '@/components/ui/SectionHeader.vue';
 import TalentReserveForm from '@/components/ui/TalentReserveForm.vue';
@@ -26,7 +27,9 @@ const closePopup = () => {
   <main class="py-10 md:py-25">
     <div class="max-w-6xl mx-auto">
       <section>
-        <SectionHeader class="gap-container"> Вакансии </SectionHeader>
+        <SectionHeader class="gap-container">
+          Вакансии
+        </SectionHeader>
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-4 items-start">
           <div
@@ -46,11 +49,12 @@ const closePopup = () => {
                     v-for="tag in vacancy.tags"
                     :key="tag"
                     class="rounded-full py-2 px-4 text-sm font-medium text-dark-gray border whitespace-nowrap"
-                    >{{ tag }}</span
-                  >
+                  >{{ tag }}</span>
                 </div>
               </div>
-              <div class="text-body-panda mb-4">{{ vacancy.salary }}</div>
+              <div class="text-body-panda mb-4">
+                {{ vacancy.salary }}
+              </div>
               <div class="mb-4">
                 <div class="text-panda-orange font-bold text-body-panda mb-1">
                   Условия
@@ -71,15 +75,15 @@ const closePopup = () => {
                     :key="index"
                     class="pl-1"
                     v-html="resp"
-                  ></li>
+                  />
                 </ol>
               </div>
             </div>
 
             <div class="mt-auto">
               <BaseButton
-                @click="openPopup(vacancy.title)"
                 variant="fill-black"
+                @click="openPopup(vacancy.title)"
               >
                 Откликнуться
               </BaseButton>
@@ -95,9 +99,16 @@ const closePopup = () => {
 
     <Teleport to="body">
       <transition name="popup">
-        <div v-if="isPopupOpen" class="popup-overlay" @click.self="closePopup">
+        <div
+          v-if="isPopupOpen"
+          class="popup-overlay"
+          @click.self="closePopup"
+        >
           <div class="popup-container">
-            <button @click="closePopup" class="popup-close-button">
+            <button
+              class="popup-close-button"
+              @click="closePopup"
+            >
               &times;
             </button>
             <VacancyApplicationForm :position-title="selectedVacancyTitle" />

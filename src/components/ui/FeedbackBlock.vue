@@ -7,16 +7,19 @@
         src="/src/assets/images/pages/HomePage/Отдел качества.svg"
         alt="Иконка документа"
         class="w-20 h-20 mb-6"
-      />
+      >
 
       <p
         class="text-h5-panda font-semibold text-panda-black mb-6 max-w-sm leading-tight"
       >
-        Если возникнут какие-либо проблемы <br />с заказом, свяжитесь с отделом
+        Если возникнут какие-либо проблемы <br>с заказом, свяжитесь с отделом
         качества
       </p>
 
-      <BaseButton href="https://wa.me/77007257799" target="_blank">
+      <BaseButton
+        href="https://wa.me/77007257799"
+        target="_blank"
+      >
         Связаться
       </BaseButton>
     </div>
@@ -28,12 +31,12 @@
         src="/src/assets/images/pages/HomePage/Отзыв.svg"
         alt="Иконка сертификата"
         class="w-20 h-20 mb-6"
-      />
+      >
 
       <p
         class="text-h5-panda font-semibold text-panda-black mb-6 max-w-sm leading-tight"
       >
-        Уже были нашим клиентом? <br />Будем рады, если оставите отзыв <br />о
+        Уже были нашим клиентом? <br>Будем рады, если оставите отзыв <br>о
         нашей работе
       </p>
 

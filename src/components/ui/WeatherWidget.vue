@@ -205,24 +205,38 @@ onUnmounted(() => {
     @mouseleave="showForecast = false"
   >
     <div class="widget-body">
-      <div v-if="weather" class="nav-item">
+      <div
+        v-if="weather"
+        class="nav-item"
+      >
         <div class="weather-icon-wrapper">
           <img
             :src="getWeatherIcon(weather.current_weather.weathercode)"
             alt="Иконка погоды"
             class="weather-icon"
-          />
+          >
         </div>
-        <span class="temperature"
-          >{{ Math.round(weather.current_weather.temperature) }}°</span
-        >
+        <span class="temperature">{{ Math.round(weather.current_weather.temperature) }}°</span>
       </div>
-      <div v-else-if="error" class="nav-item">Ошибка</div>
-      <div v-else class="nav-item">...</div>
+      <div
+        v-else-if="error"
+        class="nav-item"
+      >
+        Ошибка
+      </div>
+      <div
+        v-else
+        class="nav-item"
+      >
+        ...
+      </div>
     </div>
 
     <transition name="slide-down">
-      <div v-if="showForecast && processedForecast" class="dropdown-menu">
+      <div
+        v-if="showForecast && processedForecast"
+        class="dropdown-menu"
+      >
         <div
           v-for="(day, dayIndex) in processedForecast"
           :key="day.date"
@@ -239,13 +253,20 @@ onUnmounted(() => {
               <span class="day-number">{{ day.dayNumber }}</span>
             </div>
             <div class="temp-and-icon">
-              <img :src="day.icon" alt="Иконка погоды" class="forecast-icon" />
+              <img
+                :src="day.icon"
+                alt="Иконка погоды"
+                class="forecast-icon"
+              >
               <span class="max-temp">{{ day.maxTemp }}</span>
             </div>
           </div>
 
           <transition name="expand">
-            <div v-if="expandedIndex === dayIndex" class="detailed-forecast">
+            <div
+              v-if="expandedIndex === dayIndex"
+              class="detailed-forecast"
+            >
               <div class="time-periods-grid">
                 <div
                   v-for="period in day.details"
@@ -261,7 +282,7 @@ onUnmounted(() => {
                     :src="period.icon"
                     alt="Иконка погоды"
                     class="period-icon"
-                  />
+                  >
                   <span class="period-temp">{{ period.temp }}</span>
                 </div>
               </div>
@@ -270,7 +291,7 @@ onUnmounted(() => {
                 <div
                   v-if="
                     activePeriod.dayIndex === dayIndex &&
-                    activePeriod.periodName
+                      activePeriod.periodName
                   "
                   class="hourly-forecast"
                 >
@@ -281,7 +302,11 @@ onUnmounted(() => {
                     :class="{ 'active-hour': hour.isActive }"
                   >
                     <span class="hour-time">{{ hour.time }}</span>
-                    <img :src="hour.icon" :alt="hour.time" class="hour-icon" />
+                    <img
+                      :src="hour.icon"
+                      :alt="hour.time"
+                      class="hour-icon"
+                    >
                     <span class="hour-temp">{{ hour.temp }}</span>
                   </div>
                 </div>

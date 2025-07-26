@@ -159,8 +159,6 @@ const previewBoxStyle = computed(() => {
 
   const scale = Math.min(1.0, widthScale, heightScale);
 
-  previewScale.value = scale;
-
   return {
     width: `${idealWidthCss * scale}px`,
     height: `${idealHeightCss * scale}px`,
@@ -189,6 +187,33 @@ watch(toolStep, (step) => {
     });
   }
 });
+
+watch([selectedFormatData, windowWidth, windowHeight], () => {
+  if (selectedFormatData.value && userDevicePxPerMm.value) {
+    const [w, h] = selectedFormatData.value.dimensions
+      .replace(' мм', '')
+      .split('×');
+    const widthMm = Number(w);
+    const heightMm = Number(h);
+
+    const landscapeWidthMm = Math.max(widthMm, heightMm);
+    const landscapeHeightMm = Math.min(widthMm, heightMm);
+
+    const idealWidthCss =
+      (landscapeWidthMm * userDevicePxPerMm.value) / devicePixelRatio.value;
+    const idealHeightCss =
+      (landscapeHeightMm * userDevicePxPerMm.value) / devicePixelRatio.value;
+
+    const maxPreviewWidth = windowWidth.value * 0.9;
+    const maxPreviewHeight =
+      (windowHeight.value - controlsHeight.value - 60) * 0.9;
+
+    const widthScale = maxPreviewWidth / idealWidthCss;
+    const heightScale = maxPreviewHeight / idealHeightCss;
+
+    previewScale.value = Math.min(1.0, widthScale, heightScale);
+  }
+}, { immediate: true });
 
 const openSizeTool = () => {
   toolStep.value = 1;
@@ -227,20 +252,25 @@ const saveCalibration = () => {
   <main class="py-10 md:py-25">
     <div class="max-w-6xl mx-auto px-4 md:px-0">
       <section>
-        <SectionHeader class="gap-container">Шаблоны</SectionHeader>
+        <SectionHeader class="gap-container">
+          Шаблоны
+        </SectionHeader>
 
         <div class="flex flex-wrap gap-2 mb-10">
           <BaseButton
             v-for="tab in templatesData"
             :key="tab.id"
-            @click="activeTab = tab.id"
             :variant="activeTab === tab.id ? 'fill-black' : 'gray'"
+            @click="activeTab = tab.id"
           >
             {{ tab.name }}
           </BaseButton>
         </div>
 
-        <div v-for="tab in templatesData" :key="tab.id + '-content'">
+        <div
+          v-for="tab in templatesData"
+          :key="tab.id + '-content'"
+        >
           <div v-if="activeTab === tab.id">
             <div
               v-if="tab.items.length > 0"
@@ -292,7 +322,10 @@ const saveCalibration = () => {
                   {{ item.name }}
                 </div>
 
-                <div class="button mt-auto" data-tooltip="Corel .CDR">
+                <div
+                  class="button mt-auto"
+                  data-tooltip="Corel .CDR"
+                >
                   <div class="button-wrapper">
                     <div class="text">Скачать</div>
                     <span class="icon">
@@ -312,14 +345,17 @@ const saveCalibration = () => {
                           stroke-linejoin="round"
                           stroke-width="2"
                           d="M12 15V3m0 12l-4-4m4 4l4-4M2 17l.621 2.485A2 2 0 0 0 4.561 21h14.878a2 2 0 0 0 1.94-1.515L22 17"
-                        ></path>
+                        />
                       </svg>
                     </span>
                   </div>
                 </div>
               </a>
             </div>
-            <div v-else class="text-center py-10 text-dark-gray text-xl">
+            <div
+              v-else
+              class="text-center py-10 text-dark-gray text-xl"
+            >
               Шаблоны для категории «{{ tab.name }}» скоро появятся.
             </div>
           </div>
@@ -327,7 +363,9 @@ const saveCalibration = () => {
       </section>
 
       <section class="gap-page">
-        <SectionHeader class="gap-container">Размеры</SectionHeader>
+        <SectionHeader class="gap-container">
+          Размеры
+        </SectionHeader>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
           <div class="size-check-section">
             <h3 class="font-semibold text-panda-black text-h5-panda mb-3">
@@ -340,9 +378,9 @@ const saveCalibration = () => {
                 7810.
               </p>
               <BaseButton
-                @click="openSizeTool"
                 variant="outline-gray"
                 class="w-full mt-auto"
+                @click="openSizeTool"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -358,8 +396,8 @@ const saveCalibration = () => {
                 >
                   <path
                     d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"
-                  ></path>
-                  <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12z"></path>
+                  />
+                  <path d="M12 18a6 6 0 1 0 0-12 6 6 0 0 0 0 12z" />
                 </svg>
                 Проверить реальный размер
               </BaseButton>
@@ -415,9 +453,9 @@ const saveCalibration = () => {
       </section>
 
       <section class="gap-page">
-        <SectionHeader class="gap-container"
-          >Требования к макетам</SectionHeader
-        >
+        <SectionHeader class="gap-container">
+          Требования к макетам
+        </SectionHeader>
         <div class="space-y-10">
           <div>
             <h3 class="font-semibold text-panda-black text-h5-panda mb-3">
@@ -462,8 +500,8 @@ const saveCalibration = () => {
             </h3>
             <p class="text-dark-gray text-body-panda max-w-4xl">
               Шрифты необходимо перевести в кривые.
-              <br />Corel Draw: Ctrl+Q | Illustrator/Figma: Ctrl+Shift+O.
-              <br />Либо отправить шрифты нашему менеджеру, для избежания
+              <br>Corel Draw: Ctrl+Q | Illustrator/Figma: Ctrl+Shift+O.
+              <br>Либо отправить шрифты нашему менеджеру, для избежания
               ситуаций, когда программа может поменять шрифт, если его нет в
               системе.
             </p>
@@ -510,15 +548,18 @@ const saveCalibration = () => {
           src="@/assets/images/pages/PreparationPage/call.svg"
           alt="Иконка документа"
           class="w-20 h-20 mb-6"
-        />
+        >
 
         <p
           class="text-h5-panda font-semibold text-panda-black mb-6 max-w-sm leading-tight"
         >
-          Нет времени на подготовку файлов? <br />Оперативно сделаем за Вас!
+          Нет времени на подготовку файлов? <br>Оперативно сделаем за Вас!
         </p>
 
-        <BaseButton @click="openPopup" variant="fill-black">
+        <BaseButton
+          variant="fill-black"
+          @click="openPopup"
+        >
           Написать менеджеру
         </BaseButton>
       </div>
@@ -527,9 +568,16 @@ const saveCalibration = () => {
 
   <Teleport to="body">
     <transition name="popup">
-      <div v-if="isPopupVisible" class="popup-overlay" @click.self="closePopup">
+      <div
+        v-if="isPopupVisible"
+        class="popup-overlay"
+        @click.self="closePopup"
+      >
         <div class="popup-container">
-          <button @click="closePopup" class="popup-close-button">
+          <button
+            class="popup-close-button"
+            @click="closePopup"
+          >
             &times;
           </button>
           <CalculationForm />
@@ -545,12 +593,20 @@ const saveCalibration = () => {
         class="popup-overlay"
         @click.self="closeSizeTool"
       >
-        <button @click="closeSizeTool" class="fullscreen-close-button">
+        <button
+          class="fullscreen-close-button"
+          @click="closeSizeTool"
+        >
           &times;
         </button>
 
-        <div v-if="toolStep === 1" class="fullscreen-step-content">
-          <h3 class="fullscreen-title">Калибровка экрана</h3>
+        <div
+          v-if="toolStep === 1"
+          class="fullscreen-step-content"
+        >
+          <h3 class="fullscreen-title">
+            Калибровка экрана
+          </h3>
           <p class="fullscreen-text">
             Приложите банковскую карту к экрану и двигайте ползунок, пока
             оранжевый прямоугольник не совпадет с ее размером.
@@ -562,49 +618,76 @@ const saveCalibration = () => {
                 width: `${calibrationWidthPx}px`,
                 height: `${(calibrationWidthPx / creditCardWidthMm) * creditCardHeightMm}px`,
               }"
-            ></div>
+            />
           </div>
           <input
-            type="range"
             v-model="calibrationWidthPx"
+            type="range"
             min="250"
             max="500"
             step="0.1"
             class="w-full max-w-sm"
-          />
+          >
           <div class="flex items-center gap-2 mt-4">
-            <BaseButton @click="closeSizeTool" variant="gray"
-              >Отмена</BaseButton
+            <BaseButton
+              variant="gray"
+              @click="closeSizeTool"
             >
-            <BaseButton @click="saveCalibration" variant="fill-white"
-              >Сохранить и продолжить</BaseButton
+              Отмена
+            </BaseButton>
+            <BaseButton
+              variant="fill-white"
+              @click="saveCalibration"
             >
+              Сохранить и продолжить
+            </BaseButton>
           </div>
         </div>
 
-        <div v-if="toolStep === 2" class="w-full h-full flex flex-col">
+        <div
+          v-if="toolStep === 2"
+          class="w-full h-full flex flex-col"
+        >
           <div class="preview-scale-info">
-            <transition name="fade-fast" mode="out-in">
-              <div v-if="previewScale > 0.98">Реальный размер</div>
-              <div v-else>Масштаб: {{ (previewScale * 100).toFixed(0) }}%</div>
+            <transition
+              name="fade-fast"
+              mode="out-in"
+            >
+              <div v-if="previewScale > 0.98">
+                Реальный размер
+              </div>
+              <div v-else>
+                Масштаб: {{ (previewScale * 100).toFixed(0) }}%
+              </div>
             </transition>
           </div>
 
-          <div v-if="!selectedFormatData" class="m-auto text-white text-xl">
+          <div
+            v-if="!selectedFormatData"
+            class="m-auto text-white text-xl"
+          >
             Выберите формат для предпросмотра
           </div>
-          <div v-else class="preview-box" :style="previewBoxStyle"></div>
+          <div
+            v-else
+            class="preview-box"
+            :style="previewBoxStyle"
+          />
 
-          <div ref="controlsRef" class="fullscreen-controls">
+          <div
+            ref="controlsRef"
+            class="fullscreen-controls"
+          >
             <div class="flex flex-col sm:flex-row gap-4 items-center w-full">
-              <label class="font-semibold whitespace-nowrap text-white"
-                >Выберите формат</label
-              >
+              <label class="font-semibold whitespace-nowrap text-white">Выберите формат</label>
 
-              <div ref="customSelectRef" class="relative w-full">
+              <div
+                ref="customSelectRef"
+                class="relative w-full"
+              >
                 <button
-                  @click="isFormatDropdownOpen = !isFormatDropdownOpen"
                   class="custom-select-button"
+                  @click="isFormatDropdownOpen = !isFormatDropdownOpen"
                 >
                   <span v-if="selectedFormatData">
                     {{ selectedFormatData.name }} ({{
@@ -628,12 +711,15 @@ const saveCalibration = () => {
                   </svg>
                 </button>
                 <transition name="fade-fast">
-                  <ul v-if="isFormatDropdownOpen" class="custom-select-options">
+                  <ul
+                    v-if="isFormatDropdownOpen"
+                    class="custom-select-options"
+                  >
                     <li
                       v-for="format in availableFormats"
                       :key="format.name"
-                      @click="selectFormat(format.name)"
                       class="custom-select-option"
+                      @click="selectFormat(format.name)"
                     >
                       <span>{{ format.name }}</span>
                       <span>{{ format.dimensions }}</span>

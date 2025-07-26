@@ -53,9 +53,14 @@ const sliderStyle = computed(() => ({
 <template>
   <div>
     <div class="max-w-6xl mx-auto">
-      <SectionHeader class="gap-container"> НАМ ДОВЕРЯЮТ </SectionHeader>
+      <SectionHeader class="gap-container">
+        НАМ ДОВЕРЯЮТ
+      </SectionHeader>
 
-      <div v-if="allLogos.length > 0" class="relative overflow-hidden">
+      <div
+        v-if="allLogos.length > 0"
+        class="relative overflow-hidden"
+      >
         <div
           class="flex transition-transform duration-300 ease-out"
           :style="sliderStyle"
@@ -77,13 +82,16 @@ const sliderStyle = computed(() => ({
                   :src="logo.src"
                   :alt="logo.name"
                   class="max-h-full w-auto object-contain filter grayscale opacity-60 hover:opacity-100 hover:grayscale-0 transition-all duration-300"
-                />
+                >
               </div>
             </div>
           </div>
         </div>
       </div>
-      <div v-else class="text-center text-dark-gray py-10">
+      <div
+        v-else
+        class="text-center text-dark-gray py-10"
+      >
         Логотипы клиентов скоро появятся здесь.
       </div>
 
@@ -92,19 +100,17 @@ const sliderStyle = computed(() => ({
         class="flex justify-center items-center mt-12 gap-4"
       >
         <button
-          @click="prevPage"
           :disabled="currentPage === 1"
           class="px-5 py-1.5 bg-transparent text-dark-gray text-sm font-semibold border border-gray rounded-full hover:bg-gray disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          @click="prevPage"
         >
           назад
         </button>
-        <span class="text-sm text-dark-gray font-mono"
-          >{{ currentPage }} из {{ totalPages }}</span
-        >
+        <span class="text-sm text-dark-gray font-mono">{{ currentPage }} из {{ totalPages }}</span>
         <button
-          @click="nextPage"
           :disabled="currentPage === totalPages"
           class="px-5 py-1.5 bg-transparent text-dark-gray text-sm font-semibold border border-gray rounded-full hover:bg-gray disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          @click="nextPage"
         >
           вперёд
         </button>

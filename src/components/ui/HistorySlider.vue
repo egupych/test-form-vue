@@ -122,9 +122,9 @@ const setActiveEvent = (index) => {
   <div class="history-slider">
     <div class="timeline-controls">
       <button
-        @click="prev"
         :disabled="currentStartIndex === 0"
         class="nav-arrow"
+        @click="prev"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -137,21 +137,21 @@ const setActiveEvent = (index) => {
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <polyline points="15 18 9 12 15 6"></polyline>
+          <polyline points="15 18 9 12 15 6" />
         </svg>
       </button>
 
       <div class="timeline-wrapper">
-        <div class="timeline-line"></div>
+        <div class="timeline-line" />
         <div
           v-for="(event, index) in visibleEvents"
           :key="event.id"
           class="timeline-dot-wrapper"
         >
           <button
-            @click="setActiveEvent(currentStartIndex + index)"
             class="timeline-dot"
             :class="{ 'is-active': activeIndex === currentStartIndex + index }"
+            @click="setActiveEvent(currentStartIndex + index)"
           >
             {{ event.year }}
           </button>
@@ -159,9 +159,9 @@ const setActiveEvent = (index) => {
       </div>
 
       <button
-        @click="next"
         :disabled="currentStartIndex >= historyEvents.length - DATES_TO_SHOW"
         class="nav-arrow"
+        @click="next"
       >
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -174,13 +174,19 @@ const setActiveEvent = (index) => {
           stroke-linecap="round"
           stroke-linejoin="round"
         >
-          <polyline points="9 18 15 12 9 6"></polyline>
+          <polyline points="9 18 15 12 9 6" />
         </svg>
       </button>
     </div>
 
-    <transition name="slide-fade" mode="out-in">
-      <div :key="activeEvent.id" class="event-content">
+    <transition
+      name="slide-fade"
+      mode="out-in"
+    >
+      <div
+        :key="activeEvent.id"
+        class="event-content"
+      >
         <div class="event-info">
           <div class="text-h1-panda font-bold text-panda-orange mb-1">
             {{ activeEvent.year }}
@@ -200,7 +206,7 @@ const setActiveEvent = (index) => {
             :src="activeEvent.image"
             :alt="activeEvent.title"
             class="event-image"
-          />
+          >
         </div>
       </div>
     </transition>

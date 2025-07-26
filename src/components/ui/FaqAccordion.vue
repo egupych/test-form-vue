@@ -39,11 +39,15 @@ const toggleAccordion = (index) => {
 
 <template>
   <div class="max-w-4xl mx-auto space-y-3">
-    <div v-for="(faq, index) in faqs" :key="index" class="bg-white">
+    <div
+      v-for="(faq, index) in faqs"
+      :key="index"
+      class="bg-white"
+    >
       <button
-        @click="toggleAccordion(index)"
         class="w-full flex justify-between items-center p-6 text-left focus:outline-none"
         :aria-expanded="activeIndex === index"
+        @click="toggleAccordion(index)"
       >
         <span class="text-h5-panda font-semibold text-panda-black">{{
           faq.question
@@ -52,7 +56,7 @@ const toggleAccordion = (index) => {
         <div
           class="w-7 h-7 flex items-center justify-center flex-shrink-0 relative"
         >
-          <div class="w-5 h-0.5 bg-gray rounded-full"></div>
+          <div class="w-5 h-0.5 bg-gray rounded-full" />
 
           <div
             class="w-5 h-0.5 bg-gray rounded-full absolute transition-transform duration-300 ease-in-out"
@@ -61,7 +65,7 @@ const toggleAccordion = (index) => {
               'rotate-0': activeIndex === index,
             }"
             style="transform-origin: center"
-          ></div>
+          />
         </div>
       </button>
 

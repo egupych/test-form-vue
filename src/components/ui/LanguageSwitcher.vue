@@ -28,8 +28,8 @@ const otherLocales = availableLocales.filter((l) => l !== locale.value);
 <template>
   <div class="relative">
     <button
-      @click="isDropdownOpen = !isDropdownOpen"
       class="flex items-center justify-center w-10 h-10 rounded-full text-sm font-semibold transition-colors duration-200 ease-in-out text-header-panda hover:bg-gray"
+      @click="isDropdownOpen = !isDropdownOpen"
     >
       {{ locale.toUpperCase() }}
     </button>
@@ -42,8 +42,8 @@ const otherLocales = availableLocales.filter((l) => l !== locale.value);
         <button
           v-for="otherLocale in otherLocales"
           :key="otherLocale"
-          @click="switchLanguage(otherLocale)"
           class="w-full text-left px-4 py-2 text-sm text-panda-black hover:bg-light-gray"
+          @click="switchLanguage(otherLocale)"
         >
           {{ otherLocale.toUpperCase() }}
         </button>

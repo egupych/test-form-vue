@@ -33,14 +33,12 @@
               :alt="image.alt"
               class="gallery-image"
               loading="lazy"
-            />
+            >
             <div
               v-if="index === MAX_VISIBLE_IMAGES - 1 && hiddenImagesCount > 0"
               class="overlay"
             >
-              <span class="text-h3-panda font-bold"
-                >+{{ hiddenImagesCount }}</span
-              >
+              <span class="text-h3-panda font-bold">+{{ hiddenImagesCount }}</span>
             </div>
           </div>
         </aside>
