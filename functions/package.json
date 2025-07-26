@@ -13,6 +13,7 @@
     "node": "20"
   },
   "main": "index.js",
+  "type": "module",
   "dependencies": {
     "busboy": "^1.6.0",
     "cors": "^2.8.5",

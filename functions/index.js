@@ -9,6 +9,7 @@ import os from "os";
 import fs from "fs";
 import fetch from "node-fetch";
 
+
 setGlobalOptions({ region: "europe-west1" });
 
 // Инициализация Firebase
@@ -29,8 +30,10 @@ if (env.email && env.email.host) {
     console.error("ОШИБКА: Конфигурация Nodemailer не найдена.");
 }
 
+
+
 // --- ФУНКЦИЯ 1: Обработка основной формы расчета ---
-export const submitForm = onRequest({ region: "europe-west1" }, async (req, res) => {
+
     // Разрешаем запросы с вашего сайта
     res.set('Access-Control-Allow-Origin', 'https://redpanda.web.app');
     res.set('Access-Control-Allow-Methods', 'POST');
@@ -141,14 +144,19 @@ export const submitForm = onRequest({ region: "europe-west1" }, async (req, res)
     req.pipe(busboy);
 });
 
-// --- ФУНКЦИЯ 2: Обработка формы вакансий ---
 export const submitApplication = onRequest({ region: "europe-west1" }, async (req, res) => {
+    export const submitApplication = onRequest({ region: "europe-west1" }, async (req, res) => {
     res.set('Access-Control-Allow-Origin', 'https://redpanda.web.app');
     res.set('Access-Control-Allow-Methods', 'POST');
     res.set('Access-Control-Allow-Headers', 'Content-Type');
 
     if (req.method === 'OPTIONS') {
         res.status(204).send('');
+        return;
+    }
+
+    if (req.method !== 'POST') {
+        res.status(405).send('Method Not Allowed');
         return;
     }
 
@@ -220,14 +228,14 @@ export const submitApplication = onRequest({ region: "europe-west1" }, async (re
 export const subscribe = onCall({ region: "europe-west1" }, async (data) => {
     const { email, sphere } = data;
     if (!email) {
-        throw new functions.https.HttpsError('invalid-argument', 'Email обязателен.');
+        throw new HttpsError('invalid-argument', 'Email обязателен.');
     }
     
     try {
         const subscribersRef = db.collection('subscribers');
         const snapshot = await subscribersRef.where('email', '==', email).get();
         if (!snapshot.empty) {
-            throw new functions.https.HttpsError('already-exists', 'Вы уже подписаны!');
+            throw new HttpsError('already-exists', 'Вы уже подписаны!');
         }
         await subscribersRef.add({ email, sphere: sphere || 'Не указана', subscribedAt: admin.firestore.FieldValue.serverTimestamp() });
         return { success: true, message: 'Спасибо за подписку!' };
@@ -236,3 +244,4 @@ export const subscribe = onCall({ region: "europe-west1" }, async (data) => {
         throw new HttpsError('internal', 'Произошла ошибка на сервере.');
     }
 });
+
