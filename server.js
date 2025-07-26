@@ -323,14 +323,16 @@ export function createApp(admin, db, transporter) {
   );
 
   // --- Обработчик ошибок ---
-  app.use((error, req, res, _next) => {
+  /* eslint-disable-next-line no-unused-vars */
+  app.use((error, req, res, _) => {
     console.error(error);
     if (error instanceof multer.MulterError) {
       if (error.code === 'LIMIT_FILE_SIZE') {
         return res.status(400).json({ success: false, message: 'Файл слишком большой.' });
       }
+      return res.status(500).json({ success: false, message: 'Ошибка обработки файла.' });
     }
-    _next();
+    res.status(500).json({ success: false, message: 'Внутренняя ошибка сервера.' });
   });
 
   app.get('*', (req, res) => {
