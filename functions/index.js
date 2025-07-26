@@ -1,4 +1,5 @@
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 const {onRequest} = require("firebase-functions/v2/https");
 const {setGlobalOptions} = require("firebase-functions/v2/options");
 const admin = require("firebase-admin");
@@ -167,6 +168,26 @@ if (!admin.apps.length) {
 }
 const db = admin.firestore();
 
+=======
+// Код functions/index.js
+// Финальная, стабильная версия, написанная на нативном синтаксисе Firebase Functions
+
+const functions = require("firebase-functions");
+const admin = require("firebase-admin");
+const nodemailer = require("nodemailer");
+const Busboy = require("busboy");
+const path = require("path");
+const os = require("os");
+const fs = require("fs");
+const fetch = require("node-fetch");
+
+// Инициализация Firebase
+if (!admin.apps.length) {
+  admin.initializeApp();
+}
+const db = admin.firestore();
+
+>>>>>>> Stashed changes
 // --- Настройки почты (читаются из конфигурации Firebase) ---
 const env = functions.config();
 let transporter;
@@ -387,5 +408,9 @@ exports.subscribe = functions.region("europe-west1").https.onCall(async (data, c
         console.error("КРИТИЧЕСКАЯ ОШИБКА в subscribe:", error);
         throw new functions.https.HttpsError('internal', 'Произошла ошибка на сервере.');
     }
+<<<<<<< Updated upstream
+});
+>>>>>>> Stashed changes
+=======
 });
 >>>>>>> Stashed changes

@@ -13,7 +13,10 @@ import { useNotificationStore } from '@/stores/notifications.js';
 import { useFormValidation } from '@/composables/useFormValidation.js';
 
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 const emit = defineEmits(['close']);
 const notificationStore = useNotificationStore();
 const formStateStore = useFormStateStore();
@@ -104,11 +107,14 @@ const handleSubmit = async () => {
 
     notificationStore.showNotification(result.message, 'success');
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     // Очистка формы и закрытие окна
     formStateStore.clearVacancyForm();
     files.value = [];
     emit('close'); // Сигнал родительскому компоненту закрыть попап
 =======
+=======
+>>>>>>> Stashed changes
     formData.name = '';
     formData.phone = '';
     files.value = [];

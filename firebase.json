@@ -1,5 +1,6 @@
 {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   "functions": [
     {
       "source": "functions",
@@ -13,6 +14,8 @@
     }
   ],
 =======
+=======
+>>>>>>> Stashed changes
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
@@ -21,6 +24,9 @@
     "source": "functions",
     "runtime": "nodejs18"
   },
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
   "hosting": {
     "public": "dist",
@@ -31,6 +37,7 @@
     ],
     "rewrites": [
       {
+<<<<<<< Updated upstream
 <<<<<<< Updated upstream
         "source": "/api/submit-form",
         "function": {
@@ -47,6 +54,8 @@
         }
       },
       {
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
         "source": "**",

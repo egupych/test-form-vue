@@ -42,6 +42,7 @@ const handleSubscription = async () => {
   subscription.isSubmitting = true;
   try {
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
     const response = await fetch('/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -52,6 +53,8 @@ const handleSubscription = async () => {
     });
     const result = await response.json();
 =======
+=======
+>>>>>>> Stashed changes
     // Получаем экземпляр Firebase Functions
     const functions = getFunctions();
     // Создаем ссылку на нашу облачную функцию 'subscribe'
@@ -59,6 +62,9 @@ const handleSubscription = async () => {
     
     // Вызываем функцию, передавая данные
     const result = await subscribeFunction({ email: subscription.email, sphere: subscription.sphere });
+<<<<<<< Updated upstream
+>>>>>>> Stashed changes
+=======
 >>>>>>> Stashed changes
 
     subscription.message = result.data.message;
@@ -287,6 +293,7 @@ const handleSubscription = async () => {
 
 <style scoped>
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 /* Стили для полей ввода остаются без изменений */
 .form-input {
   @apply block w-full pb-1 pt-4 text-light-gray bg-transparent border-b border-dark-gray appearance-none focus:outline-none focus:ring-0 z-10;
@@ -299,9 +306,15 @@ const handleSubscription = async () => {
 }
 </style>
 =======
+=======
+>>>>>>> Stashed changes
 /* Стили остаются без изменений */
 .form-input { @apply block w-full pb-1 pt-4 text-light-gray bg-transparent border-b border-dark-gray appearance-none focus:outline-none focus:ring-0 z-10; }
 .form-label { @apply pointer-events-none absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4; }
 .input-border { @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full; }
+<<<<<<< Updated upstream
+</style>
+>>>>>>> Stashed changes
+=======
 </style>
 >>>>>>> Stashed changes
