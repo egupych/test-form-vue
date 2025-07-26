@@ -1,33 +1,12 @@
 {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
-  "functions": [
-    {
-      "source": "functions",
-      "codebase": "default",
-      "runtime": "nodejs20"
-    },
-    {
-      "source": "functions-form-handler",
-      "codebase": "form-handler",
-      "runtime": "nodejs20"
-    }
-  ],
-=======
-=======
->>>>>>> Stashed changes
   "firestore": {
     "rules": "firestore.rules",
     "indexes": "firestore.indexes.json"
   },
   "functions": {
     "source": "functions",
-    "runtime": "nodejs18"
+    "runtime": "nodejs20"
   },
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
   "hosting": {
     "public": "dist",
     "ignore": [
@@ -37,27 +16,18 @@
     ],
     "rewrites": [
       {
-<<<<<<< Updated upstream
-<<<<<<< Updated upstream
         "source": "/api/submit-form",
-        "function": {
-          "functionId": "submitForm",
-          "codebase": "form-handler",
-          "region": "us-central1"
-        }
+        "function": "submitForm"
       },
       {
-        "source": "/api/**",
-        "function": {
-          "functionId": "api",
-          "region": "us-central1"
-        }
+        "source": "/api/submit-application",
+        "function": "submitApplication"
       },
       {
-=======
->>>>>>> Stashed changes
-=======
->>>>>>> Stashed changes
+        "source": "/api/subscribe",
+        "function": "subscribe"
+      },
+      {
         "source": "**",
         "destination": "/index.html"
       }

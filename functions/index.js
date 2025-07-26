@@ -1,23 +1,22 @@
-// Код functions/index.js
-// Финальная, стабильная версия, написанная на нативном синтаксисе Firebase Functions
+import { onRequest, onCall } from "firebase-functions/v2/https";
+import { setGlobalOptions } from "firebase-functions/v2/options";
+import admin from "firebase-admin";
+import { config } from "firebase-functions";
+import nodemailer from "nodemailer";
+import Busboy from "busboy";
+import path from "path";
+import os from "os";
+import fs from "fs";
+import fetch from "node-fetch";
 
-const functions = require("firebase-functions");
-const admin = require("firebase-admin");
-const nodemailer = require("nodemailer");
-const Busboy = require("busboy");
-const path = require("path");
-const os = require("os");
-const fs = require("fs");
-const fetch = require("node-fetch");
+setGlobalOptions({ region: "europe-west1" });
 
 // Инициализация Firebase
-if (!admin.apps.length) {
-  admin.initializeApp();
-}
+admin.initializeApp();
 const db = admin.firestore();
 
 // --- Настройки почты (читаются из конфигурации Firebase) ---
-const env = functions.config();
+const env = config();
 let transporter;
 if (env.email && env.email.host) {
     transporter = nodemailer.createTransport({
@@ -31,7 +30,7 @@ if (env.email && env.email.host) {
 }
 
 // --- ФУНКЦИЯ 1: Обработка основной формы расчета ---
-exports.submitForm = functions.region("europe-west1").https.onRequest(async (req, res) => {
+export const submitForm = onRequest({ region: "europe-west1" }, async (req, res) => {
     // Разрешаем запросы с вашего сайта
     res.set('Access-Control-Allow-Origin', 'https://redpanda.web.app');
     res.set('Access-Control-Allow-Methods', 'POST');
@@ -143,7 +142,7 @@ exports.submitForm = functions.region("europe-west1").https.onRequest(async (req
 });
 
 // --- ФУНКЦИЯ 2: Обработка формы вакансий ---
-exports.submitApplication = functions.region("europe-west1").https.onRequest(async (req, res) => {
+export const submitApplication = onRequest({ region: "europe-west1" }, async (req, res) => {
     res.set('Access-Control-Allow-Origin', 'https://redpanda.web.app');
     res.set('Access-Control-Allow-Methods', 'POST');
     res.set('Access-Control-Allow-Headers', 'Content-Type');
@@ -218,7 +217,7 @@ exports.submitApplication = functions.region("europe-west1").https.onRequest(asy
 });
 
 // --- ФУНКЦИЯ 3: Обработка подписки на рассылку ---
-exports.subscribe = functions.region("europe-west1").https.onCall(async (data) => {
+export const subscribe = onCall({ region: "europe-west1" }, async (data) => {
     const { email, sphere } = data;
     if (!email) {
         throw new functions.https.HttpsError('invalid-argument', 'Email обязателен.');
@@ -234,6 +233,6 @@ exports.subscribe = functions.region("europe-west1").https.onCall(async (data) =
         return { success: true, message: 'Спасибо за подписку!' };
     } catch (_error) {
         console.error("КРИТИЧЕСКАЯ ОШИБКА в subscribe:", _error);
-        throw new functions.https.HttpsError('internal', 'Произошла ошибка на сервере.');
+        throw new HttpsError('internal', 'Произошла ошибка на сервере.');
     }
 });
