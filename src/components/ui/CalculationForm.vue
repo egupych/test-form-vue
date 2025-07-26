@@ -4,26 +4,26 @@
 // - Сбор данных из полей ввода (имя, телефон, email и т.д.).
 // - Валидацию полей с помощью композибл функции useFormValidation.
 // - Обработку загрузки нескольких файлов с проверкой их количества и общего размера.
-// - Предпросмотр изображений при наведении на имя файла.
-// - Автоматическое заполнение полей данными авторизованного пользователя.
-// - Отправку данных формы, включая файлы и выбранные референсы, на сервер.
+// - Отправку данных формы НАПРЯМУЮ на облачную функцию submitForm.
 // - ИСПОЛЬЗУЕТ ГЛОБАЛЬНОЕ ХРАНИЛИЩЕ ДЛЯ ФАЙЛОВ, ЧТОБЫ ОНИ НЕ ПРОПАДАЛИ.
 
-import { reactive, ref, computed, watch } from 'vue';
+import { reactive, computed, watch } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
 import { useAuth } from '@/composables/useAuth.js';
 import { useReferencesStore } from '@/stores/references.js';
 import { useNotificationStore } from '@/stores/notifications.js';
 import { useFormValidation } from '@/composables/useFormValidation.js';
-// --- ИЗМЕНЕНИЕ: Импортируем новое хранилище ---
 import { useFormStateStore } from '@/stores/formState.js';
 
 const props = defineProps({ promoCode: { type: String, default: '' } });
 const { user } = useAuth();
 const referencesStore = useReferencesStore();
 const notificationStore = useNotificationStore();
+<<<<<<< Updated upstream
 
 
+=======
+>>>>>>> Stashed changes
 const formStateStore = useFormStateStore();
 
 const formData = formStateStore.calculationForm;
@@ -35,7 +35,6 @@ const isSubmitting = ref(false);
 const hoveredFileUrl = ref(null);
 const previewStyle = ref({});
 
-// --- ИЗМЕНЕНИЕ: Теперь `files` это computed-свойство, которое читает данные из хранилища ---
 const files = computed(() => formStateStore.calculationFormFiles);
 
 const handleFileMouseEnter = (event, file) => {
@@ -67,6 +66,7 @@ const handleFileUpload = (event) => {
   }
   const currentSize = files.value.reduce((acc, file) => acc + file.size, 0);
   const newSize = newFiles.reduce((acc, file) => acc + file.size, 0);
+<<<<<<< Updated upstream
   if (currentSize + newSize > MAX_TOTAL_SIZE) {
     notificationStore.showNotification(
       `Общий размер файлов не должен превышать 100 МБ.`,
@@ -77,6 +77,9 @@ const handleFileUpload = (event) => {
   }
 
   // --- ИЗМЕНЕНИЕ: Используем действие из хранилища для добавления файлов ---
+=======
+  if (currentSize + newSize > MAX_TOTAL_SIZE) { notificationStore.showNotification(`Общий размер файлов не должен превышать 100 МБ.`, 'error'); target.value = ''; return; }
+>>>>>>> Stashed changes
   formStateStore.addCalculationFiles(newFiles);
   target.value = '';
 };
@@ -86,7 +89,6 @@ const removeFile = (index) => {
     URL.revokeObjectURL(hoveredFileUrl.value);
     hoveredFileUrl.value = null;
   }
-  // --- ИЗМЕНЕНИЕ: Используем действие из хранилища для удаления файла ---
   formStateStore.removeCalculationFile(index);
 };
 
@@ -124,10 +126,24 @@ const isFormValid = computed(() => {
     }
     isSubmitting.value = true;
     const data = new FormData();
+<<<<<<< Updated upstream
     for (const key in formStateStore.calculationForm) {
       data.append(key, formStateStore.calculationForm[key]);
+=======
+    for (const key in formData) { data.append(key, formData[key]); }
+    
+    if (files.value.length > 0) {
+        files.value.forEach(file => { data.append('files', file); });
     }
+    if (referencesStore.items.length > 0) {
+        referencesStore.items.forEach((refUrl) => { data.append('references[]', refUrl); });
+>>>>>>> Stashed changes
+    }
+    
+    // --- ИЗМЕНЕНИЕ: Указываем полный URL новой функции ---
+    const functionUrl = 'https://europe-west1-redpanda-cca8e.cloudfunctions.net/submitForm';
 
+<<<<<<< Updated upstream
   if (files.value.length > 0) {
     files.value.forEach((file) => {
       data.append('files', file);
@@ -160,6 +176,22 @@ const isFormValid = computed(() => {
   } finally {
     isSubmitting.value = false;
   }
+=======
+    try {
+        const response = await fetch(functionUrl, { method: 'POST', body: data });
+        const result = await response.json();
+        if (!response.ok) throw new Error(result.message || 'Ошибка сервера');
+        notificationStore.showNotification(result.message, 'success');
+        Object.keys(formData).forEach(key => formData[key] = '');
+        formStateStore.clearCalculationFiles();
+        referencesStore.clearReferences();
+    } catch (error) {
+        console.error('Ошибка отправки формы:', error);
+        notificationStore.showNotification(error.message || 'Ошибка соединения с сервером.', 'error');
+    } finally {
+        isSubmitting.value = false;
+    }
+>>>>>>> Stashed changes
 };
 </script>
 
@@ -249,6 +281,7 @@ const isFormValid = computed(() => {
       </div>
     </div>
     <div class="form-body">
+<<<<<<< Updated upstream
       <form
         @submit.prevent="handleSubmit"
         novalidate
@@ -271,6 +304,13 @@ const isFormValid = computed(() => {
               class="form-label"
               :class="{ '!text-panda-orange': errors.name }"
             >
+=======
+      <form @submit.prevent="handleSubmit" novalidate class="flex flex-col gap-2">
+        <div class="form-group">
+          <div class="relative">
+            <input type="text" id="name" required v-model.trim="formData.name" @input="validateField('name')" class="form-input peer" :class="{'border-panda-orange': errors.name}" placeholder=" " />
+            <label for="name" class="form-label" :class="{'!text-panda-orange': errors.name}">
+>>>>>>> Stashed changes
               <span v-if="errors.name">{{ errors.name }}</span>
               <span v-else>Ваше имя</span>
             </label>
@@ -280,6 +320,7 @@ const isFormValid = computed(() => {
             ></span>
           </div>
         </div>
+<<<<<<< Updated upstream
 
         <div class="form-group">
           <div class="relative">
@@ -298,6 +339,12 @@ const isFormValid = computed(() => {
               class="form-label"
               :class="{ '!text-panda-orange': errors.phone }"
             >
+=======
+        <div class="form-group">
+          <div class="relative">
+            <input type="tel" id="phone" required v-model="formData.phone" @input="formatPhoneInput" class="form-input peer" :class="{'border-panda-orange': errors.phone}" placeholder=" " />
+            <label for="phone" class="form-label" :class="{'!text-panda-orange': errors.phone}">
+>>>>>>> Stashed changes
               <span v-if="errors.phone">{{ errors.phone }}</span>
               <span v-else>Телефон</span>
             </label>
@@ -307,9 +354,9 @@ const isFormValid = computed(() => {
             ></span>
           </div>
         </div>
-
         <div class="form-group">
           <div class="relative">
+<<<<<<< Updated upstream
             <input
               type="email"
               id="email"
@@ -325,6 +372,10 @@ const isFormValid = computed(() => {
               class="form-label"
               :class="{ '!text-panda-orange': errors.email }"
             >
+=======
+            <input type="email" id="email" required v-model.trim="formData.email" @input="validateField('email')" class="form-input peer" :class="{'border-panda-orange': errors.email}" placeholder=" " />
+            <label for="email" class="form-label" :class="{'!text-panda-orange': errors.email}">
+>>>>>>> Stashed changes
               <span v-if="errors.email">{{ errors.email }}</span>
               <span v-else>Email</span>
             </label>
@@ -334,7 +385,6 @@ const isFormValid = computed(() => {
             ></span>
           </div>
         </div>
-
         <div class="form-group">
           <div class="relative">
             <input
@@ -348,9 +398,9 @@ const isFormValid = computed(() => {
             <span class="input-border"></span>
           </div>
         </div>
-
         <div class="form-group">
           <div class="relative">
+<<<<<<< Updated upstream
             <textarea
               id="task"
               required
@@ -365,6 +415,10 @@ const isFormValid = computed(() => {
               class="form-label"
               :class="{ '!text-panda-orange': errors.task }"
             >
+=======
+            <textarea id="task" required v-model.trim="formData.task" @input="validateField('task')" class="form-input peer min-h-[6.25rem] resize-y" :class="{'border-panda-orange': errors.task}" placeholder=" "></textarea>
+            <label for="task" class="form-label" :class="{'!text-panda-orange': errors.task}">
+>>>>>>> Stashed changes
               <span v-if="errors.task">{{ errors.task }}</span>
               <span v-else>Опишите задачу</span>
             </label>
@@ -374,7 +428,10 @@ const isFormValid = computed(() => {
             ></span>
           </div>
         </div>
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
         <div class="form-group">
           <div class="relative">
             <input
@@ -388,6 +445,7 @@ const isFormValid = computed(() => {
             <span class="input-border"></span>
           </div>
         </div>
+<<<<<<< Updated upstream
 
         <BaseButton
           type="submit"
@@ -395,6 +453,9 @@ const isFormValid = computed(() => {
           class="mt-4"
           variant="fill-orange"
         >
+=======
+        <BaseButton type="submit" :disabled="isSubmitting || !isFormValid" class="mt-4" variant="fill-orange">
+>>>>>>> Stashed changes
           <div v-if="isSubmitting" class="flex items-center justify-center">
             <svg
               class="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
@@ -423,7 +484,10 @@ const isFormValid = computed(() => {
       </form>
     </div>
   </div>
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
   <Teleport to="body">
     <transition name="preview">
       <div

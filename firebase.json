@@ -1,4 +1,5 @@
 {
+<<<<<<< Updated upstream
   "functions": [
     {
       "source": "functions",
@@ -11,6 +12,16 @@
       "runtime": "nodejs20"
     }
   ],
+=======
+  "firestore": {
+    "rules": "firestore.rules",
+    "indexes": "firestore.indexes.json"
+  },
+  "functions": {
+    "source": "functions",
+    "runtime": "nodejs18"
+  },
+>>>>>>> Stashed changes
   "hosting": {
     "public": "dist",
     "ignore": [
@@ -20,6 +31,7 @@
     ],
     "rewrites": [
       {
+<<<<<<< Updated upstream
         "source": "/api/submit-form",
         "function": {
           "functionId": "submitForm",
@@ -35,6 +47,8 @@
         }
       },
       {
+=======
+>>>>>>> Stashed changes
         "source": "**",
         "destination": "/index.html"
       }

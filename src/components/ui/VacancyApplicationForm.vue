@@ -4,8 +4,8 @@
 // - Принимает название вакансии через props.
 // - Собирает данные из полей (имя, телефон).
 // - Использует композибл useFormValidation для валидации полей.
-// - Обрабатывает загрузку одного файла (резюме) с проверкой формата и размера.
-// - Отправляет данные формы на бэкенд-сервер по адресу /api/submit-application.
+// - Обрабатывает загрузку одного файла (резюме).
+// - Отправляет данные формы НАПРЯМУЮ на облачную функцию submitApplication.
 
 import { ref, reactive, watch, computed } from 'vue';
 import BaseButton from '@/components/ui/BaseButton.vue';
@@ -14,7 +14,7 @@ import { useFormValidation } from '@/composables/useFormValidation.js';
 
 
 
-const emit = defineEmits(['close']); // Добавляем emit для закрытия попапа
+const emit = defineEmits(['close']);
 const notificationStore = useNotificationStore();
 const formStateStore = useFormStateStore();
 
@@ -72,7 +72,7 @@ const removeFile = (index) => {
   files.value.splice(index, 1);
 };
 
-// --- ИЗМЕНЕННАЯ ФУНКЦИЯ ОТПРАВКИ ---
+// --- ИЗМЕНЕНИЕ: Функция отправки теперь использует прямой URL ---
 const handleSubmit = async () => {
   if (!validateForm(validationFields) || files.value.length === 0) {
     notificationStore.showNotification(
@@ -87,10 +87,12 @@ const handleSubmit = async () => {
   data.append('name', formStateStore.vacancyForm.name);
   data.append('phone', formStateStore.vacancyForm.phone);
   data.append('desiredPosition', desiredPosition.value);
-  data.append('resume', files.value[0]); // Прикрепляем файл под именем 'resume'
+  data.append('resume', files.value[0]);
+
+  const functionUrl = 'https://europe-west1-redpanda-cca8e.cloudfunctions.net/submitApplication';
 
   try {
-    const response = await fetch('/api/submit-application', {
+    const response = await fetch(functionUrl, {
       method: 'POST',
       body: data,
     });
@@ -101,10 +103,18 @@ const handleSubmit = async () => {
     }
 
     notificationStore.showNotification(result.message, 'success');
+<<<<<<< Updated upstream
     // Очистка формы и закрытие окна
     formStateStore.clearVacancyForm();
     files.value = [];
     emit('close'); // Сигнал родительскому компоненту закрыть попап
+=======
+    formData.name = '';
+    formData.phone = '';
+    files.value = [];
+    emit('close');
+
+>>>>>>> Stashed changes
   } catch (error) {
     console.error('Ошибка отправки отклика:', error);
     notificationStore.showNotification(

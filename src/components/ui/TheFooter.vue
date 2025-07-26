@@ -1,8 +1,14 @@
 <script setup>
-// Секция script остается без изменений
+// Этот скрипт управляет логикой футера, включая форму подписки.
+// Основное изменение: форма подписки теперь использует Firebase Functions SDK
+// для вызова облачной функции 'subscribe', что является более современным
+// и безопасным способом для таких операций.
+
 import { reactive } from 'vue';
 import InteractiveMap from './InteractiveMap.vue';
 import { useFormValidation } from '@/composables/useFormValidation.js';
+// --- ИЗМЕНЕНИЕ: Импортируем Firebase Functions ---
+import { getFunctions, httpsCallable } from "firebase/functions";
 
 const subscription = reactive({
   email: '',
@@ -18,6 +24,7 @@ const { errors, validateField, validateForm } = useFormValidation(
   ['email']
 );
 
+// --- ИЗМЕНЕНИЕ: Логика отправки переписана для вызова Callable Function ---
 const handleSubscription = async () => {
   subscription.message = '';
   const isEmailValid = validateForm(['email']);
@@ -34,6 +41,7 @@ const handleSubscription = async () => {
 
   subscription.isSubmitting = true;
   try {
+<<<<<<< Updated upstream
     const response = await fetch('/api/subscribe', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -43,19 +51,27 @@ const handleSubscription = async () => {
       }),
     });
     const result = await response.json();
+=======
+    // Получаем экземпляр Firebase Functions
+    const functions = getFunctions();
+    // Создаем ссылку на нашу облачную функцию 'subscribe'
+    const subscribeFunction = httpsCallable(functions, 'subscribe');
+    
+    // Вызываем функцию, передавая данные
+    const result = await subscribeFunction({ email: subscription.email, sphere: subscription.sphere });
+>>>>>>> Stashed changes
 
-    subscription.message = result.message;
-    if (!response.ok) {
-      subscription.messageType = 'error';
-    } else {
-      subscription.messageType = 'success';
+    subscription.message = result.data.message;
+    subscription.messageType = result.data.success ? 'success' : 'error';
+    
+    if (result.data.success) {
       subscription.email = '';
       subscription.sphere = '';
       subscription.consent = false;
     }
   } catch (error) {
     subscription.messageType = 'error';
-    subscription.message = 'Ошибка сети. Попробуйте позже.';
+    subscription.message = error.message || 'Ошибка сети. Попробуйте позже.';
     console.error('Ошибка подписки:', error);
   } finally {
     subscription.isSubmitting = false;
@@ -270,6 +286,7 @@ const handleSubscription = async () => {
 </template>
 
 <style scoped>
+<<<<<<< Updated upstream
 /* Стили для полей ввода остаются без изменений */
 .form-input {
   @apply block w-full pb-1 pt-4 text-light-gray bg-transparent border-b border-dark-gray appearance-none focus:outline-none focus:ring-0 z-10;
@@ -281,3 +298,10 @@ const handleSubscription = async () => {
   @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full;
 }
 </style>
+=======
+/* Стили остаются без изменений */
+.form-input { @apply block w-full pb-1 pt-4 text-light-gray bg-transparent border-b border-dark-gray appearance-none focus:outline-none focus:ring-0 z-10; }
+.form-label { @apply pointer-events-none absolute text-base text-dark-gray duration-300 transform -translate-y-4 scale-75 top-4 z-0 origin-[0] peer-placeholder-shown:scale-100 peer-placeholder-shown:translate-y-0 peer-focus:scale-75 peer-focus:-translate-y-4; }
+.input-border { @apply absolute bottom-0 left-0 h-0.5 bg-panda-orange w-0 transition-all duration-300 peer-focus:w-full; }
+</style>
+>>>>>>> Stashed changes

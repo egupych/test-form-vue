@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Тестовая форма</title>
+</head>
+<body>
+    <h1>Простая форма для теста</h1>
+    <form id="test-form">
+        <label for="message">Сообщение:</label>
+        <input type="text" id="message" name="message" value="Привет, мир!">
+        <br><br>
+        <button type="submit">Отправить тест</button>
+    </form>
+    <div id="response"></div>
+
+    <script>
+        document.getElementById('test-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const responseDiv = document.getElementById('response');
+            responseDiv.textContent = 'Отправка...';
+            
+            try {
+                // Прямая ссылка на вашу новую тестовую функцию
+                const response = await fetch('https://europe-west1-redpanda-cca8e.cloudfunctions.net/test', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ message: document.getElementById('message').value })
+                });
+
+                const data = await response.text();
+                responseDiv.textContent = `Ответ от сервера: ${response.status} - ${data}`;
+            } catch (error) {
+                responseDiv.textContent = 'Ошибка сети: ' + error.message;
+                console.error(error);
+            }
+        });
+    </script>
+</body>
+</html>
